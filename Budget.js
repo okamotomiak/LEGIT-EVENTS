@@ -185,3 +185,121 @@ function setupBudgetSheet() {
   
   SpreadsheetApp.getUi().alert('Budget sheet has been updated with the Pre-Event Budget structure and formatting!');
 }
+
+/**
+ * Generates an estimated budget using OpenAI based on event and logistics data.
+ */
+function generateAIBudget() {
+  const ui = SpreadsheetApp.getUi();
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // Retrieve event information from TaskManagement.js
+    const eventInfo = getEventInformation();
+    if (!eventInfo) {
+      ui.alert('Error', 'Could not retrieve event information.', ui.ButtonSet.OK);
+      return;
+    }
+
+    // Retrieve API key
+    const apiKey = getOpenAIApiKey();
+    if (!apiKey) {
+      ui.alert('Error', 'OpenAI API key not found. Please add it to the Config sheet.', ui.ButtonSet.OK);
+      return;
+    }
+
+    // Build list of logistics items marked as "Needed"
+    const logisticsSheet = ss.getSheetByName('Logistics');
+    const neededItems = [];
+    if (logisticsSheet) {
+      const allData = logisticsSheet.getDataRange().getValues();
+      if (allData.length > 2) {
+        const headers = allData[1];
+        const itemCol = headers.indexOf('Item');
+        const qtyCol = headers.indexOf('Quantity Needed');
+        const statusCol = headers.indexOf('Status');
+
+        for (let i = 2; i < allData.length; i++) {
+          const row = allData[i];
+          const status = row[statusCol];
+          if (status && status.toString().toLowerCase() === 'needed') {
+            neededItems.push({
+              item: row[itemCol],
+              quantity: row[qtyCol]
+            });
+          }
+        }
+      }
+    }
+
+    // Format event dates
+    const startDate = formatDate(eventInfo.startDate);
+    const endDate = formatDate(eventInfo.endDate);
+
+    // Prepare logistics text for the prompt
+    const logisticsText = neededItems.map(it => `- ${it.item} (${it.quantity})`).join('\n');
+
+    // Construct OpenAI prompt
+    const prompt = `Create a detailed budget for the following event.\n\n` +
+      `Event Name: ${eventInfo.eventName}\n` +
+      `Dates: ${startDate}${eventInfo.endDate ? ' to ' + endDate : ''}\n` +
+      `Location: ${eventInfo.location || 'TBD'}\n` +
+      `Attendance Goal: ${eventInfo.attendanceGoal}\n\n` +
+      `Needed Logistics Items:\n${logisticsText}\n\n` +
+      `List any questions about missing costs or assumptions.\n` +
+      `Respond with a JSON object {"budget": [ {"category":"","item":"","unitPrice":0,"quantity":0} ], "questions": [] }`;
+
+    const url = 'https://api.openai.com/v1/chat/completions';
+    const payload = {
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' }
+    };
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { Authorization: 'Bearer ' + apiKey },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    };
+
+    const response = UrlFetchApp.fetch(url, options);
+    if (response.getResponseCode() !== 200) {
+      throw new Error(`OpenAI API Error (${response.getResponseCode()}): ${response.getContentText()}`);
+    }
+
+    const parsed = JSON.parse(response.getContentText());
+    const content = JSON.parse(parsed.choices[0].message.content);
+    const items = content.budget || [];
+
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new Error('No budget data returned from OpenAI.');
+    }
+
+    // Reset and format sheet
+    setupBudgetSheet();
+    const budgetSheet = ss.getSheetByName('Budget');
+    budgetSheet.getRange(2, 1, budgetSheet.getMaxRows() - 1, 6).clearContent();
+
+    const rows = items.map((it, idx) => [
+      it.category || '',
+      it.item || '',
+      parseFloat(it.unitPrice) || 0,
+      parseFloat(it.quantity) || 0,
+      `=C${idx + 2}*D${idx + 2}`,
+      ''
+    ]);
+
+    budgetSheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
+    budgetSheet.getRange(2, 3, rows.length, 1).setNumberFormat('$#,##0.00');
+    budgetSheet.getRange(2, 5, rows.length, 1).setNumberFormat('$#,##0.00');
+    budgetSheet.getRange(2, 6, rows.length, 1).setNumberFormat('$#,##0.00');
+
+    ui.alert('AI-generated budget has been added to the Budget sheet.');
+
+  } catch (e) {
+    Logger.log(e.toString());
+    ui.alert('Error generating AI budget: ' + e.message, ui.ButtonSet.OK);
+  }
+}
