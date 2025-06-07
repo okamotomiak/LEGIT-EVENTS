@@ -307,31 +307,6 @@ function handleSessionStatusChange(e) {
 }
 
 /**
- * Handles edit events in the Dashboard sheet
- * Specifically looks for clicks on the refresh button
- * @param {Object} e The edit event object
- */
-function handleDashboardEdit(e) {
-  // Only proceed if edit is in Dashboard sheet
-  if (!e || !e.range || e.range.getSheet().getName() !== 'Dashboard') return;
-  
-  // Check if the edit is in the refresh button cell (H1)
-  const row = e.range.getRow();
-  const col = e.range.getColumn();
-  
-  if (row === 1 && col === 8) {
-    // User clicked the refresh button
-    setupDashboard();
-    
-    // Show a confirmation toast
-    SpreadsheetApp.getActiveSpreadsheet().toast(
-      'Dashboard refreshed with latest data', 
-      'Refresh Complete', 
-      3);
-  }
-}
-
-/**
  * Updates dashboard task metrics when task status changes
  */
 function updateDashboardTaskMetrics() {
@@ -346,19 +321,6 @@ function updateDashboardTaskMetrics() {
     
   } catch (error) {
     Logger.log(`Error updating dashboard metrics: ${error}`);
-  }
-}
-
-/**
- * Removes all dashboard triggers for auto-update
- */
-function removeAllDashboardTriggers() {
-const allTriggers = ScriptApp.getProjectTriggers();
-  for (let i = 0; i < allTriggers.length; i++) {
-    const trigger = allTriggers[i];
-    if (trigger.getHandlerFunction() === 'handleDashboardEdit') {
-      ScriptApp.deleteTrigger(trigger);
-    }
   }
 }
 

@@ -1135,24 +1135,3 @@ function formatDate(date) {
   
   return `${year}-${month}-${day}`;
 }
-
-/**
- * Gets the OpenAI API key from script properties
- * @return {string|null} The API key or null if not found
- */
-function getOpenAIApiKey() {
-  try {
-    const props = PropertiesService.getScriptProperties();
-    const apiKey = props.getProperty('OPENAI_API_KEY');
-
-    if (apiKey) {
-      return apiKey;
-    }
-
-    Logger.log('OpenAI API key not found in script properties');
-    return null;
-  } catch (e) {
-    Logger.log('Error getting API key: ' + e.toString());
-    return null;
-  }
-}
