@@ -27,6 +27,8 @@ function createFullTutorialSystem() {
     addTaskManagementTutorial(ss);
     addScheduleTutorial(ss);
     addBudgetTutorial(ss);
+    addLogisticsTutorial(ss);
+    addFormsTutorial(ss);
     addDashboardTutorial(ss);
     
     // Show completion message
@@ -60,10 +62,10 @@ function initializeTutorialTracking(ss) {
     ['Tutorial Step 2 - Add People', 'false'],
     ['Tutorial Step 3 - Generate Tasks', 'false'],
     ['Tutorial Step 4 - Create Schedule', 'false'],
-    ['Tutorial Step 5 - Setup Budget', 'false'],
-    ['Tutorial Step 6 - Generate Forms', 'false'],
-    ['Tutorial Step 7 - View Dashboard', 'false'],
-    ['Tutorial Step 8 - All Complete', 'false']
+    ['Tutorial Step 5 - Plan Budget', 'false'],
+    ['Tutorial Step 6 - Manage Logistics', 'false'],
+    ['Tutorial Step 7 - Generate Forms', 'false'],
+    ['Tutorial Step 8 - View Dashboard', 'false']
   ];
   
   configSheet.getRange(startRow, 1, tutorialData.length, 2).setValues(tutorialData);
@@ -408,7 +410,7 @@ function addBudgetTutorial(ss) {
     ['', ''],
     ['📱 Watch the totals update automatically!', ''],
     ['', ''],
-    ['Next: Generate Forms →', '']
+    ['Next: Go to Logistics sheet →', '']
   ];
   
   sheet.getRange(4, tutorialCol, tutorialContent.length, 2).setValues(tutorialContent);
@@ -427,6 +429,118 @@ function addBudgetTutorial(ss) {
 }
 
 /**
+ * Add tutorial to Logistics sheet
+ */
+function addLogisticsTutorial(ss) {
+  const sheet = ss.getSheetByName('Logistics');
+  if (!sheet) return;
+
+  const lastCol = Math.max(sheet.getLastColumn(), 6);
+  const tutorialCol = lastCol + 2;
+
+  // Tutorial header
+  sheet.getRange(1, tutorialCol, 1, 2).merge();
+  sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 6 / 8');
+  sheet.getRange(1, tutorialCol)
+    .setBackground('#4285f4')
+    .setFontColor('#ffffff')
+    .setFontWeight('bold')
+    .setFontSize(12)
+    .setHorizontalAlignment('center');
+
+  // Progress indicators
+  const checkboxes = ['☑️', '☑️', '☑️', '☑️', '☑️', '☑️', '⬜', '⬜'];
+  sheet.getRange(2, tutorialCol, 1, 2).merge();
+  sheet.getRange(2, tutorialCol).setValue(checkboxes.join(' '));
+  sheet.getRange(2, tutorialCol).setHorizontalAlignment('center');
+
+  const tutorialContent = [
+    ['', ''],
+    ['Step 6: Manage your logistics', ''],
+    ['', ''],
+    ['📦 Use this sheet to track equipment,', ''],
+    ['supplies, and other needs.', ''],
+    ['', ''],
+    ['✨ Click "Generate AI Logistics List"', ''],
+    ['from the Event Planner menu to create', ''],
+    ['a list based on your schedule.', ''],
+    ['', ''],
+    ['Assign items to team members and', ''],
+    ['update the status as things are sourced.', ''],
+    ['', ''],
+    ['Next: Build your forms →', '']
+  ];
+
+  sheet.getRange(4, tutorialCol, tutorialContent.length, 2).setValues(tutorialContent);
+
+  sheet.getRange(4, tutorialCol, tutorialContent.length, 2)
+    .setBackground('#f8f9fa')
+    .setFontSize(10)
+    .setWrap(true);
+
+  sheet.setColumnWidth(tutorialCol, 200);
+  sheet.setColumnWidth(tutorialCol + 1, 200);
+
+  sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
+    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+}
+
+/**
+ * Add tutorial to Form Templates sheet
+ */
+function addFormsTutorial(ss) {
+  const sheet = ss.getSheetByName('Form Templates');
+  if (!sheet) return;
+
+  const lastCol = Math.max(sheet.getLastColumn(), 5);
+  const tutorialCol = lastCol + 2;
+
+  // Tutorial header
+  sheet.getRange(1, tutorialCol, 1, 2).merge();
+  sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 7 / 8');
+  sheet.getRange(1, tutorialCol)
+    .setBackground('#4285f4')
+    .setFontColor('#ffffff')
+    .setFontWeight('bold')
+    .setFontSize(12)
+    .setHorizontalAlignment('center');
+
+  // Progress indicators
+  const checkboxes = ['☑️', '☑️', '☑️', '☑️', '☑️', '☑️', '☑️', '⬜'];
+  sheet.getRange(2, tutorialCol, 1, 2).merge();
+  sheet.getRange(2, tutorialCol).setValue(checkboxes.join(' '));
+  sheet.getRange(2, tutorialCol).setHorizontalAlignment('center');
+
+  const tutorialContent = [
+    ['', ''],
+    ['Step 7: Generate Google Forms', ''],
+    ['', ''],
+    ['📝 Define form templates here for', ''],
+    ['speaker bios, registrations, and more.', ''],
+    ['', ''],
+    ['Use "Generate Forms from Templates"', ''],
+    ['in the Event Planner menu to build', ''],
+    ['actual forms. Links will be saved', ''],
+    ['to the Config sheet.', ''],
+    ['', ''],
+    ['Next: View the Dashboard →', '']
+  ];
+
+  sheet.getRange(4, tutorialCol, tutorialContent.length, 2).setValues(tutorialContent);
+
+  sheet.getRange(4, tutorialCol, tutorialContent.length, 2)
+    .setBackground('#f8f9fa')
+    .setFontSize(10)
+    .setWrap(true);
+
+  sheet.setColumnWidth(tutorialCol, 200);
+  sheet.setColumnWidth(tutorialCol + 1, 200);
+
+  sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
+    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+}
+
+/**
  * Add tutorial to Dashboard sheet
  */
 function addDashboardTutorial(ss) {
@@ -438,7 +552,7 @@ function addDashboardTutorial(ss) {
   
   // Tutorial header  
   sheet.getRange(1, tutorialCol, 1, 2).merge();
-  sheet.getRange(1, tutorialCol).setValue('🎉 You did it!');
+  sheet.getRange(1, tutorialCol).setValue('🎉 Getting Started: Step 8 / 8');
   sheet.getRange(1, tutorialCol)
     .setBackground('#34a853')
     .setFontColor('#ffffff')
@@ -464,7 +578,8 @@ function addDashboardTutorial(ss) {
     ['• Generated AI-powered tasks', ''],
     ['• Created a preliminary schedule', ''],
     ['• Planned your budget', ''],
-    ['• Ready to generate forms', ''],
+    ['• Generated a logistics list', ''],
+    ['• Created Google Forms', ''],
     ['', ''],
     ['🚀 Next steps:', ''],
     ['• Generate Google Forms from the menu', ''],
@@ -531,7 +646,7 @@ function removeTutorialSystem() {
   
   if (response !== ui.Button.YES) return;
   
-  const sheetNames = ['Event Description', 'People', 'Task Management', 'Schedule', 'Budget', 'Dashboard'];
+  const sheetNames = ['Event Description', 'People', 'Task Management', 'Schedule', 'Budget', 'Logistics', 'Form Templates', 'Dashboard'];
   
   sheetNames.forEach(sheetName => {
     const sheet = ss.getSheetByName(sheetName);
