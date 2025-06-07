@@ -4,8 +4,8 @@
  * Creates the "Form Templates" sheet and populates it with default templates.
  * MODIFIED: Added text wrapping to appropriate columns for better readability.
  */
-function setupFormTemplatesSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function setupFormTemplatesSheet(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   const ui = SpreadsheetApp.getUi();
   const sheetName = 'Form Templates';
   

@@ -4,8 +4,8 @@
  * All data starts at zero and Other/Miscellaneous section corrected
  * Header fields and Attendees Goal removed as requested
  */
-function setupBudgetSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function setupBudgetSheet(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   const budgetSheet = ss.getSheetByName('Budget');
   
   if (!budgetSheet) {

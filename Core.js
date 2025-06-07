@@ -36,7 +36,9 @@ function onOpen() {
       .addSeparator()
       .addSubMenu(ui.createMenu('📚 Tutorial System')
         .addItem('Show Tutorials', 'createFullTutorialSystem')
-        .addItem('Hide Tutorials', 'removeTutorialSystem')))
+        .addItem('Hide Tutorials', 'removeTutorialSystem'))
+      .addSeparator()
+      .addItem('Create New Event Spreadsheet', 'createNewEventSpreadsheet'))
     .addToUi();
 }
 
@@ -613,3 +615,79 @@ function getReminderLeadTime() {
     return 2; // Default to 2 days
   }
 }
+
+/**
+ * Creates a new spreadsheet with base sheets. Optionally uses the
+ * current spreadsheet as a template for People and Config data.
+ */
+function createNewEventSpreadsheet() {
+  const ui = SpreadsheetApp.getUi();
+  const current = SpreadsheetApp.getActiveSpreadsheet();
+
+  const namePrompt = ui.prompt(
+    'New Event Spreadsheet',
+    'Enter a name for the new spreadsheet:',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (namePrompt.getSelectedButton() !== ui.Button.OK) return;
+  const name = namePrompt.getResponseText().trim() || 'New Event Planner';
+
+  const templateResp = ui.alert(
+    'Use Current Spreadsheet as Template?',
+    'Choose YES to copy People (with statuses reset) and Config data to the new spreadsheet.',
+    ui.ButtonSet.YES_NO_CANCEL
+  );
+  if (templateResp === ui.Button.CANCEL) return;
+  const useTemplate = templateResp === ui.Button.YES;
+
+  const newSs = SpreadsheetApp.create(name);
+
+  // Remove default blank sheet
+  const firstSheet = newSs.getSheets()[0];
+  if (firstSheet) newSs.deleteSheet(firstSheet);
+
+  // Create base sheets
+  setupEventDescriptionSheet(newSs);
+  setupConfigSheet(newSs);
+  setupPeopleSheet(newSs, false);
+  setupTaskManagementSheet(newSs, false);
+  setupScheduleSheet(newSs, false);
+  setupBudgetSheet(newSs);
+  setupLogisticsSheet(newSs);
+  setupFormTemplatesSheet(newSs);
+  setupCueBuilderSheet(newSs);
+  setupDashboard(newSs);
+
+  if (useTemplate) {
+    // Copy People data (reset status and assigned tasks)
+    const srcPeople = current.getSheetByName('People');
+    const destPeople = newSs.getSheetByName('People');
+    if (srcPeople && destPeople) {
+      const rows = srcPeople.getDataRange().getValues();
+      if (rows.length > 1) {
+        const data = rows.slice(1)
+          .filter(r => r.some(cell => cell !== ''))
+          .map(r => {
+            const row = r.slice(0, destPeople.getLastColumn());
+            row[3] = '';
+            if (row.length > 6) row[6] = '';
+            return row;
+          });
+        if (data.length) {
+          destPeople.getRange(2, 1, data.length, data[0].length).setValues(data);
+        }
+      }
+    }
+
+    // Copy Config sheet contents
+    const srcConfig = current.getSheetByName('Config');
+    const destConfig = newSs.getSheetByName('Config');
+    if (srcConfig && destConfig) {
+      const configData = srcConfig.getDataRange().getValues();
+      destConfig.getRange(1, 1, configData.length, configData[0].length)
+        .setValues(configData);
+    }
+  }
+
+  ui.alert('Spreadsheet Created', 'Open the new file: ' + newSs.getUrl(), ui.ButtonSet.OK);
+}\n
