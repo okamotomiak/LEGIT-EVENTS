@@ -101,8 +101,7 @@ function handlePeopleSheetEdit(e) {
 
 /**
  * Helper function to find column index by case-insensitive header name
- * 
- * @param {Array} headers Array of header values
+ * * @param {Array} headers Array of header values
  * @param {string} columnName Column name to find (case-insensitive)
  * @return {number} 0-based index of the column, or -1 if not found
  */
@@ -114,8 +113,7 @@ function findColumnIndex(headers, columnName) {
 
 /**
  * Creates a task for collecting bio and headshot from a speaker
- * 
- * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} spreadsheet The spreadsheet
+ * * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} spreadsheet The spreadsheet
  * @param {string} speakerName The name of the speaker
  */
 function createSpeakerTask(spreadsheet, speakerName) {
@@ -195,8 +193,7 @@ function createSpeakerTask(spreadsheet, speakerName) {
 
 /**
  * Helper function to find a row by label in column A
- * 
- * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The sheet to search
+ * * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet The sheet to search
  * @param {string} label The label to find in column A
  * @return {number|null} The row number (1-based) or null if not found
  */
@@ -225,7 +222,7 @@ function generateTaskId() {
 
 /**
  * Sets up the People sheet with headers, formatting, and sample data.
- * Updated to ensure dropdowns are applied only to data rows (starting from row 2).
+ * MODIFIED: Added a "Notes" column.
  * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet object
  * @param {boolean} addSampleData Whether to add sample data to the sheet
  * @return {GoogleAppsScript.Spreadsheet.Sheet} The configured People sheet
@@ -251,14 +248,14 @@ function setupPeopleSheet(ss, addSampleData = true) {
     sheet.insertRowsAfter(currentMaxRows, 900 - currentMaxRows);
   }
   
-  // Define headers - REMOVED Google Form Responses and Form Submission Date columns
-  const headers = ['Name', 'Category', 'Role/Position', 'Status', 'Email', 'Phone', 'Assigned Tasks'];
+  // Define headers with the new "Notes" column at the end
+  const headers = ['Name', 'Category', 'Role/Position', 'Status', 'Email', 'Phone', 'Assigned Tasks', 'Notes'];
   
   // Set header values
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   
   // Set column widths
-  const widths = [150, 120, 150, 120, 200, 120, 200];
+  const widths = [150, 120, 150, 120, 200, 120, 200, 300]; // Added width for Notes
   for (let i = 0; i < headers.length; i++) {
     if (i < widths.length) {
       sheet.setColumnWidth(i + 1, widths[i]);
@@ -271,8 +268,8 @@ function setupPeopleSheet(ss, addSampleData = true) {
   // Apply sample data if requested
   if (addSampleData) {
     const sampleData = [
-      ['Jane Doe', 'Staff', 'Event Manager', 'Active', 'jane@example.com', '555-1234', ''],
-      ['John Smith', 'Volunteer', 'Setup Crew', 'Active', 'john@example.com', '555-5678', '']
+      ['Jane Doe', 'Staff', 'Event Manager', 'Active', 'jane@example.com', '555-1234', '', 'Core team member.'],
+      ['John Smith', 'Volunteer', 'Setup Crew', 'Active', 'john@example.com', '555-5678', '', 'Available all day.']
     ];
     sheet.getRange(2, 1, sampleData.length, headers.length).setValues(sampleData);
   }
@@ -300,9 +297,8 @@ function setupPeopleSheet(ss, addSampleData = true) {
   // Set normal white background for the first data row and all other rows
   sheet.getRange(2, 1, 899, headers.length).setBackground(null);
   
-  // Apply custom alternating row colors - manually setting alternating colors for data rows only
+  // Apply custom alternating row colors
   for (let i = 2; i <= 900; i += 2) {
-    // For even numbered rows, apply light gray background
     sheet.getRange(i, 1, 1, headers.length).setBackground('#f3f3f3');
   }
   

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary-color: #674ea7;
+        --primary-hover: #583d94;
+        --background-color: #f9f8fe;
+        --border-color: #e0e0e0;
+        --text-color: #333;
+        --label-color: #555;
+      }
+      body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--background-color);
+        margin: 0;
+        padding: 0;
+      }
+      .container { 
+        padding: 24px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .header-icon {
+        font-size: 24px;
+        margin-right: 12px;
+      }
+      .header-title { 
+        font-size: 18px; 
+        font-weight: 600;
+        color: var(--text-color);
+      }
+      .checkbox-group { 
+        max-height: 200px; 
+        overflow-y: auto; 
+        border: 1px solid var(--border-color); 
+        padding: 12px; 
+        border-radius: 8px; 
+        background-color: white;
+      }
+      .checkbox-item { 
+        display: block; 
+        margin-bottom: 10px; 
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .checkbox-item input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+      }
+      .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+      .checkbox-item:hover input ~ .checkmark {
+        background-color: #ddd;
+      }
+      .checkbox-item input:checked ~ .checkmark {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+      }
+      .checkbox-item input:checked ~ .checkmark:after {
+        display: block;
+      }
+      .checkbox-item .checkmark:after {
+        left: 7px;
+        top: 3px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        transform: rotate(45deg);
+      }
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 4px;
+      }
+      .select-link {
+        font-size: 12px;
+        color: var(--primary-color);
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      button { 
+        width: 100%;
+        padding: 12px 15px; 
+        border: none; 
+        border-radius: 8px; 
+        background: linear-gradient(145deg, var(--primary-color), #7e6bbd);
+        color: white; 
+        cursor: pointer; 
+        font-size: 14px; 
+        font-weight: 500;
+        margin-top: 20px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      button:hover { 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+      }
+      #status-info { 
+        margin-top: 15px; 
+        color: var(--label-color);
+        text-align: center;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <span class="header-icon">📦</span>
+        <span class="header-title">Generate AI Logistics List</span>
+      </div>
+      
+      <div class="controls">
+        <span class="select-link" onclick="toggleAll(true)">Select All</span>
+        <span class="select-link" onclick="toggleAll(false)">Deselect All</span>
+      </div>
+      <div id="checkbox-container" class="checkbox-group">
+        <!-- Checkboxes will be populated by script -->
+      </div>
+
+      <button onclick="generate()">Generate Logistics</button>
+      <div id="status-info"></div>
+    </div>
+
+    <script>
+      // Populate checkboxes on load
+      window.onload = function() {
+        google.script.run.withSuccessHandler(populateCheckboxes).getScheduleItemsForDialog();
+      };
+
+      function populateCheckboxes(items) {
+        const container = document.getElementById('checkbox-container');
+        let html = `
+          <label class="checkbox-item">Overall Event
+            <input type="checkbox" name="scheduleItem" value="Overall Event" checked>
+            <span class="checkmark"></span>
+          </label>
+        `;
+        
+        items.forEach(item => {
+          html += `
+            <label class="checkbox-item">${item}
+              <input type="checkbox" name="scheduleItem" value="${item}">
+              <span class="checkmark"></span>
+            </label>
+          `;
+        });
+        container.innerHTML = html;
+      }
+      
+      function toggleAll(checked) {
+        document.querySelectorAll('input[name="scheduleItem"]').forEach(cb => {
+          cb.checked = checked;
+        });
+      }
+
+      function generate() {
+        const statusDiv = document.getElementById('status-info');
+        statusDiv.innerHTML = "🤖 Contacting AI...";
+        
+        const selectedItems = Array.from(document.querySelectorAll('input[name="scheduleItem"]:checked')).map(cb => cb.value);
+        
+        if (selectedItems.length === 0) {
+          statusDiv.innerHTML = "Please select at least one item.";
+          return;
+        }
+        
+        google.script.run.withSuccessHandler(function(response) {
+          statusDiv.innerHTML = response;
+          // Close dialog on success
+          if (response.startsWith("Success")) {
+            setTimeout(google.script.host.close, 2000);
+          }
+        }).generateAILogisticsList(selectedItems);
+      }
+    </script>
+  </body>
+</html>
+
