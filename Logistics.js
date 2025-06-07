@@ -140,6 +140,7 @@ function generateAILogisticsList(selectedItems) {
 
     Focus on the logistics for these specific parts of the event:
     ${scheduleContext}
+    Do NOT include volunteers, staff, or any people. Only list physical items, equipment, or supplies.
     For each item, specify which part it is for using the "relatedScheduleItem" key. You MUST use one of these exact names: ${selectedItems.join(', ')}.
 
     Return a JSON object with a single key "logistics" containing an array of objects.
