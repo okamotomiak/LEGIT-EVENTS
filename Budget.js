@@ -240,15 +240,16 @@ function generateAIBudget() {
     // Prepare logistics text for the prompt
     const logisticsText = neededItems.map(it => `- ${it.item} (${it.quantity})`).join('\n');
 
-    // Construct OpenAI prompt
-    const prompt = `Create a detailed budget for the following event.\n\n` +
+    // Construct OpenAI prompt with explicit income/expense guidance
+    const prompt =
+      `Create a detailed budget for the following event that includes both income and expense categories.\n\n` +
       `Event Name: ${eventInfo.eventName}\n` +
       `Dates: ${startDate}${eventInfo.endDate ? ' to ' + endDate : ''}\n` +
       `Location: ${eventInfo.location || 'TBD'}\n` +
       `Attendance Goal: ${eventInfo.attendanceGoal}\n\n` +
       `Needed Logistics Items:\n${logisticsText}\n\n` +
-      `List any questions about missing costs or assumptions.\n` +
-      `Respond with a JSON object {"budget": [ {"category":"","item":"","unitPrice":0,"quantity":0} ], "questions": [] }`;
+      `List any questions about missing costs or assumptions, such as registration fees per person.\n` +
+      `Respond with a JSON object {"budget": [ {"category":"Income or Expense","item":"","unitPrice":0,"quantity":0} ], "questions": [] }`;
 
     const url = 'https://api.openai.com/v1/chat/completions';
     const payload = {
@@ -272,31 +273,62 @@ function generateAIBudget() {
     const parsed = JSON.parse(response.getContentText());
     const content = JSON.parse(parsed.choices[0].message.content);
     const items = content.budget || [];
+    const questions = Array.isArray(content.questions) ? content.questions : [];
 
     if (!Array.isArray(items) || items.length === 0) {
       throw new Error('No budget data returned from OpenAI.');
     }
 
-    // Reset and format sheet
+    // Reset sheet to default template with formulas and formatting
     setupBudgetSheet();
     const budgetSheet = ss.getSheetByName('Budget');
-    budgetSheet.getRange(2, 1, budgetSheet.getMaxRows() - 1, 6).clearContent();
 
-    const rows = items.map((it, idx) => [
-      it.category || '',
-      it.item || '',
-      parseFloat(it.unitPrice) || 0,
-      parseFloat(it.quantity) || 0,
-      `=C${idx + 2}*D${idx + 2}`,
-      ''
-    ]);
+    // Map of known items to their row numbers in the template
+    const rowMap = {
+      'regular fee': 4,
+      'early bird discount': 5,
+      'staff': 6,
+      'org donations': 10,
+      'individual donations': 11,
+      'drinks': 15,
+      'vendors': 16,
+      'stocks': 17,
+      'zoom': 24,
+      'audio/visual': 25,
+      'venue': 26,
+      'translator': 27,
+      'production': 31,
+      'guest speakers': 32,
+      'performers': 33,
+      'prizes': 34,
+      'meals': 38,
+      'refreshments': 39,
+      'hotel rooms': 43,
+      'paid staff': 47,
+      'staff meals': 48,
+      'flights': 52,
+      'bus': 53,
+      'rental car': 54,
+      'other/miscellaneous': 57
+    };
 
-    budgetSheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
-    budgetSheet.getRange(2, 3, rows.length, 1).setNumberFormat('$#,##0.00');
-    budgetSheet.getRange(2, 5, rows.length, 1).setNumberFormat('$#,##0.00');
-    budgetSheet.getRange(2, 6, rows.length, 1).setNumberFormat('$#,##0.00');
+    // Apply AI values to the matching rows without disturbing formulas
+    items.forEach(it => {
+      const key = (it.item || '').toString().toLowerCase();
+      const row = rowMap[key];
+      if (row) {
+        budgetSheet.getRange(row, 3).setValue(parseFloat(it.unitPrice) || 0);
+        budgetSheet.getRange(row, 4).setValue(parseFloat(it.quantity) || 0);
+      } else {
+        Logger.log('Unmapped budget item: ' + it.item);
+      }
+    });
 
-    ui.alert('AI-generated budget has been added to the Budget sheet.');
+    if (questions.length > 0) {
+      ui.alert('AI-generated budget has been added to the Budget sheet.\n\nQuestions:\n' + questions.join('\n'));
+    } else {
+      ui.alert('AI-generated budget has been added to the Budget sheet.');
+    }
 
   } catch (e) {
     Logger.log(e.toString());
