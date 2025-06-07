@@ -32,7 +32,7 @@ function setupEventDescriptionSheet(ss) {
     'Profit Goal ($)'
   ];
   sheet.getRange(1, 1, 1, 2).setValues([headers])
-    .setBackground('#4a86e8')
+    .setBackground('#674ea7')
     .setFontColor('#ffffff')
     .setFontWeight('bold');
   const data = fields.map(f => [f, '']);

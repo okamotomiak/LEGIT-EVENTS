@@ -4,9 +4,14 @@
     <base target="_top">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --primary-color: #674ea7;
+        --primary-hover: #583d94;
+        --background-color: #f9f8fe;
+      }
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f8f9fa;
+        background-color: var(--background-color);
         font-size: 14px;
         line-height: 1.5;
       }
@@ -34,13 +39,13 @@
         padding: 10px 15px;
         border: none;
         border-radius: 4px;
-        background-color: #4285f4;
+        background-color: var(--primary-color);
         color: white;
         cursor: pointer;
         font-size: 14px;
         margin-top: 20px;
       }
-      button:hover { background-color: #357ae8; }
+      button:hover { background-color: var(--primary-hover); }
       .info { margin-top: 15px; color: #555; }
       .note {
         font-size: 12px;

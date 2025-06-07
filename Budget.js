@@ -33,7 +33,7 @@ function setupBudgetSheet(ss) {
   
   // Format headers
   budgetSheet.getRange(1, 1, 1, headers.length)
-    .setBackground('#4a86e8')
+    .setBackground('#674ea7')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setHorizontalAlignment('center');
@@ -137,7 +137,7 @@ function setupBudgetSheet(ss) {
   // Highlight specific rows with blue background and white text
   const blueRows = [2, 20, 22, 58, 60]; // Revenue (2), Total Revenue (20), Expenses (22), Total Expenses (58), Net Balance (60)
   budgetSheet.getRangeList(blueRows.map(r => `A${r}:F${r}`))
-    .setBackground('#4a86e8')
+    .setBackground('#674ea7')
     .setFontColor('#ffffff')
     .setFontWeight('bold');
   

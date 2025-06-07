@@ -25,7 +25,7 @@ function setupFormTemplatesSheet(ss) {
     'Question Title', 'Question Type', 'Options (comma-separated)', 'Is Required?', 'Maps to People Column'
   ];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers])
-    .setBackground('#073763').setFontColor('#ffffff').setFontWeight('bold');
+    .setBackground('#674ea7').setFontColor('#ffffff').setFontWeight('bold');
 
   // Define the default templates
   const templates = [

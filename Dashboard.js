@@ -341,7 +341,7 @@ function setupDashboard(ss) {
   buttonCell.setValue('🔄 Refresh')
            .setFontWeight('bold')
            .setFontColor('#ffffff')
-           .setBackground('#4CAF50')
+           .setBackground('#674ea7')
            .setHorizontalAlignment('center');
   sheet.setColumnWidth(8, 100);
   
