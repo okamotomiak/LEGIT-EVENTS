@@ -42,7 +42,7 @@ function generatePreliminarySchedule() {
   // Step 4: Get OpenAI API key
   const apiKey = getOpenAIApiKey();
   if (!apiKey) {
-    ui.alert('Error', 'OpenAI API key not found. Please add your API key to the Config sheet.', ui.ButtonSet.OK);
+    ui.alert('Error', 'OpenAI API key not found. Use the "Save API Key" option to add it.', ui.ButtonSet.OK);
     return;
   }
   
@@ -1137,45 +1137,20 @@ function formatDate(date) {
 }
 
 /**
- * Gets the OpenAI API key from the Config sheet with improved debugging
+ * Gets the OpenAI API key from script properties
  * @return {string|null} The API key or null if not found
  */
 function getOpenAIApiKey() {
-  const props = PropertiesService.getScriptProperties();
-  let apiKey = props.getProperty('OPENAI_API_KEY');
-  if (apiKey) {
-    return apiKey;
-  }
-
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const configSheet = ss.getSheetByName('Config');
-  if (!configSheet) {
-    Logger.log('Config sheet not found');
-    return null;
-  }
-
   try {
-    // Try direct access first
-    apiKey = configSheet.getRange("B15").getValue();
+    const props = PropertiesService.getScriptProperties();
+    const apiKey = props.getProperty('OPENAI_API_KEY');
 
-    if (!apiKey) {
-      const keyValues = configSheet.getRange("A:A").getValues();
-      for (let i = 0; i < keyValues.length; i++) {
-        if (keyValues[i][0] === "OpenAI API Key") {
-          apiKey = configSheet.getRange(i + 1, 2).getValue();
-          break;
-        }
-      }
+    if (apiKey) {
+      return apiKey;
     }
 
-    const apiKeyStr = apiKey ? apiKey.toString().trim() : '';
-    if (apiKeyStr) {
-      props.setProperty('OPENAI_API_KEY', apiKeyStr);
-    } else {
-      Logger.log('OpenAI API Key is empty');
-    }
-
-    return apiKeyStr || null;
+    Logger.log('OpenAI API key not found in script properties');
+    return null;
   } catch (e) {
     Logger.log('Error getting API key: ' + e.toString());
     return null;

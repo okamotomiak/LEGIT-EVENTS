@@ -41,7 +41,6 @@ function setupConfigSheet(ss) {
     // --- Section 2: System & AI Settings ---
     ['', '', ''], // Spacer
     ['--- SYSTEM & AI SETTINGS ---', '', ''],
-    ['OpenAI API Key', '', 'Enter your OpenAI API key here for all AI-powered features.'],
     ['Look-Ahead Days', '1', 'Number of days ahead to look for upcoming session reminders.'],
     ['Reminder Lead Time (days)', '2', 'How many days before a task is due should a reminder be triggered.'],
     
@@ -62,13 +61,11 @@ function setupConfigSheet(ss) {
   
   // --- Formatting ---
   // Highlight section headers
-  const sectionHeaderRows = [2, 10, 16, 21];
+  const sectionHeaderRows = [2, 11, 15, 20];
   sectionHeaderRows.forEach(row => {
     configSheet.getRange(row, 1, 1, 3).setBackground('#d9d9d9').setFontWeight('bold');
   });
 
-  // Highlight the OpenAI API Key row
-  configSheet.getRange(11, 1, 1, 3).setBackground('#fff2cc');
 
   // Format the body column for text wrapping
   const bodyColumn = configSheet.getRange(2, 3, configData.length, 1);
