@@ -98,6 +98,13 @@ function buildFormFromTemplate(formName) {
       .setAllowResponseEdits(true)
       .setCollectEmail(true);
 
+    // Move the form to an event-specific folder next to the spreadsheet
+    const formsFolder = getOrCreateFormsFolder(getEventName(), ss.getId());
+    const formFile = DriveApp.getFileById(form.getId());
+    formsFolder.addFile(formFile);
+    // Remove from root to avoid clutter
+    DriveApp.getRootFolder().removeFile(formFile);
+
     // Add questions based on the template
     formTemplateRows.forEach(row => {
       const title = row[headers.indexOf('Question Title')];
@@ -223,6 +230,22 @@ function saveFormUrl(formName, url) {
     // Add new row if key doesn't exist
     configSheet.appendRow([formName, `=HYPERLINK("${url}","${formName}")`]);
   }
+}
+
+/**
+ * Get or create the folder used to store generated forms.
+ * The folder is placed next to the spreadsheet and named "[Event Name] Forms".
+ * @param {string} eventName The current event name.
+ * @param {string} spreadsheetId The ID of the active spreadsheet.
+ * @return {Folder} The Drive folder for the forms.
+ */
+function getOrCreateFormsFolder(eventName, spreadsheetId) {
+  const sheetFile = DriveApp.getFileById(spreadsheetId);
+  const parents = sheetFile.getParents();
+  const parentFolder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+  const folderName = `${eventName} Forms`;
+  const existing = parentFolder.getFoldersByName(folderName);
+  return existing.hasNext() ? existing.next() : parentFolder.createFolder(folderName);
 }
 
 function addOrUpdatePersonInPeopleSheet(data){
