@@ -1141,50 +1141,40 @@ function formatDate(date) {
  * @return {string|null} The API key or null if not found
  */
 function getOpenAIApiKey() {
+  const props = PropertiesService.getScriptProperties();
+  let apiKey = props.getProperty('OPENAI_API_KEY');
+  if (apiKey) {
+    return apiKey;
+  }
+
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const configSheet = ss.getSheetByName('Config');
-  
   if (!configSheet) {
     Logger.log('Config sheet not found');
     return null;
   }
-  
+
   try {
-    // First method: Try to find the row labeled "OpenAI API Key"
-    const keyRange = configSheet.getRange("A:A");
-    const keyValues = keyRange.getValues();
-    let apiKeyRow = -1;
-    
-    Logger.log('Searching for OpenAI API Key row in Config sheet...');
-    
-    for (let i = 0; i < keyValues.length; i++) {
-      if (keyValues[i][0] === "OpenAI API Key") {
-        apiKeyRow = i + 1; // Convert to 1-based row index
-        Logger.log(`Found OpenAI API Key row at position ${apiKeyRow}`);
-        break;
+    // Try direct access first
+    apiKey = configSheet.getRange("B15").getValue();
+
+    if (!apiKey) {
+      const keyValues = configSheet.getRange("A:A").getValues();
+      for (let i = 0; i < keyValues.length; i++) {
+        if (keyValues[i][0] === "OpenAI API Key") {
+          apiKey = configSheet.getRange(i + 1, 2).getValue();
+          break;
+        }
       }
     }
-    
-    let apiKey = null;
-    
-    if (apiKeyRow !== -1) {
-      // If we found the label, get the key from that row
-      apiKey = configSheet.getRange(apiKeyRow, 2).getValue();
-      Logger.log(`Found API key via label search at row ${apiKeyRow}`);
-    } else {
-      // Fallback to directly accessing B15 (most reliable)
-      apiKey = configSheet.getRange("B15").getValue();
-      Logger.log('Using direct cell reference to B15 for API key');
-    }
-    
+
     const apiKeyStr = apiKey ? apiKey.toString().trim() : '';
-    
-    if (!apiKeyStr) {
-      Logger.log('OpenAI API Key is empty');
+    if (apiKeyStr) {
+      props.setProperty('OPENAI_API_KEY', apiKeyStr);
     } else {
-      Logger.log(`Found API key (length: ${apiKeyStr.length}, first 4 chars: ${apiKeyStr.substring(0, 4)}...)`);
+      Logger.log('OpenAI API Key is empty');
     }
-    
+
     return apiKeyStr || null;
   } catch (e) {
     Logger.log('Error getting API key: ' + e.toString());

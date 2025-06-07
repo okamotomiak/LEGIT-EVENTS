@@ -271,10 +271,12 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
     .build();
   sheet.getRange(2, 10, 899, 1).setDataValidation(reminderRule);
   
-  // Apply alternating row colors to all data rows
-  for (let i = 2; i <= 900; i += 2) {
-    sheet.getRange(i, 1, 1, headers.length).setBackground('#f3f3f3');
+  // Apply alternating row colors to all data rows in bulk
+  const altColors = [];
+  for (let i = 2; i <= 900; i++) {
+    altColors.push(new Array(headers.length).fill(i % 2 === 0 ? '#f3f3f3' : null));
   }
+  sheet.getRange(2, 1, altColors.length, headers.length).setBackgrounds(altColors);
   
   // Add sample data if requested
   if (addSampleData) {

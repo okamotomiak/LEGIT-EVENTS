@@ -229,16 +229,19 @@ function populateProfessionalCueSheet(cueSheet, cueData, ss) {
     cueSheet.getRange(START_ROW, 2, outputData.length, 1).setNumberFormat('h:mm AM/PM').setHorizontalAlignment('center'); // Time
     cueSheet.getRange(START_ROW, 3, outputData.length, 1).setHorizontalAlignment('center'); // Dur.
     
-    // Apply borders and formatting row by row
+    // Apply borders and formatting more efficiently
+    const borderRows = [];
     for (let i = 0; i < outputData.length; i++) {
         const row = i + START_ROW;
-        if(outputData[i][3] && outputData[i][3].startsWith('---')){ 
+        if(outputData[i][3] && outputData[i][3].startsWith('---')){
             const separatorRange = cueSheet.getRange(row, 1, 1, NUM_COLUMNS);
             separatorRange.merge().setBackground('#d9d9d9').setFontWeight('bold').setHorizontalAlignment('center');
         } else {
-            const dataRowRange = cueSheet.getRange(row, 1, 1, NUM_COLUMNS);
-            dataRowRange.setBorder(true, true, true, true, true, true, '#cccccc', SpreadsheetApp.BorderStyle.SOLID);
+            borderRows.push(`A${row}:I${row}`);
         }
+    }
+    if (borderRows.length) {
+        cueSheet.getRangeList(borderRows).setBorder(true, true, true, true, true, true, '#cccccc', SpreadsheetApp.BorderStyle.SOLID);
     }
   }
 }
