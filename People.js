@@ -297,10 +297,12 @@ function setupPeopleSheet(ss, addSampleData = true) {
   // Set normal white background for the first data row and all other rows
   sheet.getRange(2, 1, 899, headers.length).setBackground(null);
   
-  // Apply custom alternating row colors
-  for (let i = 2; i <= 900; i += 2) {
-    sheet.getRange(i, 1, 1, headers.length).setBackground('#f3f3f3');
+  // Apply custom alternating row colors in bulk
+  const altColors = [];
+  for (let i = 2; i <= 900; i++) {
+    altColors.push(new Array(headers.length).fill(i % 2 === 0 ? '#f3f3f3' : null));
   }
+  sheet.getRange(2, 1, altColors.length, headers.length).setBackgrounds(altColors);
   
   // Create filter view for all rows
   sheet.getRange(1, 1, 900, headers.length).createFilter();

@@ -118,15 +118,11 @@ function setupBudgetSheet() {
   
   // Format category headers
   const categoryRows = [2, 3, 9, 14, 22, 23, 30, 37, 42, 46, 51, 57, 60];
-  for (let row of categoryRows) {
-    budgetSheet.getRange(row, 1).setFontWeight("bold");
-  }
+  budgetSheet.getRangeList(categoryRows.map(r => `A${r}`)).setFontWeight("bold");
   
   // Format total rows
   const totalRows = [7, 12, 18, 20, 28, 35, 40, 44, 49, 55, 58, 61, 62];
-  for (let row of totalRows) {
-    budgetSheet.getRange(row, 2, 1, 5).setFontWeight("bold");
-  }
+  budgetSheet.getRangeList(totalRows.map(r => `B${r}:F${r}`)).setFontWeight("bold");
   
   // Adjust column widths
   budgetSheet.setColumnWidth(1, 200);  // Category
@@ -140,9 +136,10 @@ function setupBudgetSheet() {
   
   // Highlight specific rows with blue background and white text
   const blueRows = [2, 20, 22, 58, 60]; // Revenue (2), Total Revenue (20), Expenses (22), Total Expenses (58), Net Balance (60)
-  for (let row of blueRows) {
-    budgetSheet.getRange(row, 1, 1, 6).setBackground('#4a86e8').setFontColor('#ffffff').setFontWeight('bold');
-  }
+  budgetSheet.getRangeList(blueRows.map(r => `A${r}:F${r}`))
+    .setBackground('#4a86e8')
+    .setFontColor('#ffffff')
+    .setFontWeight('bold');
   
   // Apply mint green color (#b7e1cd) to rows with "⮞" symbol, etc.
   const mintGreenRows = [
@@ -151,11 +148,9 @@ function setupBudgetSheet() {
     57, // Other/Miscellaneous (row 57)
     61, 62 // Net Profit (Loss) (row 61), % Profit (Loss) (row 62)
   ];
-  
+
   // Apply the mint green color (#b7e1cd) to the mint green rows
-  for (let row of mintGreenRows) {
-    budgetSheet.getRange(row, 1, 1, 6).setBackground('#b7e1cd'); // Mint green color
-  }
+  budgetSheet.getRangeList(mintGreenRows.map(r => `A${r}:F${r}`)).setBackground('#b7e1cd');
   
   // Light blue sections for user input (using correct row numbers)
   budgetSheet.getRange("C4:D6").setBackground('#d0e0ff');    // Registration (rows 4-6)
