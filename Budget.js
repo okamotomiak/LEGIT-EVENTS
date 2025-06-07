@@ -200,7 +200,7 @@ function generateAIBudget() {
     // Retrieve API key
     const apiKey = getOpenAIApiKey();
     if (!apiKey) {
-      ui.alert('Error', 'OpenAI API key not found. Please add it to the Config sheet.', ui.ButtonSet.OK);
+      ui.alert('Error', 'OpenAI API key not found. Use the "Save API Key" option to add it.', ui.ButtonSet.OK);
       return;
     }
 
