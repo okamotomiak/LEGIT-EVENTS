@@ -135,7 +135,7 @@ function setupProfessionalCueSheetHeaders(sheet) {
   ];
   const headerRange = sheet.getRange(8, 1, 1, headers.length); // Now 9 columns
   headerRange.setValues([headers])
-    .setBackground('#1c4587')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)

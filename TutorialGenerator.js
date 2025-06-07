@@ -72,7 +72,7 @@ function initializeTutorialTracking(ss) {
   
   // Format the header
   configSheet.getRange(startRow, 1, 1, 2)
-    .setBackground('#4a86e8')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold');
 }
@@ -92,7 +92,7 @@ function addEventDescriptionTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 1 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -149,7 +149,7 @@ function addEventDescriptionTutorial(ss) {
   
   // Add border around tutorial
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -166,7 +166,7 @@ function addPeopleTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 2 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -217,7 +217,7 @@ function addPeopleTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
   
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -234,7 +234,7 @@ function addTaskManagementTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 3 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -287,7 +287,7 @@ function addTaskManagementTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
   
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -304,7 +304,7 @@ function addScheduleTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 4 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -355,7 +355,7 @@ function addScheduleTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
   
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -372,7 +372,7 @@ function addBudgetTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 5 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -425,7 +425,7 @@ function addBudgetTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
   
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -442,7 +442,7 @@ function addLogisticsTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 6 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -482,7 +482,7 @@ function addLogisticsTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
 
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -499,7 +499,7 @@ function addFormsTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 7 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#4285f4')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(12)
@@ -537,7 +537,7 @@ function addFormsTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
 
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#4285f4', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**
@@ -554,7 +554,7 @@ function addDashboardTutorial(ss) {
   sheet.getRange(1, tutorialCol, 1, 2).merge();
   sheet.getRange(1, tutorialCol).setValue('🎉 Getting Started: Step 8 / 8');
   sheet.getRange(1, tutorialCol)
-    .setBackground('#34a853')
+    .setBackground('#583d94')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(14)
@@ -615,7 +615,7 @@ function addDashboardTutorial(ss) {
   sheet.setColumnWidth(tutorialCol + 1, 200);
   
   sheet.getRange(1, tutorialCol, tutorialContent.length + 3, 2)
-    .setBorder(true, true, true, true, true, true, '#34a853', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
+    .setBorder(true, true, true, true, true, true, '#583d94', SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 }
 
 /**

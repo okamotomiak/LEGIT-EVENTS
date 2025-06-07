@@ -79,7 +79,7 @@ function setupScheduleSheet(ss, addSampleData = true) {
   
   // Format headers with blue background and white text
   sheet.getRange(1, 1, 1, headers.length)
-    .setBackground('#4a86e8') // Blue background
+    .setBackground('#674ea7') // Brand background
     .setFontColor('#ffffff') // White text
     .setFontWeight('bold')
     .setHorizontalAlignment('center');
