@@ -409,9 +409,7 @@ function generateUniqueTaskId() {
 function logError(message, error) {
   if (error) {
     Logger.log(`ERROR: ${message} - ${error.toString()}`);
-    console.error(`ERROR: ${message} - ${error.toString()}`);
   } else {
     Logger.log(`ERROR: ${message}`);
-    console.error(`ERROR: ${message}`);
   }
 }
