@@ -4,8 +4,8 @@
  * Creates and populates the Config sheet with a clean, organized structure.
  * This can be run once to initialize or to reset the sheet to defaults.
  */
-function setupConfigSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function setupConfigSheet(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   let configSheet = ss.getSheetByName('Config');
   
   // Create the sheet if it doesn't exist

@@ -3,8 +3,8 @@
 /**
  * Creates and sets up the "Logistics" sheet.
  */
-function setupLogisticsSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function setupLogisticsSheet(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   const ui = SpreadsheetApp.getUi();
   const sheetName = 'Logistics';
 
@@ -36,15 +36,15 @@ function setupLogisticsSheet() {
   const statusRule = SpreadsheetApp.newDataValidation().requireValueInList(statusOptions, true).build();
   sheet.getRange(3, 4, sheet.getMaxRows() - 2, 1).setDataValidation(statusRule);
   
-  updateLogisticsDropdowns();
+  updateLogisticsDropdowns(ss);
   sheet.setFrozenRows(2);
 }
 
 /**
  * Updates dropdowns in the Logistics sheet.
  */
-function updateLogisticsDropdowns() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function updateLogisticsDropdowns(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   const peopleSheet = ss.getSheetByName('People');
   const scheduleSheet = ss.getSheetByName('Schedule');
   const logisticsSheet = ss.getSheetByName('Logistics');

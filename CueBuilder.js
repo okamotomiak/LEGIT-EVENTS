@@ -4,8 +4,8 @@
  * Creates and sets up the "Cue Builder" sheet.
  * This sheet is used for creating the detailed, step-by-step program flow.
  */
-function setupCueBuilderSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function setupCueBuilderSheet(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   const ui = SpreadsheetApp.getUi();
   
   let sheet = ss.getSheetByName('Cue Builder');

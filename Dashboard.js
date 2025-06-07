@@ -104,8 +104,8 @@ function createTaskCategoryChart(dashboardSheet, taskSheet) {
  * Builds a visual dashboard layout with live formulas, metrics, and tables.
  * Modified to only include the task category bar chart.
  */
-function setupDashboard() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function setupDashboard(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName('Dashboard');
   
   // Store references to other sheets for direct references
