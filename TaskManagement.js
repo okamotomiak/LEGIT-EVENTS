@@ -10,73 +10,93 @@ const DEFAULT_POST_EVENT_DAYS = 2;
 function getEventInformation() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const eventSheet = ss.getSheetByName('Event Description');
-  
+
   if (!eventSheet) {
     Logger.log('Event Description sheet not found');
     return null;
   }
-  
+
   const data = eventSheet.getDataRange().getValues();
-  
+
   const eventInfo = {
+    eventId: '',
     eventName: '',
     startDate: null,
     endDate: null,
+    isMultiDay: false,
     location: '',
     theme: '',
+    objectives: '',
     description: '',
+    detailedDescription: '',
+    keyMessages: '',
     attendanceGoal: 0 // Default to 0
   };
-  
-  // Loop through all rows in the Event Description sheet to find our keys.
-  for (let i = 0; i < data.length; i++) {
-    const key = data[i][0] ? data[i][0].toString().trim() : '';
-    const value = data[i][1];
 
-    switch(key) {
-      case 'Event Name':
-        eventInfo.eventName = value;
-        break;
-      case 'Start Date (And Time)':
-      case 'Start Date':
-        if (value instanceof Date) eventInfo.startDate = value;
-        break;
-      case 'End Date (And Time)':
-      case 'End Date':
-        if (value instanceof Date) eventInfo.endDate = value;
-        break;
-      case 'Location':
-        eventInfo.location = value;
-        break;
-      case 'Theme':
-      case 'Theme or Focus':
-        eventInfo.theme = value;
-        break;
-      case 'Description & Messaging':
-        eventInfo.description = value;
-        break;
-      case 'Attendance Goal (#)':
-        // --- THIS IS THE FIX ---
-        // This more robust parsing handles strings, spaces, and currency symbols.
-        const goalValue = value ? value.toString().replace(/[^0-9]/g, '') : '0';
-        eventInfo.attendanceGoal = parseInt(goalValue, 10) || 0;
-        break;
+  const fieldMap = {
+    'Event ID': 'eventId',
+    'Event Name': 'eventName',
+    'Start Date (And Time)': 'startDate',
+    'Start Date': 'startDate',
+    'End Date (And Time)': 'endDate',
+    'End Date': 'endDate',
+    'Single- or Multi-Day?': 'isMultiDay',
+    'Location': 'location',
+    'Theme': 'theme',
+    'Theme or Focus': 'theme',
+    'Short Objectives': 'objectives',
+    'Description & Messaging': 'description',
+    'Detailed Description': 'detailedDescription',
+    'Key Messages': 'keyMessages',
+    'Attendance Goal (#)': 'attendanceGoal'
+  };
+
+  for (let i = 0; i < data.length; i++) {
+    const fieldName = data[i][0];
+    const fieldValue = data[i][1];
+
+    const property = fieldMap[fieldName];
+    if (!property) continue;
+
+    if (property === 'startDate' || property === 'endDate') {
+      if (fieldValue instanceof Date) {
+        eventInfo[property] = fieldValue;
+      } else if (typeof fieldValue === 'string') {
+        try {
+          const parsedDate = new Date(fieldValue);
+          if (!isNaN(parsedDate.getTime())) {
+            eventInfo[property] = parsedDate;
+          }
+        } catch (e) {
+          Logger.log(`Error parsing date: ${fieldValue}`);
+        }
+      }
+    } else if (property === 'isMultiDay') {
+      eventInfo.isMultiDay = fieldValue === 'Multi';
+    } else if (property === 'attendanceGoal') {
+      const goalValue = fieldValue ? fieldValue.toString().replace(/[^0-9]/g, '') : '0';
+      eventInfo.attendanceGoal = parseInt(goalValue, 10) || 0;
+    } else {
+      eventInfo[property] = fieldValue;
     }
   }
-  
-  // Validate required fields
+
   if (!eventInfo.eventName || !eventInfo.startDate) {
     Logger.log('Missing required event information (Name or Start Date)');
     return null;
   }
-  
-  // Set end date equal to start date if not specified
+
   if (!eventInfo.endDate) {
     eventInfo.endDate = new Date(eventInfo.startDate);
   }
-  
+
+  const duration = Math.round(
+    (eventInfo.endDate.getTime() - eventInfo.startDate.getTime()) / (1000 * 60 * 60 * 24)
+  ) + 1;
+  eventInfo.durationDays = duration;
+
   Logger.log(`Event Info Retrieved: ${eventInfo.eventName}, Attendance Goal: ${eventInfo.attendanceGoal}`);
-  
+
   return eventInfo;
 }
 
@@ -344,111 +364,6 @@ function getConfigDropdownOptions(ss) {
 
 
 
-/**
- * Gets comprehensive event information from the Event Description sheet
- * @return {Object|null} Object with event details or null if not found
- */
-function getEventInformation() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const eventSheet = ss.getSheetByName(EVENT_DESC_SHEET_NAME);
-  
-  if (!eventSheet) {
-    Logger.log('Event Description sheet not found');
-    return null;
-  }
-  
-  const data = eventSheet.getDataRange().getValues();
-  
-  // Initialize event info object
-  const eventInfo = {
-    eventId: '',
-    eventName: '',
-    startDate: null,
-    endDate: null,
-    isMultiDay: false,
-    location: '',
-    theme: '',
-    objectives: '',
-    description: '',
-    detailedDescription: '',
-    keyMessages: ''
-  };
-  
-  // Map field names to property names
-  const fieldMap = {
-    'Event ID': 'eventId',
-    'Event Name': 'eventName',
-    'Start Date (And Time)': 'startDate',
-    'Start Date': 'startDate',
-    'End Date (And Time)': 'endDate',
-    'End Date': 'endDate',
-    'Single- or Multi-Day?': 'isMultiDay',
-    'Location': 'location',
-    'Theme': 'theme',
-    'Short Objectives': 'objectives',
-    'Description & Messaging': 'description',
-    'Detailed Description': 'detailedDescription',
-    'Key Messages': 'keyMessages'
-  };
-  
-  // Extract data from sheet
-  for (let i = 0; i < data.length; i++) {
-    const fieldName = data[i][0];
-    const fieldValue = data[i][1];
-    
-    const propertyName = fieldMap[fieldName];
-    if (propertyName) {
-      // Parse dates for date fields
-      if (propertyName === 'startDate' || propertyName === 'endDate') {
-        if (fieldValue instanceof Date) {
-          eventInfo[propertyName] = fieldValue;
-        } else if (typeof fieldValue === 'string') {
-          // Try to parse string as date
-          try {
-            const parsedDate = new Date(fieldValue);
-            if (!isNaN(parsedDate.getTime())) {
-              eventInfo[propertyName] = parsedDate;
-            }
-          } catch (e) {
-            Logger.log(`Error parsing date: ${fieldValue}`);
-          }
-        }
-      } 
-      // Parse multi-day flag
-      else if (propertyName === 'isMultiDay') {
-        eventInfo[propertyName] = fieldValue === 'Multi';
-      }
-      // Set other properties directly
-      else {
-        eventInfo[propertyName] = fieldValue;
-      }
-    }
-  }
-  
-  // Validate required fields
-  if (!eventInfo.eventName || !eventInfo.startDate) {
-    Logger.log('Missing required event information');
-    return null;
-  }
-  
-  // Set end date equal to start date if not specified (single-day event)
-  if (!eventInfo.endDate) {
-    eventInfo.endDate = new Date(eventInfo.startDate);
-  }
-  
-  // Calculate event duration in days
-  const eventDuration = Math.round(
-    (eventInfo.endDate.getTime() - eventInfo.startDate.getTime()) / (1000 * 60 * 60 * 24)
-  ) + 1; // +1 to include both start and end days
-  
-  eventInfo.durationDays = eventDuration;
-  
-  // Log the event info for debugging
-  Logger.log(`Event: ${eventInfo.eventName}`);
-  Logger.log(`Dates: ${eventInfo.startDate} to ${eventInfo.endDate} (${eventInfo.durationDays} days)`);
-  
-  return eventInfo;
-}
 
 /**
  * Gets the OpenAI API key from script properties or Config sheet
