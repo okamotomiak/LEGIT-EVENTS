@@ -12,14 +12,18 @@
         --text-color: #333;
         --label-color: #555;
       }
-      body { 
-        font-family: 'Inter', sans-serif; 
+      body {
+        font-family: 'Inter', sans-serif;
         background-color: var(--background-color);
         margin: 0;
         padding: 0;
+        font-size: 14px;
+        line-height: 1.5;
       }
-      .container { 
+      .container {
         padding: 24px;
+        max-width: 480px;
+        margin: 0 auto;
       }
       .header {
         display: flex;
@@ -43,13 +47,15 @@
         border-radius: 8px; 
         background-color: white;
       }
-      .checkbox-item { 
-        display: block; 
-        margin-bottom: 10px; 
+      .checkbox-item {
+        display: block;
+        margin-bottom: 10px;
         position: relative;
         padding-left: 30px;
         cursor: pointer;
         user-select: none;
+        line-height: 1.4;
+        word-wrap: break-word;
       }
       .checkbox-item input {
         position: absolute;

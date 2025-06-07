@@ -20,14 +20,28 @@ function showFormSelectionDialog() {
     return;
   }
   
-  // Build the HTML for the dialog
-  let html = '<form>';
+  // Build the HTML for the dialog with some basic styling
+  let html = `
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 20px;
+        max-width: 400px;
+        margin: 0 auto;
+        word-wrap: break-word;
+      }
+      label { display: block; margin-bottom: 8px; }
+      input[type=checkbox] { margin-right: 6px; }
+    </style>
+    <form>`;
   formNames.forEach(name => {
-    html += `<input type="checkbox" name="form" value="${name}"> ${name}<br>`;
+    html += `<label><input type="checkbox" name="form" value="${name}"> ${name}</label>`;
   });
-  html += '<br><input type="button" value="Generate Selected Forms" onclick="google.script.run.withSuccessHandler(google.script.host.close).generateSelectedForms(this.parentNode);"></form>';
-  
-  const htmlOutput = HtmlService.createHtmlOutput(html).setWidth(300).setHeight(250);
+  html += `<br><input type="button" value="Generate Selected Forms" onclick="google.script.run.withSuccessHandler(google.script.host.close).generateSelectedForms(this.parentNode);"></form>`;
+
+  const htmlOutput = HtmlService.createHtmlOutput(html).setWidth(400).setHeight(270);
   SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'Select Forms to Generate');
 }
 
