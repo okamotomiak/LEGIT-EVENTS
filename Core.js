@@ -11,7 +11,8 @@ function onOpen() {
     .addSubMenu(ui.createMenu('1. AI Generators 🤖')
       .addItem('1.1 Generate Preliminary Schedule', 'generatePreliminarySchedule')
       .addItem('1.2 Generate AI Task List', 'generateAITasksWithSchedule')
-      .addItem('1.3 Generate AI Logistics List', 'showLogisticsDialog')) // <-- MODIFIED
+      .addItem('1.3 Generate AI Logistics List', 'showLogisticsDialog')
+      .addItem('1.4 Generate AI Budget', 'generateAIBudget'))
     .addSeparator()
     // --- PRODUCTION ---
     .addSubMenu(ui.createMenu('2. Production Tools 🎬')
