@@ -4,81 +4,6 @@ const CONFIG_SHEET_NAME = 'Config';
 const DEFAULT_PRE_EVENT_DAYS = 4;
 const DEFAULT_POST_EVENT_DAYS = 2;
 
-// =================================================================================
-// THIS IS THE SINGLE, CORRECTED VERSION OF THIS FUNCTION FOR THE ENTIRE PROJECT
-// =================================================================================
-function getEventInformation() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const eventSheet = ss.getSheetByName('Event Description');
-  
-  if (!eventSheet) {
-    Logger.log('Event Description sheet not found');
-    return null;
-  }
-  
-  const data = eventSheet.getDataRange().getValues();
-  
-  const eventInfo = {
-    eventName: '',
-    startDate: null,
-    endDate: null,
-    location: '',
-    theme: '',
-    description: '',
-    attendanceGoal: 0 // Default to 0
-  };
-  
-  // Loop through all rows in the Event Description sheet to find our keys.
-  for (let i = 0; i < data.length; i++) {
-    const key = data[i][0] ? data[i][0].toString().trim() : '';
-    const value = data[i][1];
-
-    switch(key) {
-      case 'Event Name':
-        eventInfo.eventName = value;
-        break;
-      case 'Start Date (And Time)':
-      case 'Start Date':
-        if (value instanceof Date) eventInfo.startDate = value;
-        break;
-      case 'End Date (And Time)':
-      case 'End Date':
-        if (value instanceof Date) eventInfo.endDate = value;
-        break;
-      case 'Location':
-        eventInfo.location = value;
-        break;
-      case 'Theme':
-      case 'Theme or Focus':
-        eventInfo.theme = value;
-        break;
-      case 'Description & Messaging':
-        eventInfo.description = value;
-        break;
-      case 'Attendance Goal (#)':
-        // --- THIS IS THE FIX ---
-        // This more robust parsing handles strings, spaces, and currency symbols.
-        const goalValue = value ? value.toString().replace(/[^0-9]/g, '') : '0';
-        eventInfo.attendanceGoal = parseInt(goalValue, 10) || 0;
-        break;
-    }
-  }
-  
-  // Validate required fields
-  if (!eventInfo.eventName || !eventInfo.startDate) {
-    Logger.log('Missing required event information (Name or Start Date)');
-    return null;
-  }
-  
-  // Set end date equal to start date if not specified
-  if (!eventInfo.endDate) {
-    eventInfo.endDate = new Date(eventInfo.startDate);
-  }
-  
-  Logger.log(`Event Info Retrieved: ${eventInfo.eventName}, Attendance Goal: ${eventInfo.attendanceGoal}`);
-  
-  return eventInfo;
-}
 
 
 /**
@@ -371,7 +296,8 @@ function getEventInformation() {
     objectives: '',
     description: '',
     detailedDescription: '',
-    keyMessages: ''
+    keyMessages: '',
+    attendanceGoal: 0
   };
   
   // Map field names to property names
@@ -385,10 +311,12 @@ function getEventInformation() {
     'Single- or Multi-Day?': 'isMultiDay',
     'Location': 'location',
     'Theme': 'theme',
+    'Theme or Focus': 'theme',
     'Short Objectives': 'objectives',
     'Description & Messaging': 'description',
     'Detailed Description': 'detailedDescription',
-    'Key Messages': 'keyMessages'
+    'Key Messages': 'keyMessages',
+    'Attendance Goal (#)': 'attendanceGoal'
   };
   
   // Extract data from sheet
@@ -418,6 +346,10 @@ function getEventInformation() {
       else if (propertyName === 'isMultiDay') {
         eventInfo[propertyName] = fieldValue === 'Multi';
       }
+      else if (propertyName === 'attendanceGoal') {
+        const goalValue = fieldValue ? fieldValue.toString().replace(/[^0-9]/g, '') : '0';
+        eventInfo.attendanceGoal = parseInt(goalValue, 10) || 0;
+      }
       // Set other properties directly
       else {
         eventInfo[propertyName] = fieldValue;
@@ -442,11 +374,12 @@ function getEventInformation() {
   ) + 1; // +1 to include both start and end days
   
   eventInfo.durationDays = eventDuration;
-  
+
   // Log the event info for debugging
   Logger.log(`Event: ${eventInfo.eventName}`);
   Logger.log(`Dates: ${eventInfo.startDate} to ${eventInfo.endDate} (${eventInfo.durationDays} days)`);
-  
+  Logger.log(`Attendance Goal: ${eventInfo.attendanceGoal}`);
+
   return eventInfo;
 }
 
