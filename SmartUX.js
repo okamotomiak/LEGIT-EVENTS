@@ -13,6 +13,7 @@ function smartUXOnOpen() {
   // Always available items
   let menu = ui.createMenu('Event Planner Pro 🚀')
     .addItem('📖 Help & User Guide', 'showContextualHelp')
+    .addItem('🗒️ Quick Event Setup', 'showEventSetupDialog')
     .addItem('💡 Quick Tip for This Sheet', 'showQuickHelp')
     .addItem('📕 User Manual (Google Doc)', 'showUserManual')
     .addSeparator();

@@ -27,7 +27,7 @@ function generatePreliminarySchedule() {
   }
   
   // Step 1: Gather event details
-  const eventDetails = getEventDetails(eventDescSheet);
+  const eventDetails = getEventDetailsFromSheet(eventDescSheet);
   if (!eventDetails || !eventDetails.eventName || !eventDetails.startDate || !eventDetails.endDate) {
     ui.alert('Error', 'Required event details (Event Name, Start Date, End Date) are missing. Please complete the Event Description sheet.', ui.ButtonSet.OK);
     return;
@@ -149,7 +149,7 @@ function validateLocation(location, approvedLocations) {
  * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - The Event Description sheet
  * @return {Object} Event details including name, dates, theme, audience, objectives, descriptions, etc.
  */
-function getEventDetails(sheet) {
+function getEventDetailsFromSheet(sheet) {
   // Get all data from the sheet
   const data = sheet.getDataRange().getValues();
   
