@@ -54,6 +54,10 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 8. **Learn Advanced Tools**
    Run **Dashboard & Utilities → Create/Reset AI & Automation Tools Sheet** for a quick overview of optional automation features like cue sheets and form generators.
 
+9. **Enable Automatic Dropdown Updates**
+   In the Apps Script editor run `createDropdownUpdateTrigger()` once. This sets
+   up a daily trigger that refreshes dropdown lists across all sheets.
+
 ## Repository Structure
 
 - `Core.js` – Creates the custom menu and houses common utilities.
