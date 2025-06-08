@@ -2,49 +2,60 @@
 <html>
   <head>
     <base target="_top">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --primary-color: #674ea7;
-        --primary-hover: #583d94;
-        --background-color: #f9f8fe;
-        --border-color: #e0e0e0;
-        --text-color: #333;
-        --label-color: #555;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
+
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--background-color);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: #f8f9fa;
         margin: 0;
         padding: 0;
         font-size: 14px;
-        line-height: 1.5;
       }
-      .container {
-        padding: 24px;
-        max-width: 480px;
-        margin: 0 auto;
-      }
-      .header {
+
+      .dialog-container {
+        background: white;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
         display: flex;
-        align-items: center;
-        margin-bottom: 20px;
+        flex-direction: column;
       }
-      .header-icon {
-        font-size: 24px;
-        margin-right: 12px;
+
+      .dialog-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 24px;
+        flex-shrink: 0;
+        text-align: center;
       }
-      .header-title { 
-        font-size: 18px; 
-        font-weight: 600;
-        color: var(--text-color);
+
+      .dialog-header h1 {
+        font-size: 26px;
+        margin-bottom: 8px;
       }
-      .checkbox-group { 
-        max-height: 200px; 
-        overflow-y: auto; 
-        border: 1px solid var(--border-color); 
-        padding: 12px; 
-        border-radius: 8px; 
+
+      .dialog-header p {
+        opacity: 0.9;
+        font-size: 15px;
+      }
+
+      .dialog-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+      }
+
+      .checkbox-group {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #e0e0e0;
+        padding: 12px;
+        border-radius: 8px;
         background-color: white;
       }
       .checkbox-item {
@@ -104,55 +115,113 @@
         justify-content: space-between;
         padding: 8px 4px;
       }
+
       .select-link {
         font-size: 12px;
-        color: var(--primary-color);
+        color: #667eea;
         text-decoration: underline;
         cursor: pointer;
       }
-      button { 
-        width: 100%;
-        padding: 12px 15px; 
-        border: none; 
-        border-radius: 8px; 
-        background: linear-gradient(145deg, var(--primary-color), #7e6bbd);
-        color: white; 
-        cursor: pointer; 
-        font-size: 14px; 
+
+      .dialog-footer {
+        background: white;
+        padding: 16px 24px;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        gap: 12px;
+      }
+
+      .button {
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
+        font-size: 15px;
         font-weight: 500;
-        margin-top: 20px;
+        cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       }
-      button:hover { 
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+
+      .button-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
       }
-      #status-info { 
-        margin-top: 15px; 
-        color: var(--label-color);
+
+      .button-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .button-secondary {
+        background: white;
+        color: #495057;
+        border: 1px solid #ced4da;
+      }
+
+      .button-secondary:hover {
+        background: #f8f9fa;
+      }
+
+      .loading {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        color: #667eea;
+        font-size: 14px;
+      }
+
+      .loading.show {
+        display: flex;
+      }
+
+      .spinner {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #667eea;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      #status-info {
+        margin-top: 15px;
+        color: #555;
         text-align: center;
         font-size: 13px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <span class="header-icon">📦</span>
-        <span class="header-title">Generate AI Logistics List</span>
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <h1>Generate Logistics List</h1>
+        <p>Select schedule items to include</p>
       </div>
-      
-      <div class="controls">
-        <span class="select-link" onclick="toggleAll(true)">Select All</span>
-        <span class="select-link" onclick="toggleAll(false)">Deselect All</span>
+      <div class="dialog-body">
+        <div class="controls">
+          <span class="select-link" onclick="toggleAll(true)">Select All</span>
+          <span class="select-link" onclick="toggleAll(false)">Deselect All</span>
+        </div>
+        <div id="checkbox-container" class="checkbox-group">
+          <!-- Checkboxes will be populated by script -->
+        </div>
+        <div id="status-info"></div>
       </div>
-      <div id="checkbox-container" class="checkbox-group">
-        <!-- Checkboxes will be populated by script -->
+      <div class="dialog-footer">
+        <button class="button button-secondary" onclick="closeDialog()">Cancel</button>
+        <div class="loading" id="loadingIndicator">
+          <div class="spinner"></div>
+          <span>Generating...</span>
+        </div>
+        <button class="button button-primary" onclick="generate()">Generate Logistics</button>
       </div>
-
-      <button onclick="generate()">Generate Logistics</button>
-      <div id="status-info"></div>
     </div>
 
     <script>
@@ -189,7 +258,8 @@
 
       function generate() {
         const statusDiv = document.getElementById('status-info');
-        statusDiv.innerHTML = "🤖 Contacting AI...";
+        statusDiv.innerHTML = '';
+        document.getElementById('loadingIndicator').classList.add('show');
         
         const selectedItems = Array.from(document.querySelectorAll('input[name="scheduleItem"]:checked')).map(cb => cb.value);
         
@@ -199,12 +269,17 @@
         }
         
         google.script.run.withSuccessHandler(function(response) {
+          document.getElementById('loadingIndicator').classList.remove('show');
           statusDiv.innerHTML = response;
           // Close dialog on success
           if (response.startsWith("Success")) {
             setTimeout(google.script.host.close, 2000);
           }
         }).generateAILogisticsList(selectedItems);
+      }
+
+      function closeDialog() {
+        google.script.host.close();
       }
     </script>
   </body>
