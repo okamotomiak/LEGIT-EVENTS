@@ -31,7 +31,14 @@ function onOpen() {
       .addItem('🔄 Refresh Dashboard', 'setupDashboard')
       .addSeparator()
       .addSubMenu(ui.createMenu('⚙️ Sheet Setup')
+        .addItem('Create/Reset Event Description Sheet', 'setupEventDescriptionSheet')
+        .addItem('Create/Reset Config Sheet', 'setupConfigSheet')
+        .addItem('Create/Reset People Sheet', 'setupPeopleSheet')
+        .addItem('Create/Reset Task Management Sheet', 'setupTaskManagementSheet')
+        .addItem('Create/Reset Schedule Sheet', 'setupScheduleSheet')
+        .addItem('Create/Reset Budget Sheet', 'setupBudgetSheet')
         .addItem('Create/Reset Logistics Sheet', 'setupLogisticsSheet')
+        .addItem('Create/Reset AI & Automation Tools Sheet', 'setupAutomationToolsSheet')
         .addItem('Update All Dropdowns', 'updateAllDropdowns'))
       .addSeparator()
       .addSubMenu(ui.createMenu('📚 Tutorial System')
@@ -602,11 +609,17 @@ function createNewEventSpreadsheet() {
   if (templateResp === ui.Button.CANCEL) return;
   const useTemplate = templateResp === ui.Button.YES;
 
-  const newSs = SpreadsheetApp.create(name);
+  // Copy the current spreadsheet so the script project stays attached
+  const copyFile = DriveApp.getFileById(current.getId()).makeCopy(name);
+  const newSs = SpreadsheetApp.openById(copyFile.getId());
 
-  // Remove default blank sheet
-  const firstSheet = newSs.getSheets()[0];
-  if (firstSheet) newSs.deleteSheet(firstSheet);
+  // Remove all sheets except one, then rename it for Event Description
+  const sheets = newSs.getSheets();
+  const firstSheet = sheets[0];
+  for (let i = sheets.length - 1; i > 0; i--) {
+    newSs.deleteSheet(sheets[i]);
+  }
+  if (firstSheet) firstSheet.setName('Event Description');
 
   // Create base sheets
   setupEventDescriptionSheet(newSs);
@@ -614,10 +627,6 @@ function createNewEventSpreadsheet() {
   setupPeopleSheet(newSs, false);
   setupTaskManagementSheet(newSs, false);
   setupScheduleSheet(newSs, false);
-  setupBudgetSheet(newSs);
-  setupLogisticsSheet(newSs);
-  setupFormTemplatesSheet(newSs);
-  setupCueBuilderSheet(newSs);
   setupDashboard(newSs);
 
   if (useTemplate) {
