@@ -667,3 +667,29 @@ function createDropdownUpdateTrigger() {
     5
   );
 }
+
+/**
+ * Restores the spreadsheet to its base sheets only.
+ * Deletes any extra sheets and resets core sheets to blank defaults.
+ * Intended for developer use only.
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss Optional spreadsheet.
+ */
+function restoreBaseSheets(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+  const coreSheets = ["Dashboard", "Event Description", "People", "Schedule", "Task Management", "Config"];
+
+  // Delete any non-core sheets
+  ss.getSheets().forEach(sheet => {
+    if (coreSheets.indexOf(sheet.getName()) === -1) {
+      ss.deleteSheet(sheet);
+    }
+  });
+
+  // Recreate or reset core sheets
+  setupEventDescriptionSheet(ss);
+  setupConfigSheet(ss);
+  setupPeopleSheet(ss, false);
+  setupTaskManagementSheet(ss, false);
+  setupScheduleSheet(ss, false);
+  setupDashboard(ss);
+}
