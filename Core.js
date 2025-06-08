@@ -31,6 +31,12 @@ function onOpen() {
       .addItem('🔄 Refresh Dashboard', 'setupDashboard')
       .addSeparator()
       .addSubMenu(ui.createMenu('⚙️ Sheet Setup')
+        .addItem('Create/Reset Event Description Sheet', 'setupEventDescriptionSheet')
+        .addItem('Create/Reset Config Sheet', 'setupConfigSheet')
+        .addItem('Create/Reset People Sheet', 'setupPeopleSheet')
+        .addItem('Create/Reset Task Management Sheet', 'setupTaskManagementSheet')
+        .addItem('Create/Reset Schedule Sheet', 'setupScheduleSheet')
+        .addItem('Create/Reset Budget Sheet', 'setupBudgetSheet')
         .addItem('Create/Reset Logistics Sheet', 'setupLogisticsSheet')
         .addItem('Update All Dropdowns', 'updateAllDropdowns'))
       .addSeparator()
@@ -604,9 +610,9 @@ function createNewEventSpreadsheet() {
 
   const newSs = SpreadsheetApp.create(name);
 
-  // Remove default blank sheet
+  // Use the default sheet for Event Description to avoid deletion errors
   const firstSheet = newSs.getSheets()[0];
-  if (firstSheet) newSs.deleteSheet(firstSheet);
+  if (firstSheet) firstSheet.setName('Event Description');
 
   // Create base sheets
   setupEventDescriptionSheet(newSs);
