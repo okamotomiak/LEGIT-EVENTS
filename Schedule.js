@@ -11,13 +11,15 @@ function setupScheduleSheet(ss, addSampleData = true) {
   if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   
   let sheet = ss.getSheetByName('Schedule');
-  
+
   // Create the sheet if it doesn't exist
   if (!sheet) {
     sheet = ss.insertSheet('Schedule');
     sheet.setTabColor('#f1c232'); // Yellow/gold color
   } else {
-    // Clear existing content if sheet already exists
+    // Remove existing filter and clear content if sheet already exists
+    const existingFilter = sheet.getFilter();
+    if (existingFilter) existingFilter.remove();
     sheet.clear();
   }
   
@@ -93,6 +95,8 @@ function setupScheduleSheet(ss, addSampleData = true) {
   }
   
   // Create filter view for all rows
+  const filter = sheet.getFilter();
+  if (filter) filter.remove();
   sheet.getRange(1, 1, 900, headers.length).createFilter();
   
   // Setup duration calculation
