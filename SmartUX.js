@@ -14,7 +14,6 @@ function smartUXOnOpen() {
   let menu = ui.createMenu('Event Planner Pro 🚀')
     .addItem('📖 Help & User Guide', 'showContextualHelp')
     .addItem('🗒️ Quick Event Setup', 'showEventSetupDialog')
-    .addItem('💡 Quick Tip for This Sheet', 'showQuickHelp')
     .addItem('📕 User Manual (Google Doc)', 'showUserManual')
     .addSeparator();
 
@@ -357,41 +356,13 @@ function createHelpHTML(helpContent) {
         ${helpContent.content}
         
         <div class="next-step">
-          <strong>Need more help?</strong> Use the "💡 Quick Tip" option for immediate guidance, or ask your team for support!
+          <strong>Need more help?</strong> Check the User Guide or ask your team for support!
         </div>
       </body>
     </html>
   `;
 }
 
-/**
- * Quick contextual tips for current sheet
- */
-function showQuickHelp() {
-  const currentSheet = SpreadsheetApp.getActiveSheet().getName();
-  const userProgress = assessUserProgress();
-  
-  const quickTips = {
-    'Event Description': userProgress.isNewUser ? 
-      'Start here! Fill out Event Name, dates, and location. Everything else builds from this info.' :
-      'Your foundation is set! Update details here anytime - other sheets will reflect changes.',
-      
-    'People': 'Add team members, speakers, and volunteers. When you mark speakers as "Accepted", tasks are auto-created for collecting their info!',
-    
-    'Schedule': 'Enter times as "9:00 AM" format. Duration calculates automatically. Mark sessions "Confirmed" to get notifications!',
-    
-    'Task Management': 'Add tasks as you think of them. Use categories and priorities to stay organized. Check the Dashboard to see progress!',
-    
-    'Dashboard': 'Click 🔄 Refresh to update all metrics. This shows your real-time progress toward event readiness!',
-    
-    'Budget': 'Enter costs and quantities - totals calculate automatically. The profit/loss shows in real-time!',
-    
-    'Logistics': 'Track equipment and supplies needed. Link items to specific schedule sessions for better organization.'
-  };
-  
-  const tip = quickTips[currentSheet] || 'Check the full User Guide for detailed help with this sheet!';
-  SpreadsheetApp.getActiveSpreadsheet().toast(tip, `💡 Quick Tip: ${currentSheet}`, 8);
-}
 
 /**
  * Smart Onboarding Flow
