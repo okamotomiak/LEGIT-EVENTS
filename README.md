@@ -6,7 +6,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 
 - Automated menu with one-click access to event planning tools.
 - AI-powered generation of preliminary schedules, tasks, logistics lists, and budgets.
-- Form and email generators to streamline communication.
+- Form and email generators to streamline communication. Generated forms are saved in a "[Event Name] Forms" folder next to the spreadsheet.
 - Tools for managing people, schedules, and cues.
 - Modular code organized by feature for easier maintenance.
 
