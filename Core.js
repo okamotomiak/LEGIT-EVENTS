@@ -692,4 +692,7 @@ function restoreBaseSheets(ss) {
   setupTaskManagementSheet(ss, false);
   setupScheduleSheet(ss, false);
   setupDashboard(ss);
+
+  // Ensure all dropdown lists are populated after reset
+  updateAllDropdowns();
 }
