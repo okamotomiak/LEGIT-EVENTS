@@ -38,6 +38,7 @@ function onOpen() {
         .addItem('Create/Reset Schedule Sheet', 'setupScheduleSheet')
         .addItem('Create/Reset Budget Sheet', 'setupBudgetSheet')
         .addItem('Create/Reset Logistics Sheet', 'setupLogisticsSheet')
+        .addItem('Create/Reset AI & Automation Tools Sheet', 'setupAutomationToolsSheet')
         .addItem('Update All Dropdowns', 'updateAllDropdowns'))
       .addSeparator()
       .addSubMenu(ui.createMenu('📚 Tutorial System')
@@ -608,10 +609,10 @@ function createNewEventSpreadsheet() {
   if (templateResp === ui.Button.CANCEL) return;
   const useTemplate = templateResp === ui.Button.YES;
 
-  const newSs = SpreadsheetApp.create(name);
+  // Copy the current spreadsheet so the script project stays attached
+  const copyFile = DriveApp.getFileById(current.getId()).makeCopy(name);
+  const newSs = SpreadsheetApp.openById(copyFile.getId());
 
-  // Use the default sheet for Event Description to avoid deletion errors
-  const firstSheet = newSs.getSheets()[0];
   if (firstSheet) firstSheet.setName('Event Description');
 
   // Create base sheets
@@ -620,10 +621,6 @@ function createNewEventSpreadsheet() {
   setupPeopleSheet(newSs, false);
   setupTaskManagementSheet(newSs, false);
   setupScheduleSheet(newSs, false);
-  setupBudgetSheet(newSs);
-  setupLogisticsSheet(newSs);
-  setupFormTemplatesSheet(newSs);
-  setupCueBuilderSheet(newSs);
   setupDashboard(newSs);
 
   if (useTemplate) {

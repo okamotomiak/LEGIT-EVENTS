@@ -8,6 +8,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 - AI-powered generation of preliminary schedules, tasks, logistics lists, and budgets.
 - Form and email generators to streamline communication. Generated forms are saved in a "[Event Name] Forms" folder next to the spreadsheet.
 - Tools for managing people, schedules, and cues.
+- Dedicated **AI & Automation Tools** sheet to explain advanced menu options.
 - Modular code organized by feature for easier maintenance.
 
 ## Setup
@@ -47,12 +48,19 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 6. **Initialize Sheets**
    Run the setup functions from the "Event Planner Pro" menu to create the necessary sheets (Config, Schedule, Logistics, Budget, etc.). These provide templates for your event data and settings.
 
+7. **Create a New Planner**
+   Use **Dashboard & Utilities → Create New Event Spreadsheet** to generate a fresh planner. The new file includes this script project and only the base sheets (Dashboard, Event Description, People, Schedule, Task Management, and Config).
+
+8. **Learn Advanced Tools**
+   Run **Dashboard & Utilities → Create/Reset AI & Automation Tools Sheet** for a quick overview of optional automation features like cue sheets and form generators.
+
 ## Repository Structure
 
 - `Core.js` – Creates the custom menu and houses common utilities.
 - `Config.js` – Handles setup and management of configuration data.
 - `ScheduleGenerator.js` – Generates preliminary schedules using AI services.
 - `Logistics.js`, `Budget.js`, `TaskManagement.js` – Sheets and logic for logistics, budgeting, and tasks.
+- `AutomationTools.js` – Sets up the AI & Automation Tools overview sheet.
 - `MailMerge.js`, `FormGenerator.js` – Communication helpers for emailing and form creation.
 - `appsscript.json` – Google Apps Script project manifest.
 

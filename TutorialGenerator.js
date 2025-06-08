@@ -24,8 +24,8 @@ function createFullTutorialSystem() {
     // Add tutorials to each sheet
     addEventDescriptionTutorial(ss);
     addPeopleTutorial(ss);
-    addTaskManagementTutorial(ss);
     addScheduleTutorial(ss);
+    addTaskManagementTutorial(ss);
     addBudgetTutorial(ss);
     addLogisticsTutorial(ss);
     addFormsTutorial(ss);
@@ -60,8 +60,8 @@ function initializeTutorialTracking(ss) {
     ['=== TUTORIAL PROGRESS ===', ''],
     ['Tutorial Step 1 - Event Setup', 'false'],
     ['Tutorial Step 2 - Add People', 'false'],
-    ['Tutorial Step 3 - Generate Tasks', 'false'],
-    ['Tutorial Step 4 - Create Schedule', 'false'],
+    ['Tutorial Step 3 - Create Schedule', 'false'],
+    ['Tutorial Step 4 - Generate Tasks', 'false'],
     ['Tutorial Step 5 - Plan Budget', 'false'],
     ['Tutorial Step 6 - Manage Logistics', 'false'],
     ['Tutorial Step 7 - Generate Forms', 'false'],
@@ -199,7 +199,7 @@ function addPeopleTutorial(ss) {
     ['"Accepted", the system automatically', ''],
     ['creates a task to collect their bio!', ''],
     ['', ''],
-    ['Next: Go to Task Management sheet →', ''],
+    ['Next: Go to Schedule sheet →', ''],
     ['', ''],
     ['🔧 You can also auto-generate forms', ''],
     ['later from the Event Planner Setup menu!', '']
@@ -232,7 +232,7 @@ function addTaskManagementTutorial(ss) {
   
   // Tutorial header
   sheet.getRange(1, tutorialCol, 1, 2).merge();
-  sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 3 / 8');
+  sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 4 / 8');
   sheet.getRange(1, tutorialCol)
     .setBackground('#583d94')
     .setFontColor('#ffffff')
@@ -241,14 +241,14 @@ function addTaskManagementTutorial(ss) {
     .setHorizontalAlignment('center');
   
   // Progress indicators
-  const checkboxes = ['☑️', '☑️', '☑️', '⬜', '⬜', '⬜', '⬜', '⬜'];
+  const checkboxes = ['☑️', '☑️', '☑️', '☑️', '⬜', '⬜', '⬜', '⬜'];
   sheet.getRange(2, tutorialCol, 1, 2).merge();
   sheet.getRange(2, tutorialCol).setValue(checkboxes.join(' '));
   sheet.getRange(2, tutorialCol).setHorizontalAlignment('center');
   
   const tutorialContent = [
     ['', ''],
-    ['Step 3: Generate AI-powered tasks', ''],
+    ['Step 4: Generate AI-powered tasks', ''],
     ['', ''],
     ['🤖 This is where the magic happens!', ''],
     ['', ''],
@@ -272,7 +272,7 @@ function addTaskManagementTutorial(ss) {
     ['💡 You can always add, edit, or delete', ''],
     ['tasks after they\'re generated.', ''],
     ['', ''],
-    ['Next: Go to Schedule sheet →', '']
+    ['Next: Go to Budget sheet →', '']
   ];
   
   sheet.getRange(4, tutorialCol, tutorialContent.length, 2).setValues(tutorialContent);
@@ -302,7 +302,7 @@ function addScheduleTutorial(ss) {
   
   // Tutorial header
   sheet.getRange(1, tutorialCol, 1, 2).merge();
-  sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 4 / 8');
+  sheet.getRange(1, tutorialCol).setValue('📚 Getting Started: Step 3 / 8');
   sheet.getRange(1, tutorialCol)
     .setBackground('#583d94')
     .setFontColor('#ffffff')
@@ -311,14 +311,14 @@ function addScheduleTutorial(ss) {
     .setHorizontalAlignment('center');
   
   // Progress indicators
-  const checkboxes = ['☑️', '☑️', '☑️', '☑️', '⬜', '⬜', '⬜', '⬜'];
+  const checkboxes = ['☑️', '☑️', '☑️', '⬜', '⬜', '⬜', '⬜', '⬜'];
   sheet.getRange(2, tutorialCol, 1, 2).merge();
   sheet.getRange(2, tutorialCol).setValue(checkboxes.join(' '));
   sheet.getRange(2, tutorialCol).setHorizontalAlignment('center');
   
   const tutorialContent = [
     ['', ''],
-    ['Step 4: Create your event schedule', ''],
+    ['Step 3: Create your event schedule', ''],
     ['', ''],
     ['📅 Generate a preliminary schedule:', ''],
     ['', ''],
@@ -340,7 +340,7 @@ function addScheduleTutorial(ss) {
     ['• Lead dropdown pulls from People sheet', ''],
     ['• Time validation prevents conflicts', ''],
     ['', ''],
-    ['Next: Go to Budget sheet →', '']
+    ['Next: Go to Task Management sheet →', '']
   ];
   
   sheet.getRange(4, tutorialCol, tutorialContent.length, 2).setValues(tutorialContent);
@@ -575,8 +575,8 @@ function addDashboardTutorial(ss) {
     ['✨ What you\'ve accomplished:', ''],
     ['• Set up your event basics', ''],
     ['• Added team members', ''],
-    ['• Generated AI-powered tasks', ''],
     ['• Created a preliminary schedule', ''],
+    ['• Generated AI-powered tasks', ''],
     ['• Planned your budget', ''],
     ['• Generated a logistics list', ''],
     ['• Created Google Forms', ''],
@@ -646,7 +646,7 @@ function removeTutorialSystem() {
   
   if (response !== ui.Button.YES) return;
   
-  const sheetNames = ['Event Description', 'People', 'Task Management', 'Schedule', 'Budget', 'Logistics', 'Form Templates', 'Dashboard'];
+  const sheetNames = ['Event Description', 'People', 'Schedule', 'Task Management', 'Budget', 'Logistics', 'Form Templates', 'Dashboard'];
   
   sheetNames.forEach(sheetName => {
     const sheet = ss.getSheetByName(sheetName);
