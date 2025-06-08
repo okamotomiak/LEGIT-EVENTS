@@ -151,6 +151,7 @@ function saveEventDetails(details) {
   };
 
   setVal('Event Name', details.eventName);
+
   setVal('Tagline', details.eventTagline);
   setVal('Description & Messaging', details.eventDescription);
   setVal('Theme or Focus', details.theme);
