@@ -119,6 +119,7 @@ function addNewUserMenu(menu, ui) {
     .addSubMenu(ui.createMenu("🌟 Let's Get Started!")
       .addItem('🚀 2-Minute Setup Wizard', 'startSetupWizard')
       .addItem('📝 Create Event Description', 'setupEventDescriptionSheet')
+      .addItem('🗒️ Quick Event Setup', 'showEventSetupDialog')
       .addSeparator()
       .addItem('📚 Show Me Around (Tutorial)', 'createFullTutorialSystem'))
     .addItem('⚙️ Pro Tools', 'showAdvancedOptionsDialog');
