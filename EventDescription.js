@@ -89,7 +89,8 @@ function getEventDetails() {
 
   return {
     eventName: getVal('Event Name'),
-    eventDescription: getVal('Description & Messaging'),
+    eventTagline: getVal('Description & Messaging'),
+    eventDescription: getVal('Detailed Description'),
     theme: getVal('Theme or Focus'),
     eventDuration: getVal('Single- or Multi-Day?') || 'single',
     startDate: parseDate(startValue),
@@ -133,7 +134,8 @@ function saveEventDetails(details) {
   };
 
   setVal('Event Name', details.eventName);
-  setVal('Description & Messaging', details.eventDescription);
+  setVal('Description & Messaging', details.eventTagline);
+  setVal('Detailed Description', details.eventDescription);
   setVal('Theme or Focus', details.theme);
   setVal('Single- or Multi-Day?', details.eventDuration);
   setVal('Start Date (And Time)', combineDateTime(details.startDate, details.startTime));
