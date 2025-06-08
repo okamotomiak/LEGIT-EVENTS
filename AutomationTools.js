@@ -33,7 +33,6 @@ function setupAutomationToolsSheet(ss) {
      'Use Production Tools to build cues and generate a professional cue sheet.'],
     ['Form Templates & Mail Merge',
      'Generate Google Forms and send bulk emails from the Communication Tools.'],
-    ['Tutorial System', 'Show or hide in-sheet tutorials from the menu.'],
     ['Create New Event Spreadsheet',
      'Duplicate this planner with all scripts and base sheets attached.']
   ];
