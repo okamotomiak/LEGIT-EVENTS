@@ -18,18 +18,27 @@ function setupEventDescriptionSheet(ss) {
   const fields = [
     'Event ID',
     'Event Name',
+    'Tagline',
     'Start Date (And Time)',
     'End Date (And Time)',
     'Single- or Multi-Day?',
+    'Timezone',
+    'Event Type',
     'Location',
+    'Venue Address',
+    'Virtual Link',
     'Theme or Focus',
     'Target Audience',
+    'Categories',
     'Short Objectives',
+    'Success Metrics',
     'Description & Messaging',
     'Detailed Description',
     'Key Messages',
     'Attendance Goal (#)',
-    'Profit Goal ($)'
+    'Profit Goal ($)',
+    'Special Notes',
+    'Event Website'
   ];
   sheet.getRange(1, 1, 1, 2).setValues([headers])
     .setBackground('#674ea7')
@@ -89,19 +98,28 @@ function getEventDetails() {
 
   return {
     eventName: getVal('Event Name'),
+    eventTagline: getVal('Tagline'),
     eventDescription: getVal('Description & Messaging'),
     theme: getVal('Theme or Focus'),
     eventDuration: getVal('Single- or Multi-Day?') || 'single',
+    timezone: getVal('Timezone'),
+    eventType: getVal('Event Type'),
     startDate: parseDate(startValue),
     startTime: parseTime(startValue),
     endDate: parseDate(endValue),
     endTime: parseTime(endValue),
     venueName: getVal('Location'),
+    venueAddress: getVal('Venue Address'),
+    virtualLink: getVal('Virtual Link'),
     targetAudience: getVal('Target Audience'),
+    categories: getVal('Categories'),
     eventGoals: getVal('Short Objectives'),
+    successMetrics: getVal('Success Metrics'),
     keyMessages: getVal('Key Messages'),
     expectedAttendees: getVal('Attendance Goal (#)'),
-    profitGoal: getVal('Profit Goal ($)')
+    profitGoal: getVal('Profit Goal ($)'),
+    specialNotes: getVal('Special Notes'),
+    eventWebsite: getVal('Event Website')
   };
 }
 
@@ -133,19 +151,28 @@ function saveEventDetails(details) {
   };
 
   setVal('Event Name', details.eventName);
+  setVal('Tagline', details.eventTagline);
   setVal('Description & Messaging', details.eventDescription);
   setVal('Theme or Focus', details.theme);
   setVal('Single- or Multi-Day?', details.eventDuration);
+  setVal('Timezone', details.timezone);
+  setVal('Event Type', details.eventType);
   setVal('Start Date (And Time)', combineDateTime(details.startDate, details.startTime));
   if (details.endDate || details.endTime) {
     setVal('End Date (And Time)', combineDateTime(details.endDate || details.startDate, details.endTime));
   }
   setVal('Location', details.venueName || details.virtualLink || '');
+  setVal('Venue Address', details.venueAddress);
+  setVal('Virtual Link', details.virtualLink);
   setVal('Target Audience', details.targetAudience);
+  setVal('Categories', details.categories);
   setVal('Short Objectives', details.eventGoals);
+  setVal('Success Metrics', details.successMetrics);
   setVal('Key Messages', details.keyMessages);
   setVal('Attendance Goal (#)', details.expectedAttendees);
   setVal('Profit Goal ($)', details.profitGoal);
+  setVal('Special Notes', details.specialNotes);
+  setVal('Event Website', details.eventWebsite);
 
   return true;
 }
