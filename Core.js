@@ -574,9 +574,12 @@ function createNewEventSpreadsheet() {
   const copyFile = DriveApp.getFileById(current.getId()).makeCopy(name);
   const newSs = SpreadsheetApp.openById(copyFile.getId());
 
-  // Rename the default sheet to avoid deletion errors
+  // Rename the first sheet to "Event Description" if not already present
   const firstSheet = newSs.getSheets()[0];
-  if (firstSheet) firstSheet.setName('Event Description');
+  const descSheet = newSs.getSheetByName('Event Description');
+  if (firstSheet && !descSheet) {
+    firstSheet.setName('Event Description');
+  }
 
   // Create base sheets
   setupEventDescriptionSheet(newSs);
