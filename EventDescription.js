@@ -90,6 +90,7 @@ function getEventDetails() {
   return {
     eventName: getVal('Event Name'),
     eventDescription: getVal('Description & Messaging'),
+    theme: getVal('Theme or Focus'),
     eventDuration: getVal('Single- or Multi-Day?') || 'single',
     startDate: parseDate(startValue),
     startTime: parseTime(startValue),
@@ -98,7 +99,9 @@ function getEventDetails() {
     venueName: getVal('Location'),
     targetAudience: getVal('Target Audience'),
     eventGoals: getVal('Short Objectives'),
-    expectedAttendees: getVal('Attendance Goal (#)')
+    keyMessages: getVal('Key Messages'),
+    expectedAttendees: getVal('Attendance Goal (#)'),
+    profitGoal: getVal('Profit Goal ($)')
   };
 }
 
@@ -131,6 +134,7 @@ function saveEventDetails(details) {
 
   setVal('Event Name', details.eventName);
   setVal('Description & Messaging', details.eventDescription);
+  setVal('Theme or Focus', details.theme);
   setVal('Single- or Multi-Day?', details.eventDuration);
   setVal('Start Date (And Time)', combineDateTime(details.startDate, details.startTime));
   if (details.endDate || details.endTime) {
@@ -139,7 +143,9 @@ function saveEventDetails(details) {
   setVal('Location', details.venueName || details.virtualLink || '');
   setVal('Target Audience', details.targetAudience);
   setVal('Short Objectives', details.eventGoals);
+  setVal('Key Messages', details.keyMessages);
   setVal('Attendance Goal (#)', details.expectedAttendees);
+  setVal('Profit Goal ($)', details.profitGoal);
 
   return true;
 }

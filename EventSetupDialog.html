@@ -363,6 +363,16 @@
                     <div class="helper-text">Provide a detailed description that explains the purpose, activities, and what makes it special</div>
                     <textarea id="eventDescription" placeholder="Describe your event's goals, target audience, key activities, and unique value proposition..."></textarea>
                 </div>
+
+                <div class="form-group">
+                    <label>Does your event have a theme or focus? <span class="optional-tag">(Optional)</span></label>
+                    <input type="text" id="eventTheme" placeholder="e.g., Sustainability, Innovation, Community" />
+                </div>
+
+                <div class="form-group">
+                    <label>What are the key messages you want to communicate? <span class="optional-tag">(Optional)</span></label>
+                    <textarea id="keyMessages" placeholder="e.g., Empower local entrepreneurs; Foster collaboration among nonprofits..."></textarea>
+                </div>
             </div>
 
             <!-- Date & Time Section -->
@@ -532,6 +542,11 @@
                     <div class="helper-text">Define metrics that will help you evaluate the event afterwards</div>
                     <textarea id="successMetrics" placeholder="e.g., Number of attendees, satisfaction survey scores, amount raised, new partnerships formed..."></textarea>
                 </div>
+
+                <div class="form-group">
+                    <label>What's your profit goal ($)? <span class="optional-tag">(Optional)</span></label>
+                    <input type="number" id="profitGoal" min="0" step="0.01" placeholder="e.g., 5000" />
+                </div>
             </div>
 
             <!-- Additional Details Section -->
@@ -639,6 +654,9 @@
                 document.getElementById('eventName').value = details.eventName || '';
                 document.getElementById('eventTagline').value = details.eventTagline || '';
                 document.getElementById('eventDescription').value = details.eventDescription || '';
+                document.getElementById('eventTheme').value = details.theme || '';
+                document.getElementById('keyMessages').value = details.keyMessages || '';
+                document.getElementById('profitGoal').value = details.profitGoal || '';
                 // ... populate other fields as needed
             }
             updateProgress();
@@ -675,10 +693,13 @@
                 venueName: document.getElementById('venueName').value,
                 venueAddress: document.getElementById('venueAddress').value,
                 virtualLink: document.getElementById('virtualLink').value,
+                theme: document.getElementById('eventTheme').value,
                 expectedAttendees: document.getElementById('expectedAttendees').value,
                 targetAudience: document.getElementById('targetAudience').value,
                 eventGoals: document.getElementById('eventGoals').value,
+                keyMessages: document.getElementById('keyMessages').value,
                 successMetrics: document.getElementById('successMetrics').value,
+                profitGoal: document.getElementById('profitGoal').value,
                 specialNotes: document.getElementById('specialNotes').value,
                 eventWebsite: document.getElementById('eventWebsite').value,
                 categories: getSelectedCategories()
