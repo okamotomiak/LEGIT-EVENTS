@@ -4,49 +4,10 @@
  * Consolidates menu creation to prevent conflicts and improve performance.
  */
 function onOpen() {
-  const ui = SpreadsheetApp.getUi();
-  
-  ui.createMenu('Event Planner Pro 🚀')
-    // --- AI GENERATION ---
-    .addSubMenu(ui.createMenu('1. AI Generators 🤖')
-      .addItem('1.1 Generate Preliminary Schedule', 'generatePreliminarySchedule')
-      .addItem('1.2 Generate AI Task List', 'generateAITasksWithSchedule')
-      .addItem('1.3 Generate AI Logistics List', 'showLogisticsDialog')
-      .addItem('1.4 Generate AI Budget', 'generateAIBudget'))
-    .addSeparator()
-    // --- PRODUCTION ---
-    .addSubMenu(ui.createMenu('2. Production Tools 🎬')
-      .addItem('2.1 Create/Reset Cue Builder', 'setupCueBuilderSheet')
-      .addItem('2.2 Generate Professional Cue Sheet', 'generateProfessionalCueSheet'))
-    .addSeparator()
-    // --- COMMUNICATION ---
-    .addSubMenu(ui.createMenu('3. Communication Tools ✉️')
-      .addSubMenu(ui.createMenu('3.1 Form Generators')
-        .addItem('Create/Reset Form Templates', 'setupFormTemplatesSheet')
-        .addItem('Generate Forms from Templates', 'showFormSelectionDialog'))
-      .addItem('3.2 Send Bulk Emails', 'showEmailDialog'))
-    .addSeparator()
-    // --- UTILITIES ---
-    .addSubMenu(ui.createMenu('Dashboard & Utilities 📊')
-      .addItem('🔄 Refresh Dashboard', 'setupDashboard')
-      .addSeparator()
-      .addSubMenu(ui.createMenu('⚙️ Sheet Setup')
-        .addItem('Create/Reset Event Description Sheet', 'setupEventDescriptionSheet')
-        .addItem('Create/Reset Config Sheet', 'setupConfigSheet')
-        .addItem('Create/Reset People Sheet', 'setupPeopleSheet')
-        .addItem('Create/Reset Task Management Sheet', 'setupTaskManagementSheet')
-        .addItem('Create/Reset Schedule Sheet', 'setupScheduleSheet')
-        .addItem('Create/Reset Budget Sheet', 'setupBudgetSheet')
-        .addItem('Create/Reset Logistics Sheet', 'setupLogisticsSheet')
-        .addItem('Create/Reset AI & Automation Tools Sheet', 'setupAutomationToolsSheet')
-        .addItem('Update All Dropdowns', 'updateAllDropdowns'))
-      .addSeparator()
-      .addSubMenu(ui.createMenu('📚 Tutorial System')
-        .addItem('Show Tutorials', 'createFullTutorialSystem')
-        .addItem('Hide Tutorials', 'removeTutorialSystem'))
-      .addSeparator()
-      .addItem('Create New Event Spreadsheet', 'createNewEventSpreadsheet'))
-    .addToUi();
+  // Delegate menu creation to the progressive UX system
+  if (typeof smartUXOnOpen === 'function') {
+    smartUXOnOpen();
+  }
 }
 
 /**
