@@ -1,5 +1,8 @@
 //TutorialGenerator.gs - Creates guided tutorial overlays for the Event Planner
 
+// Link to the full user manual shared with SmartUX.js
+const MANUAL_LINK_FORMULA = '=HYPERLINK("' + USER_MANUAL_URL + '", "Open User Manual")';
+
 /**
  * Main function to set up the complete tutorial system
  * Run this once to add tutorials to all sheets
@@ -115,6 +118,7 @@ function addEventDescriptionTutorial(ss) {
     ['Let\'s start by filling out your event details.', ''],
     ['This information helps our AI create better', ''],
     ['tasks and schedules for you.', ''],
+    [MANUAL_LINK_FORMULA, ''],
     ['', ''],
     ['👆 Fill out these key fields:', ''],
     ['• Event Name', ''],
@@ -202,7 +206,7 @@ function addPeopleTutorial(ss) {
     ['Next: Go to Schedule sheet →', ''],
     ['', ''],
     ['🔧 You can also auto-generate forms', ''],
-    ['later from the Event Planner Setup menu!', '']
+    ['later from the Pro Tools menu!', '']
   ];
   
   sheet.getRange(4, tutorialCol, tutorialContent.length, 2).setValues(tutorialContent);
@@ -258,7 +262,7 @@ function addTaskManagementTutorial(ss) {
     ['', ''],
     ['🚀 To generate AI tasks:', ''],
     ['', ''],
-    ['1. Go to Event Planner Setup menu', ''],
+    ['1. Open the Pro Tools menu', ''],
     ['2. Click "Generate AI Tasks"', ''],
     ['3. Wait for the AI to work (30-60 seconds)', ''],
     ['4. Review the generated tasks below', ''],
@@ -323,7 +327,7 @@ function addScheduleTutorial(ss) {
     ['📅 Generate a preliminary schedule:', ''],
     ['', ''],
     ['🎯 Option 1: AI-Generated Schedule', ''],
-    ['• Go to Event Planner Setup menu', ''],
+    ['• Open the Pro Tools menu', ''],
     ['• Click "Generate Preliminary Schedule"', ''],
     ['• AI creates sessions based on your event', ''],
     ['• Uses approved locations from Config', ''],
@@ -462,7 +466,7 @@ function addLogisticsTutorial(ss) {
     ['supplies, and other needs.', ''],
     ['', ''],
     ['✨ Click "Generate AI Logistics List"', ''],
-    ['from the Event Planner menu to create', ''],
+    ['from the Pro Tools menu to create', ''],
     ['a list based on your schedule.', ''],
     ['', ''],
     ['Assign items to team members and', ''],
@@ -519,7 +523,7 @@ function addFormsTutorial(ss) {
     ['speaker bios, registrations, and more.', ''],
     ['', ''],
     ['Use "Generate Forms from Templates"', ''],
-    ['in the Event Planner menu to build', ''],
+    ['from the Pro Tools menu to build', ''],
     ['actual forms. Links will be saved', ''],
     ['to the Config sheet.', ''],
     ['', ''],
@@ -592,6 +596,7 @@ function addDashboardTutorial(ss) {
     ['', ''],
     ['📚 Need help? Check the Config sheet', ''],
     ['for email templates and settings.', ''],
+    [MANUAL_LINK_FORMULA, ''],
     ['', ''],
     ['HOW TO HIDE THESE TUTORIAL COLUMNS', ''],
     ['', ''],

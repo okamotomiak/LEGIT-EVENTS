@@ -121,7 +121,7 @@ function addNewUserMenu(menu, ui) {
       .addItem('📝 Create Event Description', 'setupEventDescriptionSheet')
       .addSeparator()
       .addItem('📚 Show Me Around (Tutorial)', 'createFullTutorialSystem'))
-    .addItem('⚙️ Advanced Options', 'showAdvancedOptionsDialog');
+    .addItem('⚙️ Pro Tools', 'showAdvancedOptionsDialog');
 }
 
 /**
