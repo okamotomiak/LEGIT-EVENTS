@@ -232,13 +232,15 @@ function setupPeopleSheet(ss, addSampleData = true) {
   if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   
   let sheet = ss.getSheetByName('People');
-  
+
   // Create the sheet if it doesn't exist
   if (!sheet) {
     sheet = ss.insertSheet('People');
     sheet.setTabColor('#b45f06'); // Brown color
   } else {
-    // Clear existing content if sheet already exists
+    // Remove existing filter and clear content if sheet already exists
+    const existingFilter = sheet.getFilter();
+    if (existingFilter) existingFilter.remove();
     sheet.clear();
   }
   
@@ -305,6 +307,8 @@ function setupPeopleSheet(ss, addSampleData = true) {
   sheet.getRange(2, 1, altColors.length, headers.length).setBackgrounds(altColors);
   
   // Create filter view for all rows
+  const filter = sheet.getFilter();
+  if (filter) filter.remove();
   sheet.getRange(1, 1, 900, headers.length).createFilter();
   
   return sheet;
