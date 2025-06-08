@@ -415,7 +415,10 @@
             
             // Call server-side function to save configuration
             google.script.run
-                .withSuccessHandler(onSaveSuccess)
+                .withSuccessHandler(function() {
+                    google.script.run.updateAllDropdowns();
+                    onSaveSuccess();
+                })
                 .withFailureHandler(onSaveError)
                 .saveConfiguration(config);
         }

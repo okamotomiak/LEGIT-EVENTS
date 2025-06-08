@@ -347,43 +347,47 @@ function setScheduleDropdowns(ss, sheets, rowCounts, lists) {
     updated.push("Location");
   }
   
-  // Set Status dropdown
-  if (lists && lists['Status Options'] && lists['Status Options'].length) {
+  // Set Status dropdown using values from Config sheet
+  if (lists && lists['Schedule Status Options'] && lists['Schedule Status Options'].length) {
     const statusRule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(lists['Status Options'], true)
+      .requireValueInList(lists['Schedule Status Options'], true)
       .build();
     // Starting from row 2 (first data row)
     scheduleSheet.getRange(2, 8, numRows).setDataValidation(statusRule);
     updated.push("Status");
   }
   
-  // Update Lead dropdown with people from People sheet
+  // Update Lead dropdown using People sheet and Owners list from Config
   const peopleSheet = sheets.people;
+  let leadOptions = [];
+
+  // Include owners list from Config if available
+  if (lists && lists['Owners'] && lists['Owners'].length) {
+    leadOptions = leadOptions.concat(lists['Owners']);
+  }
+
+  // Add names from People sheet
   if (peopleSheet) {
     const lastPeopleRow = peopleSheet.getLastRow();
-    
     if (lastPeopleRow > 1) {
-      // Get all names from row 2 to last row - properly excludes header
       const dataRowCount = lastPeopleRow - 1; // Exclude header row
       const nameRange = peopleSheet.getRange(2, 1, dataRowCount, 1);
       const nameValues = nameRange.getValues();
-      
-      // Filter non-empty names
       const allPeople = nameValues
         .filter(row => row[0])
         .map(row => row[0]);
-      
-      if (allPeople.length > 0) {
-        // Create validation rule with all people names
-        const leadRule = SpreadsheetApp.newDataValidation()
-          .requireValueInList(allPeople, true)
-          .build();
-        
-        // Apply to Lead column (column 6) - data rows only
-        scheduleSheet.getRange(2, 6, numRows).setDataValidation(leadRule);
-        updated.push("Lead");
-      }
+      leadOptions = leadOptions.concat(allPeople);
     }
+  }
+
+  leadOptions = Array.from(new Set(leadOptions)); // unique values
+
+  if (leadOptions.length > 0) {
+    const leadRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(leadOptions, true)
+      .build();
+    scheduleSheet.getRange(2, 6, numRows).setDataValidation(leadRule);
+    updated.push("Lead");
   }
   
   return updated;
