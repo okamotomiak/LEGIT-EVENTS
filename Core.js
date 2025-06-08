@@ -613,12 +613,6 @@ function createNewEventSpreadsheet() {
   const copyFile = DriveApp.getFileById(current.getId()).makeCopy(name);
   const newSs = SpreadsheetApp.openById(copyFile.getId());
 
-  // Remove all sheets except one, then rename it for Event Description
-  const sheets = newSs.getSheets();
-  const firstSheet = sheets[0];
-  for (let i = sheets.length - 1; i > 0; i--) {
-    newSs.deleteSheet(sheets[i]);
-  }
   if (firstSheet) firstSheet.setName('Event Description');
 
   // Create base sheets
@@ -661,4 +655,4 @@ function createNewEventSpreadsheet() {
   }
 
   ui.alert('Spreadsheet Created', 'Open the new file: ' + newSs.getUrl(), ui.ButtonSet.OK);
-}\n
+}
