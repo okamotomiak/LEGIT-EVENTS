@@ -40,10 +40,11 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
    - Store sensitive keys using the Apps Script Properties service rather than directly in the spreadsheet. In the Apps Script editor, go to `Project Settings` ➜ `Script Properties` or run **Event Planner Pro → Save API Key to Script Properties** from the sheet menu to add your keys.
 
 5. **Deploy**
-   ```bash
-   clasp push
-   ```
-   After pushing, open the associated Google Sheet and refresh to load the custom menu.
+  ```bash
+  clasp push
+  ```
+   After pushing, open the associated Google Sheet and refresh to load the custom menu. When first running the script you may be asked to authorize
+   Google Drive access so that new spreadsheets and generated forms can be created.
 
 6. **Initialize Sheets**
    Run the setup functions from the "Event Planner Pro" menu to create the necessary sheets (Config, Schedule, Logistics, Budget, etc.). These provide templates for your event data and settings.
