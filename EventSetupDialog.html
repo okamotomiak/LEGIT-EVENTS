@@ -648,7 +648,7 @@
                 .getEventDetails();
         };
         
-        function loadEventDetails(details) {
+       function loadEventDetails(details) {
             if (details) {
                 // Populate form fields with existing values
                 document.getElementById('eventName').value = details.eventName || '';
@@ -656,8 +656,33 @@
                 document.getElementById('eventDescription').value = details.eventDescription || '';
                 document.getElementById('eventTheme').value = details.theme || '';
                 document.getElementById('keyMessages').value = details.keyMessages || '';
+                document.querySelector(`input[name="eventDuration"][value="${details.eventDuration || 'single'}"]`).checked = true;
+                document.getElementById('startDate').value = details.startDate || '';
+                document.getElementById('startTime').value = details.startTime || '';
+                document.getElementById('endDate').value = details.endDate || '';
+                document.getElementById('endTime').value = details.endTime || '';
+                document.getElementById('timezone').value = details.timezone || 'EST';
+                document.querySelector(`input[name="eventType"][value="${details.eventType || 'in-person'}"]`).checked = true;
+                document.getElementById('venueName').value = details.venueName || '';
+                document.getElementById('venueAddress').value = details.venueAddress || '';
+                document.getElementById('virtualLink').value = details.virtualLink || '';
+                document.getElementById('expectedAttendees').value = details.expectedAttendees || '';
+                document.getElementById('targetAudience').value = details.targetAudience || '';
+                document.getElementById('eventGoals').value = details.eventGoals || '';
+                document.getElementById('successMetrics').value = details.successMetrics || '';
                 document.getElementById('profitGoal').value = details.profitGoal || '';
-                // ... populate other fields as needed
+                document.getElementById('specialNotes').value = details.specialNotes || '';
+                document.getElementById('eventWebsite').value = details.eventWebsite || '';
+                // Set categories
+                if (details.categories) {
+                    const cats = details.categories.split(',').map(c => c.trim());
+                    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        cb.checked = cats.includes(cb.value);
+                    });
+                }
+                // Trigger UI toggles
+                document.querySelector(`input[name="eventDuration"][value="${details.eventDuration || 'single'}"]`).dispatchEvent(new Event('change'));
+                document.querySelector(`input[name="eventType"][value="${details.eventType || 'in-person'}"]`).dispatchEvent(new Event('change'));
             }
             updateProgress();
         }
@@ -707,7 +732,7 @@
             
             // Save to spreadsheet
             google.script.run
-                .withSuccessHandler(onSaveSuccess)
+                .withSuccessHandler(function() { onSaveSuccess(eventDetails); })
                 .withFailureHandler(onSaveError)
                 .saveEventDetails(eventDetails);
         }
@@ -720,11 +745,16 @@
             return categories.join(', ');
         }
         
-        function onSaveSuccess() {
+        function onSaveSuccess(savedDetails) {
             document.getElementById('loadingIndicator').classList.remove('show');
             document.getElementById('saveButton').disabled = false;
             document.getElementById('successMessage').textContent = 'Event details saved successfully!';
             document.getElementById('successMessage').style.display = 'block';
+
+            // Refresh form with the saved details
+            if (savedDetails) {
+                loadEventDetails(savedDetails);
+            }
             
             // Update button text
             document.getElementById('saveButton').textContent = 'Update Event';
