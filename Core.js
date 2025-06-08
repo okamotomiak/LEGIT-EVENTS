@@ -617,3 +617,48 @@ function createNewEventSpreadsheet() {
 
   ui.alert('Spreadsheet Created', 'Open the new file: ' + newSs.getUrl(), ui.ButtonSet.OK);
 }
+
+/**
+ * Refreshes dropdown menus across all relevant sheets.
+ */
+function updateAllDropdowns() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const lists = _getConfigLists(ss);
+
+  const peopleSheet = ss.getSheetByName('People');
+  const taskSheet = ss.getSheetByName('Task Management');
+  if (peopleSheet) {
+    const numRows = Math.max(peopleSheet.getMaxRows() - 1, 1);
+    setPeopleDropdowns(peopleSheet, numRows, lists, taskSheet);
+  }
+
+  setScheduleDropdowns(ss, null, null, lists);
+  updateLogisticsDropdowns(ss);
+  updateCueBuilderDropdowns();
+  updateRelatedSessionDropdown(ss);
+}
+
+/**
+ * Creates a daily time-driven trigger for `updateAllDropdowns`.
+ * Run once to enable automatic dropdown refresh.
+ */
+function createDropdownUpdateTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  for (const t of triggers) {
+    if (t.getHandlerFunction() === 'updateAllDropdowns') {
+      ScriptApp.deleteTrigger(t);
+    }
+  }
+
+  ScriptApp.newTrigger('updateAllDropdowns')
+    .timeBased()
+    .everyDays(1)
+    .atHour(2)
+    .create();
+
+  SpreadsheetApp.getActiveSpreadsheet().toast(
+    'Daily dropdown update trigger created.',
+    'Setup Complete',
+    5
+  );
+}

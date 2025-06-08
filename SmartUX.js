@@ -160,7 +160,6 @@ function addExpertUserMenu(menu, ui) {
       .addItem('📧 Send Emails', 'showEmailDialog'))
     .addSubMenu(ui.createMenu('⚙️ Utilities')
       .addItem('🔧 Configuration', 'setupConfigSheet')
-      .addItem('🔄 Update Dropdowns', 'updateAllDropdowns')
       .addItem('📋 New Event Planner', 'createNewEventSpreadsheet'));
 }
 
@@ -612,7 +611,6 @@ function showProToolsMenu() {
       .addItem('📧 Send Emails', 'showEmailDialog'))
     .addSubMenu(ui.createMenu('⚙️ Utilities')
       .addItem('🔧 Configuration', 'setupConfigSheet')
-      .addItem('🔄 Update Dropdowns', 'updateAllDropdowns')
       .addItem('📋 New Event Planner', 'createNewEventSpreadsheet')
       .addItem('📚 Tutorials', 'createFullTutorialSystem'))
     .addToUi();

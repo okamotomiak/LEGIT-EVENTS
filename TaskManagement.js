@@ -972,6 +972,35 @@ function formatDate(date) {
 }
 
 /**
+ * Updates the "Related Session" dropdown in the Task Management sheet using
+ * titles from the Schedule sheet.
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet.
+ */
+function updateRelatedSessionDropdown(ss) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+  const scheduleSheet = ss.getSheetByName('Schedule');
+  const taskSheet = ss.getSheetByName(TASK_SHEET_NAME);
+
+  if (!scheduleSheet || !taskSheet) {
+    Logger.log('Required sheets not found for Related Session dropdown.');
+    return;
+  }
+
+  const titles = scheduleSheet.getRange('E2:E').getValues()
+    .flat()
+    .filter(String);
+
+  if (titles.length === 0) return;
+
+  const rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['General Event', ...new Set(titles)], true)
+    .build();
+
+  taskSheet.getRange(2, 9, taskSheet.getMaxRows() - 1, 1)
+    .setDataValidation(rule);
+}
+
+/**
  * Add menu items to the spreadsheet menu
  * This should be called from your onOpen function
  * @param {Object} menu The menu object to add items to
