@@ -658,4 +658,4 @@ function createNewEventSpreadsheet() {
   }
 
   ui.alert('Spreadsheet Created', 'Open the new file: ' + newSs.getUrl(), ui.ButtonSet.OK);
-}\n
+}
