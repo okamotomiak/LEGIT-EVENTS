@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            padding: 0;
+            margin: 0;
+        }
+
+        .event-container {
+            background: white;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .event-header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .event-header p {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 16px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .event-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #495057;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #495057;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .form-group .helper-text {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group input[type="number"],
+        .form-group input[type="url"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .date-time-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-option:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .checkbox-option label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .event-footer {
+            background: white;
+            padding: 20px 24px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            gap: 12px;
+        }
+
+        .button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .button-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .button-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-secondary {
+            background: white;
+            color: #495057;
+            border: 1px solid #ced4da;
+        }
+
+        .button-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .highlight-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .optional-tag {
+            font-size: 11px;
+            color: #6c757d;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="event-container">
+        <div class="event-header">
+            <h1>Tell Us About Your Event</h1>
+            <p>Let's capture all the important details to make your event a success</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <div class="event-body">
+            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+            
+            <!-- Basic Information Section -->
+            <div class="section" style="animation-delay: 0.1s;">
+                <h2 class="section-title">
+                    <div class="section-icon">📋</div>
+                    <span>Basic Information</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>What's the name of your event?</label>
+                    <div class="helper-text">Choose something memorable that captures the essence of your gathering</div>
+                    <input type="text" id="eventName" placeholder="e.g., Annual Tech Summit 2024" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>How would you describe this event in one sentence?</label>
+                    <div class="helper-text">This tagline will help attendees quickly understand what to expect</div>
+                    <input type="text" id="eventTagline" placeholder="e.g., Where innovation meets inspiration">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tell us more about the event</label>
+                    <div class="helper-text">Provide a detailed description that explains the purpose, activities, and what makes it special</div>
+                    <textarea id="eventDescription" placeholder="Describe your event's goals, target audience, key activities, and unique value proposition..."></textarea>
+                </div>
+            </div>
+
+            <!-- Date & Time Section -->
+            <div class="section" style="animation-delay: 0.2s;">
+                <h2 class="section-title">
+                    <div class="section-icon">📅</div>
+                    <span>When is it happening?</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>Is this a single-day or multi-day event?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="singleDay" name="eventDuration" value="single" checked>
+                            <label for="singleDay">Single Day</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="multiDay" name="eventDuration" value="multi">
+                            <label for="multiDay">Multiple Days</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="date-time-group">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+                </div>
+                
+                <div class="date-time-group" id="endDateTimeGroup" style="display: none;">
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="endTime">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>What timezone is the event in?</label>
+                    <select id="timezone">
+                        <option value="EST">Eastern Time (EST/EDT)</option>
+                        <option value="CST">Central Time (CST/CDT)</option>
+                        <option value="MST">Mountain Time (MST/MDT)</option>
+                        <option value="PST">Pacific Time (PST/PDT)</option>
+                        <option value="UTC">UTC</option>
+                        <option value="Other">Other (specify in description)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Location Section -->
+            <div class="section" style="animation-delay: 0.3s;">
+                <h2 class="section-title">
+                    <div class="section-icon">📍</div>
+                    <span>Where is it happening?</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>What type of event is this?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="inPerson" name="eventType" value="in-person" checked>
+                            <label for="inPerson">In-Person</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="virtual" name="eventType" value="virtual">
+                            <label for="virtual">Virtual</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="hybrid" name="eventType" value="hybrid">
+                            <label for="hybrid">Hybrid</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="venueGroup">
+                    <label>What's the venue or location?</label>
+                    <div class="helper-text">Include the full name and any helpful details</div>
+                    <input type="text" id="venueName" placeholder="e.g., Grand Convention Center, Main Ballroom">
+                </div>
+                
+                <div class="form-group" id="addressGroup">
+                    <label>What's the address?</label>
+                    <textarea id="venueAddress" placeholder="123 Main Street&#10;Suite 100&#10;City, State 12345"></textarea>
+                </div>
+                
+                <div class="form-group" id="virtualLinkGroup" style="display: none;">
+                    <label>What's the virtual event link?</label>
+                    <div class="helper-text">This will be shared with attendees</div>
+                    <input type="url" id="virtualLink" placeholder="https://zoom.us/j/123456789">
+                </div>
+            </div>
+
+            <!-- Audience Section -->
+            <div class="section" style="animation-delay: 0.4s;">
+                <h2 class="section-title">
+                    <div class="section-icon">👥</div>
+                    <span>Who's coming?</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>How many people are you expecting?</label>
+                    <div class="helper-text">This helps with planning logistics and resources</div>
+                    <input type="number" id="expectedAttendees" min="1" placeholder="e.g., 150">
+                </div>
+                
+                <div class="form-group">
+                    <label>Who is your target audience?</label>
+                    <div class="helper-text">Describe the types of attendees you're hoping to attract</div>
+                    <textarea id="targetAudience" placeholder="e.g., Tech professionals, startup founders, students interested in innovation..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>What categories best describe your event? <span class="optional-tag">(Optional)</span></label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="catConference" value="Conference">
+                            <label for="catConference">Conference</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="catWorkshop" value="Workshop">
+                            <label for="catWorkshop">Workshop</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="catNetworking" value="Networking">
+                            <label for="catNetworking">Networking</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="catTraining" value="Training">
+                            <label for="catTraining">Training</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="catSocial" value="Social">
+                            <label for="catSocial">Social</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="catFundraiser" value="Fundraiser">
+                            <label for="catFundraiser">Fundraiser</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goals & Objectives Section -->
+            <div class="section" style="animation-delay: 0.5s;">
+                <h2 class="section-title">
+                    <div class="section-icon">🎯</div>
+                    <span>Goals & Success Metrics</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>What are the main goals for this event?</label>
+                    <div class="helper-text">What do you hope to achieve? Be specific about your objectives</div>
+                    <textarea id="eventGoals" placeholder="e.g., 1. Connect 150+ professionals in the tech industry&#10;2. Showcase 10 innovative startups&#10;3. Raise $50K for our scholarship fund"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>How will you measure success? <span class="optional-tag">(Optional)</span></label>
+                    <div class="helper-text">Define metrics that will help you evaluate the event afterwards</div>
+                    <textarea id="successMetrics" placeholder="e.g., Number of attendees, satisfaction survey scores, amount raised, new partnerships formed..."></textarea>
+                </div>
+            </div>
+
+            <!-- Additional Details Section -->
+            <div class="section" style="animation-delay: 0.6s;">
+                <h2 class="section-title">
+                    <div class="section-icon">💡</div>
+                    <span>Additional Details</span>
+                </h2>
+                
+                <div class="highlight-card">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Any special requirements or notes? <span class="optional-tag">(Optional)</span></label>
+                        <div class="helper-text">Include dietary restrictions, accessibility needs, technical requirements, or any other important information</div>
+                        <textarea id="specialNotes" placeholder="e.g., Vegetarian/vegan options needed, wheelchair accessible venue required, AV equipment for presentations..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>What's your event website or registration link? <span class="optional-tag">(Optional)</span></label>
+                    <input type="url" id="eventWebsite" placeholder="https://www.yourevent.com">
+                </div>
+            </div>
+        </div>
+        
+        <div class="event-footer">
+            <button class="button button-secondary" onclick="closeDialog()">Cancel</button>
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>Saving...</span>
+            </div>
+            <button class="button button-primary" id="saveButton" onclick="saveEventDetails()">Create Event</button>
+        </div>
+    </div>
+
+    <script>
+        // Update progress bar as user fills out form
+        function updateProgress() {
+            const requiredFields = ['eventName', 'eventDescription', 'startDate', 'startTime'];
+            let filledCount = 0;
+            let totalFields = document.querySelectorAll('input, textarea, select').length;
+            let filledFields = 0;
+            
+            document.querySelectorAll('input, textarea, select').forEach(field => {
+                if (field.value.trim() !== '') {
+                    filledFields++;
+                }
+            });
+            
+            const progress = (filledFields / totalFields) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Add event listeners to all form fields
+        document.querySelectorAll('input, textarea, select').forEach(field => {
+            field.addEventListener('input', updateProgress);
+            field.addEventListener('change', updateProgress);
+        });
+
+        // Toggle end date/time for multi-day events
+        document.querySelectorAll('input[name="eventDuration"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const endGroup = document.getElementById('endDateTimeGroup');
+                if (this.value === 'multi') {
+                    endGroup.style.display = 'grid';
+                } else {
+                    endGroup.style.display = 'none';
+                }
+            });
+        });
+
+        // Toggle venue fields based on event type
+        document.querySelectorAll('input[name="eventType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const venueGroup = document.getElementById('venueGroup');
+                const addressGroup = document.getElementById('addressGroup');
+                const virtualLinkGroup = document.getElementById('virtualLinkGroup');
+                
+                if (this.value === 'virtual') {
+                    venueGroup.style.display = 'none';
+                    addressGroup.style.display = 'none';
+                    virtualLinkGroup.style.display = 'block';
+                } else if (this.value === 'hybrid') {
+                    venueGroup.style.display = 'block';
+                    addressGroup.style.display = 'block';
+                    virtualLinkGroup.style.display = 'block';
+                } else {
+                    venueGroup.style.display = 'block';
+                    addressGroup.style.display = 'block';
+                    virtualLinkGroup.style.display = 'none';
+                }
+            });
+        });
+
+        // Load existing event details if available
+        window.onload = function() {
+            google.script.run
+                .withSuccessHandler(loadEventDetails)
+                .withFailureHandler(showError)
+                .getEventDetails();
+        };
+        
+        function loadEventDetails(details) {
+            if (details) {
+                // Populate form fields with existing values
+                document.getElementById('eventName').value = details.eventName || '';
+                document.getElementById('eventTagline').value = details.eventTagline || '';
+                document.getElementById('eventDescription').value = details.eventDescription || '';
+                // ... populate other fields as needed
+            }
+            updateProgress();
+        }
+        
+        function saveEventDetails() {
+            // Validate required fields
+            const eventName = document.getElementById('eventName').value;
+            const eventDescription = document.getElementById('eventDescription').value;
+            const startDate = document.getElementById('startDate').value;
+            const startTime = document.getElementById('startTime').value;
+            
+            if (!eventName || !eventDescription || !startDate || !startTime) {
+                showError('Please fill in all required fields');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loadingIndicator').classList.add('show');
+            document.getElementById('saveButton').disabled = true;
+            
+            // Gather all event details
+            const eventDetails = {
+                eventName: eventName,
+                eventTagline: document.getElementById('eventTagline').value,
+                eventDescription: eventDescription,
+                eventDuration: document.querySelector('input[name="eventDuration"]:checked').value,
+                startDate: startDate,
+                startTime: startTime,
+                endDate: document.getElementById('endDate').value,
+                endTime: document.getElementById('endTime').value,
+                timezone: document.getElementById('timezone').value,
+                eventType: document.querySelector('input[name="eventType"]:checked').value,
+                venueName: document.getElementById('venueName').value,
+                venueAddress: document.getElementById('venueAddress').value,
+                virtualLink: document.getElementById('virtualLink').value,
+                expectedAttendees: document.getElementById('expectedAttendees').value,
+                targetAudience: document.getElementById('targetAudience').value,
+                eventGoals: document.getElementById('eventGoals').value,
+                successMetrics: document.getElementById('successMetrics').value,
+                specialNotes: document.getElementById('specialNotes').value,
+                eventWebsite: document.getElementById('eventWebsite').value,
+                categories: getSelectedCategories()
+            };
+            
+            // Save to spreadsheet
+            google.script.run
+                .withSuccessHandler(onSaveSuccess)
+                .withFailureHandler(onSaveError)
+                .saveEventDetails(eventDetails);
+        }
+        
+        function getSelectedCategories() {
+            const categories = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                categories.push(checkbox.value);
+            });
+            return categories.join(', ');
+        }
+        
+        function onSaveSuccess() {
+            document.getElementById('loadingIndicator').classList.remove('show');
+            document.getElementById('saveButton').disabled = false;
+            document.getElementById('successMessage').textContent = 'Event details saved successfully!';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Update button text
+            document.getElementById('saveButton').textContent = 'Update Event';
+            
+            // Close dialog after delay
+            setTimeout(function() {
+                google.script.host.close();
+            }, 1500);
+        }
+        
+        function onSaveError(error) {
+            document.getElementById('loadingIndicator').classList.remove('show');
+            document.getElementById('saveButton').disabled = false;
+            showError(error);
+        }
+        
+        function showError(error) {
+            document.getElementById('errorMessage').textContent = 'Error: ' + error.toString();
+            document.getElementById('errorMessage').style.display = 'block';
+            
+            // Hide error after 5 seconds
+            setTimeout(function() {
+                document.getElementById('errorMessage').style.display = 'none';
+            }, 5000);
+        }
+        
+        function closeDialog() {
+            if (confirm('Are you sure you want to close without saving?')) {
+                google.script.host.close();
+            }
+        }
+    </script>
+</body>
+</html>
