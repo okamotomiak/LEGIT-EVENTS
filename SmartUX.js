@@ -138,7 +138,7 @@ function addBasicUserMenu(menu, ui) {
       .addItem('💰 Add Budget Planning', 'setupBudgetSheet')
       .addItem('📦 Add Logistics', 'setupLogisticsSheet')
       .addItem('🤖 Try AI Tools', 'showAIIntroduction'))
-    .addItem('⚙️ All Features', 'showAdvancedOptionsDialog');
+    .addItem('⚙️ Pro Tools', 'showAdvancedOptionsDialog');
 }
 
 /**
@@ -146,16 +146,7 @@ function addBasicUserMenu(menu, ui) {
  */
 function addAdvancedUserMenu(menu, ui) {
   return menu
-    .addSubMenu(ui.createMenu('🤖 AI-Powered Tools')
-      .addItem('🔑 Set Up AI (API Key)', 'saveApiKeyToScriptProperties')
-      .addItem('📅 Generate AI Schedule', 'generatePreliminarySchedule')
-      .addItem('✅ Generate AI Tasks', 'generateAITasksWithSchedule')
-      .addItem('💰 Generate AI Budget', 'generateAIBudget')
-      .addItem('📦 Generate AI Logistics', 'showLogisticsDialog'))
-    .addSubMenu(ui.createMenu('🎬 Professional Tools')
-      .addItem('🎯 Production Cue Builder', 'setupCueBuilderSheet')
-      .addItem('✉️ Communication Tools', 'showCommunicationMenu'))
-    .addItem('⚙️ All Options', 'showAdvancedOptionsDialog');
+    .addItem('⚙️ Pro Tools', 'showAdvancedOptionsDialog');
 }
 
 /**
@@ -163,14 +154,6 @@ function addAdvancedUserMenu(menu, ui) {
  */
 function addExpertUserMenu(menu, ui) {
   return menu
-    .addSubMenu(ui.createMenu('🤖 AI Generators')
-      .addItem('📅 Generate Schedule', 'generatePreliminarySchedule')
-      .addItem('✅ Generate Tasks', 'generateAITasksWithSchedule')
-      .addItem('💰 Generate Budget', 'generateAIBudget')
-      .addItem('📦 Generate Logistics', 'showLogisticsDialog'))
-    .addSubMenu(ui.createMenu('🎬 Production Tools')
-      .addItem('🎯 Cue Builder', 'setupCueBuilderSheet')
-      .addItem('📄 Professional Cue Sheet', 'generateProfessionalCueSheet'))
     .addSubMenu(ui.createMenu('✉️ Communication')
       .addItem('📝 Form Templates', 'setupFormTemplatesSheet')
       .addItem('🔗 Generate Forms', 'showFormSelectionDialog')
@@ -602,18 +585,18 @@ function showAdvancedOptionsDialog() {
   message += '⚙️ Utilities:\n• Create new event planners\n• Advanced configuration\n\n';
   message += 'Would you like to explore these features?';
   
-  const response = ui.alert('All Available Features', message, ui.ButtonSet.YES_NO);
+  const response = ui.alert('Pro Tools', message, ui.ButtonSet.YES_NO);
   
   if (response === ui.Button.YES) {
     // Temporarily show full menu by updating user to expert level
-    showExpertOptionsMenu();
+    showProToolsMenu();
   }
 }
 
-function showExpertOptionsMenu() {
+function showProToolsMenu() {
   const ui = SpreadsheetApp.getUi();
 
-  ui.createMenu('🚀 All Features')
+  ui.createMenu('🚀 Pro Tools')
     .addSubMenu(ui.createMenu('🤖 AI Tools')
       .addItem('🔑 Set Up API Key', 'saveApiKeyToScriptProperties')
       .addItem('📅 Generate Schedule', 'generatePreliminarySchedule')
