@@ -85,8 +85,8 @@ function setupConfigSheet(ss) {
  */
 function showConfigDialog() {
   const html = HtmlService.createHtmlOutputFromFile('ConfigDialog')
-    .setWidth(600)
-    .setHeight(650);
+    .setWidth(900)
+    .setHeight(975);
   SpreadsheetApp.getUi().showModalDialog(html, 'Event Planner Configuration');
 }
 
