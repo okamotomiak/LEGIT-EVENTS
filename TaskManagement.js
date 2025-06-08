@@ -21,6 +21,7 @@ function getEventInformation() {
   const eventInfo = {
     eventId: '',
     eventName: '',
+    eventTagline: '',
     startDate: null,
     endDate: null,
     isMultiDay: false,
@@ -30,12 +31,15 @@ function getEventInformation() {
     description: '',
     detailedDescription: '',
     keyMessages: '',
+    successMetrics: '',
+    eventWebsite: '',
     attendanceGoal: 0 // Default to 0
   };
 
   const fieldMap = {
     'Event ID': 'eventId',
     'Event Name': 'eventName',
+    'Tagline': 'eventTagline',
     'Start Date (And Time)': 'startDate',
     'Start Date': 'startDate',
     'End Date (And Time)': 'endDate',
@@ -48,6 +52,8 @@ function getEventInformation() {
     'Description & Messaging': 'description',
     'Detailed Description': 'detailedDescription',
     'Key Messages': 'keyMessages',
+    'Success Metrics': 'successMetrics',
+    'Event Website': 'eventWebsite',
     'Attendance Goal (#)': 'attendanceGoal'
   };
 
@@ -473,6 +479,7 @@ Generate a comprehensive list of tasks for planning and executing the following 
 
 EVENT DETAILS:
 - Name: ${eventInfo.eventName}
+- Tagline: ${eventInfo.eventTagline || 'N/A'}
 - Date(s): ${startDate}${eventInfo.durationDays > 1 ? ` to ${endDate}` : ''}
 - Duration: ${eventInfo.durationDays} day(s)
 - Location: ${eventInfo.location || 'TBD'}
@@ -481,6 +488,8 @@ EVENT DETAILS:
 - Description: ${eventInfo.description || 'N/A'}
 - Detailed Description: ${eventInfo.detailedDescription || 'N/A'}
 - Key Messages: ${eventInfo.keyMessages || 'N/A'}
+- Success Metrics: ${eventInfo.successMetrics || 'N/A'}
+- Event Website: ${eventInfo.eventWebsite || 'N/A'}
 
 Please create a comprehensive task list divided into three phases:
 1. PRE-EVENT TASKS (tasks to complete before ${startDate}, with most due ${DEFAULT_PRE_EVENT_DAYS} days before)

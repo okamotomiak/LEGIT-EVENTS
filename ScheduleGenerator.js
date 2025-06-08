@@ -156,6 +156,7 @@ function getEventDetailsFromSheet(sheet) {
   // Initialize object to store event details
   const eventDetails = {
     eventName: null,
+    eventTagline: null,
     startDate: null,
     endDate: null,
     startTime: null,
@@ -165,13 +166,30 @@ function getEventDetailsFromSheet(sheet) {
     objectives: null,
     description: null,
     detailedDescription: null,
-    keyMessages: null
+    keyMessages: null,
+    successMetrics: null,
+    eventWebsite: null
   };
   
   // Find the values using _findRow helper from Core.gs where possible
   const eventNameRow = _findRow(sheet, 'Event Name');
   if (eventNameRow) {
     eventDetails.eventName = sheet.getRange(eventNameRow, 2).getValue();
+  }
+
+  const taglineRow = _findRow(sheet, 'Tagline');
+  if (taglineRow) {
+    eventDetails.eventTagline = sheet.getRange(taglineRow, 2).getValue();
+  }
+
+  const successRow = _findRow(sheet, 'Success Metrics');
+  if (successRow) {
+    eventDetails.successMetrics = sheet.getRange(successRow, 2).getValue();
+  }
+
+  const websiteRow = _findRow(sheet, 'Event Website');
+  if (websiteRow) {
+    eventDetails.eventWebsite = sheet.getRange(websiteRow, 2).getValue();
   }
   
   // Look for Start Date with different possible labels
@@ -372,6 +390,7 @@ function getEventDetailsFromSheet(sheet) {
   // Log what we found for debugging
   Logger.log('Event Details Found:');
   Logger.log(`- Event Name: ${eventDetails.eventName}`);
+  Logger.log(`- Tagline: ${eventDetails.eventTagline}`);
   Logger.log(`- Start Date: ${eventDetails.startDate}`);
   Logger.log(`- Start Time: ${eventDetails.startTimeFormatted || 'Not specified'}`);
   Logger.log(`- End Date: ${eventDetails.endDate}`);
@@ -383,6 +402,8 @@ function getEventDetailsFromSheet(sheet) {
   Logger.log(`- Description: ${eventDetails.description ? 'Found' : 'Not found'}`);
   Logger.log(`- Detailed Description: ${eventDetails.detailedDescription ? 'Found' : 'Not found'}`);
   Logger.log(`- Key Messages: ${eventDetails.keyMessages ? 'Found' : 'Not found'}`);
+  Logger.log(`- Success Metrics: ${eventDetails.successMetrics ? 'Found' : 'Not found'}`);
+  Logger.log(`- Event Website: ${eventDetails.eventWebsite || 'N/A'}`);
   
   return eventDetails;
 }
@@ -448,6 +469,10 @@ function generatePrompt(eventDetails, speakers, approvedLocations) {
   // Base prompt with explicit event details including exact dates
   let prompt = `
 Draft a detailed sample schedule outline for a ${eventTypeDesc} event titled '${eventDetails.eventName}'`;
+
+  if (eventDetails.eventTagline) {
+    prompt += ` - ${eventDetails.eventTagline}`;
+  }
   
   // Add theme if available
   if (eventDetails.theme) {
@@ -482,6 +507,11 @@ For this ${eventTypeDesc} event, please include:
     prompt += `
 5. Sessions that align with these objectives: ${eventDetails.objectives}`;
   }
+
+  if (eventDetails.successMetrics) {
+    prompt += `
+6. Keep these success metrics in mind when proposing sessions: ${eventDetails.successMetrics}`;
+  }
   
   // Add description context - ensure all description fields are included
   // and prominently featured in the prompt
@@ -490,6 +520,11 @@ For this ${eventTypeDesc} event, please include:
   
   if (eventDetails.description) {
     descriptionText += `- Description & Messaging: ${eventDetails.description}\n\n`;
+    descriptionAdded = true;
+  }
+
+  if (eventDetails.eventTagline) {
+    descriptionText += `- Tagline: ${eventDetails.eventTagline}\n\n`;
     descriptionAdded = true;
   }
   
@@ -502,6 +537,11 @@ For this ${eventTypeDesc} event, please include:
     descriptionText += `- Key Messages: ${eventDetails.keyMessages}\n\n`;
     descriptionAdded = true;
   }
+
+  if (eventDetails.eventWebsite) {
+    descriptionText += `- Event Website: ${eventDetails.eventWebsite}\n\n`;
+    descriptionAdded = true;
+  }
   
   if (descriptionAdded) {
     prompt += `${descriptionText}CREATE SESSION TITLES AND CONTENT THAT DIRECTLY ALIGN WITH THIS EVENT CONTEXT.`;
@@ -510,7 +550,7 @@ For this ${eventTypeDesc} event, please include:
   // Add speakers if available, but clarify they should not be assigned yet
   if (speakers && speakers.length > 0) {
     prompt += `
-6. Note: These are the available speakers, but DO NOT assign them to sessions in your response. Leave the speaker/lead field empty: ${speakers.join(', ')}`;
+7. Note: These are the available speakers, but DO NOT assign them to sessions in your response. Leave the speaker/lead field empty: ${speakers.join(', ')}`;
   }
   
   // Add specific format requirements for easier parsing
