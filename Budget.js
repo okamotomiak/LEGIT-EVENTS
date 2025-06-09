@@ -239,9 +239,12 @@ function generateAIBudget() {
     const prompt =
       `Create a detailed budget for the following event that includes both income and expense categories.\n\n` +
       `Event Name: ${eventInfo.eventName}\n` +
+      `Tagline: ${eventInfo.eventTagline || 'N/A'}\n` +
       `Dates: ${startDate}${eventInfo.endDate ? ' to ' + endDate : ''}\n` +
       `Location: ${eventInfo.location || 'TBD'}\n` +
       `Attendance Goal: ${eventInfo.attendanceGoal}\n\n` +
+      `Success Metrics: ${eventInfo.successMetrics || 'N/A'}\n\n` +
+      `Event Website: ${eventInfo.eventWebsite || 'N/A'}\n\n` +
       `Needed Logistics Items:\n${logisticsText}\n\n` +
       `List any questions about missing costs or assumptions, such as registration fees per person.\n` +
       `Respond with a JSON object {"budget": [ {"category":"Income or Expense","item":"","unitPrice":0,"quantity":0} ], "questions": [] }`;

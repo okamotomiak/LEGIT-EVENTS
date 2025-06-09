@@ -275,12 +275,15 @@ Create coordination and communication tasks for team members.`;
 
 EVENT DETAILS:
 - Name: ${eventInfo.eventName}
+- Tagline: ${eventInfo.eventTagline || 'N/A'}
 - Date(s): ${startDate}${eventInfo.durationDays > 1 ? ` to ${endDate}` : ''}
 - Duration: ${eventInfo.durationDays} day(s)
 - Location: ${eventInfo.location || 'TBD'}
 - Theme: ${eventInfo.theme || 'N/A'}
 - Objectives: ${eventInfo.objectives || 'N/A'}
 - Description: ${eventInfo.description || 'N/A'}${sessionContext}${peopleContext}
+- Success Metrics: ${eventInfo.successMetrics || 'N/A'}
+- Event Website: ${eventInfo.eventWebsite || 'N/A'}
 
 Create tasks in three phases:
 1. PRE-EVENT TASKS (due before ${startDate})
