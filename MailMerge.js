@@ -66,7 +66,7 @@ function sendEmails(filters, subject, body) {
 
     if (!subjectTemplate || !bodyTemplate) {
       const configData = configSheet.getDataRange().getValues();
-      const templateRow = configData.find(row => row[0] === filters.template);
+      const templateRow = configData.sendEmailsAdvanced(row => row[0] === filters.template);
       if (!templateRow) {
         throw new Error(`Template "${filters.template}" not found in Config sheet.`);
       }
@@ -232,15 +232,15 @@ function sendEmailsAdvanced(data) {
   } catch (e) {
     Logger.log(e.toString());
     return 'Error: ' + e.message;
+  } // <-- ADD THIS CLOSING BRACE
+} // <-- ADD THIS CLOSING BRACE
 
 /**
-
  * Saves or updates an email template in the Config sheet under "EMAIL TEMPLATES".
  * @param {string} name Template name/key.
  * @param {string} subject Subject line text.
  * @param {string} body Body text.
  * @return {string} Status message.
-
  */
 function saveEmailTemplate(name, subject, body) {
   try {
@@ -270,27 +270,26 @@ function saveEmailTemplate(name, subject, body) {
 
     if (existingRow !== -1) {
       sheet.getRange(existingRow, 1, 1, 3).setValues([[name, subject, body]]);
-      return;
+      return 'Template updated.'; // Return a more specific message
     }
 
     if (emailHeaderRow === -1) {
+      // If the header doesn't exist, you might want to create it
+      sheet.appendRow(['--- EMAIL TEMPLATES ---']);
       sheet.appendRow([name, subject, body]);
-      return;
+      return 'Template saved.';
     }
 
     if (nextSectionRow > data.length) {
       sheet.appendRow([name, subject, body]);
     } else {
-      sheet.insertRows(nextSectionRow, 1);
-      sheet.getRange(nextSectionRow, 1, 1, 3).setValues([[name, subject, body]]);
+      sheet.insertRows(nextSectionRow -1, 1); // Adjust row to insert before the next section
+      sheet.getRange(nextSectionRow -1, 1, 1, 3).setValues([[name, subject, body]]);
     }
     return 'Template saved.';
   } catch (e) {
     Logger.log('Error saving email template: ' + e.toString());
     return 'Error: ' + e.message;
-
-  } catch (e) {
-    Logger.log('Error saving email template: ' + e.toString());
-  }
+  } 
 }
 
