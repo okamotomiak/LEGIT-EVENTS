@@ -33,9 +33,16 @@ function onEdit(e) {
   if (sheetName === 'Schedule') {
     // Handle duration calculation for time changes
     handleScheduleEdit(e);
-    
+
     // Handle session status changes to "Confirmed"
     handleSessionStatusChange(e);
+
+    // Update Related Session dropdown when schedule changes
+    try {
+      updateRelatedSessionDropdown(e.source);
+    } catch (err) {
+      Logger.log('Error updating Related Session dropdown: ' + err);
+    }
   }
   
   // Handle People sheet edits for speaker task creation

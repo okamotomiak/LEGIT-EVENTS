@@ -100,6 +100,7 @@ function getEventDetails() {
     eventName: getVal('Event Name'),
     eventTagline: getVal('Tagline'),
     eventDescription: getVal('Description & Messaging'),
+    detailedDescription: getVal('Detailed Description'),
     theme: getVal('Theme or Focus'),
     eventDuration: getVal('Single- or Multi-Day?') || 'single',
     timezone: getVal('Timezone'),
@@ -154,6 +155,7 @@ function saveEventDetails(details) {
 
   setVal('Tagline', details.eventTagline);
   setVal('Description & Messaging', details.eventDescription);
+  setVal('Detailed Description', details.detailedDescription);
   setVal('Theme or Focus', details.theme);
   setVal('Single- or Multi-Day?', details.eventDuration);
   setVal('Timezone', details.timezone);

@@ -1,6 +1,6 @@
 # LEGIT Event Planner Pro
 
-LEGIT Event Planner Pro is a Google Apps Script project for managing events directly inside Google Sheets. It provides tools to generate schedules, task lists, logistics, and budgets with the help of AI services such as OpenAI. The script also includes utilities for sending emails, creating forms, and building professional cue sheets.
+LEGIT Event Planner Pro is a Google Apps Script project for managing events directly inside Google Sheets. It provides tools to generate schedules, task lists, logistics, and budgets with the help of AI services such as OpenAI. The script also includes utilities for sending emails, creating forms, and building professional cue sheets. A built-in help system guides you through these features and links to a full user manual.
 
 ## Features
 
@@ -12,6 +12,15 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 - Interactive configuration dialog for customizing dropdown lists and email templates.
 - Dedicated **AI & Automation Tools** sheet to explain advanced menu options.
 - Modular code organized by feature for easier maintenance.
+- Helpful onboarding with a **🚀 2-Minute Setup Wizard** and contextual help menu.
+- One-click access to a **📕 User Manual (Google Doc)** and an offline copy in `docs/USER_MANUAL.md`.
+
+## Quick Start
+
+1. After installing, open the Google Sheet and choose **🚀 2-Minute Setup Wizard** from the **Event Planner Pro** menu.
+2. Follow the on-screen prompts to generate your core sheets and sample data.
+3. Access **📖 Help & User Guide** at any time for context-sensitive tips.
+4. Explore **Show Me Around (Tutorial)** to add tutorial columns explaining each sheet. You can remove them later via **Remove Tutorial Overlays** in the same menu.
 
 ## Setup
 
@@ -55,7 +64,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
    Use **Dashboard & Utilities → Create New Event Spreadsheet** to generate a fresh planner. The new file includes this script project and only the base sheets (Dashboard, Event Description, People, Schedule, Task Management, and Config).
 
 8. **Learn Advanced Tools**
-   Run **Dashboard & Utilities → Create/Reset AI & Automation Tools Sheet** for a quick overview of optional automation features like cue sheets and form generators.
+   Run **Dashboard & Utilities → Create/Reset AI & Automation Tools Sheet** for a quick overview of optional automation features like cue sheets and form generators. The sheet explains what each advanced menu item does and provides links to setup dialogs.
 
 9. **Enable Automatic Dropdown Updates**
    In the Apps Script editor run `createDropdownUpdateTrigger()` once. This sets
@@ -64,6 +73,16 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 ## Email Templates and AI Generation
 
 The **Send Emails** dialog now lets you filter recipients by role and status and includes a **Generate with AI** button. When used, OpenAI crafts a subject line and body using your event description. You can tweak the generated text and click **Save Template** to add it to the `Config` sheet for later use. This feature relies on the OpenAI API key saved in your script properties.
+
+## Documentation & Help
+
+The **Event Planner Pro** menu provides built-in assistance:
+
+1. **📖 Help & User Guide** – shows contextual help for the active sheet.
+2. **🗒️ Quick Event Setup** – opens a dialog for fast event configuration.
+3. **📕 User Manual (Google Doc)** – opens the full online manual.
+
+An abbreviated offline manual is available in [`docs/USER_MANUAL.md`](docs/USER_MANUAL.md).
 
 ## Repository Structure
 

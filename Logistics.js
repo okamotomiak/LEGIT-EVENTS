@@ -134,9 +134,14 @@ function generateAILogisticsList(selectedItems) {
     // --------------------------------------------------------
 
     const prompt = `Based on the event details below, generate a list of logistical items.
+    Event Name: ${eventInfo.eventName}
+    Tagline: ${eventInfo.eventTagline || 'N/A'}
     The total expected attendance is ${attendanceGoal}. This is a critical number.
 
     **VERY IMPORTANT INSTRUCTION**: Use the attendance goal to calculate a final number for the 'quantity'. Do NOT return ratios like '1 per 25 attendees'. For an attendance of 100 and a recommendation of 1 per 25, you MUST return the calculated number 4.
+
+    Success Metrics: ${eventInfo.successMetrics || 'N/A'}
+    Event Website: ${eventInfo.eventWebsite || 'N/A'}
 
     Focus on the logistics for these specific parts of the event:
     ${scheduleContext}

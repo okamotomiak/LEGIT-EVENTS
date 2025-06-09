@@ -121,7 +121,7 @@ function addNewUserMenu(menu, ui) {
       .addItem('📝 Create Event Description', 'setupEventDescriptionSheet')
       .addItem('🗒️ Quick Event Setup', 'showEventSetupDialog')
       .addSeparator()
-      .addItem('📚 Show Me Around (Tutorial)', 'createFullTutorialSystem'))
+    )
     .addItem('⚙️ Pro Tools', 'showAdvancedOptionsDialog');
 }
 
@@ -319,6 +319,7 @@ function getHelpContentForSheet(sheetName, userProgress) {
         
         <h3>💡 Pro Tip</h3>
         <p>Check this regularly to stay motivated and catch any tasks that might be falling behind!</p>
+        <p>You can customize status options and other settings in the <strong>Config</strong> sheet.</p>
       `
     }
   };
@@ -356,7 +357,7 @@ function createHelpHTML(helpContent) {
         ${helpContent.content}
         
         <div class="next-step">
-          <strong>Need more help?</strong> Check the User Guide or ask your team for support!
+          <strong>Need more help?</strong> Check the <a href="${USER_MANUAL_URL}" target="_blank">User Guide</a> for step-by-step examples or ask your team for support!
         </div>
       </body>
     </html>
@@ -584,8 +585,7 @@ function showProToolsMenu() {
       .addItem('📧 Send Emails', 'showEmailDialog'))
     .addSubMenu(ui.createMenu('⚙️ Utilities')
       .addItem('🔧 Configuration', 'showConfigDialog')
-      .addItem('📋 New Event Planner', 'createNewEventSpreadsheet')
-      .addItem('📚 Tutorials', 'createFullTutorialSystem'))
+      .addItem('📋 New Event Planner', 'createNewEventSpreadsheet'))
     .addToUi();
 }
 
