@@ -29,7 +29,8 @@ function setupBudgetSheet(ss) {
   
   // Set headers (Row 1)
   const headers = ["Category", "Item", "$Unit Fee", "Quantity", "Sub Total $", "Total $"];
-  budgetSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  const headerRange = budgetSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  headerRange.setFontSize(16);
   
   // Format headers
   budgetSheet.getRange(1, 1, 1, headers.length)
@@ -106,7 +107,9 @@ function setupBudgetSheet(ss) {
   ];
   
   // Set values
-  budgetSheet.getRange(2, 1, budgetData.length, 6).setValues(budgetData);
+  budgetSheet.getRange(2, 1, budgetData.length, 6)
+    .setValues(budgetData)
+    .setFontSize(12);
   
   // Format currency columns
   budgetSheet.getRange(4, 3, 60, 1).setNumberFormat("$#,##0.00");  // $Unit Fee (starting from Row 4)

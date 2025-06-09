@@ -254,7 +254,8 @@ function setupPeopleSheet(ss, addSampleData = true) {
   const headers = ['Name', 'Category', 'Role/Position', 'Status', 'Email', 'Phone', 'Assigned Tasks', 'Notes'];
   
   // Set header values
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  const headerRange = sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  headerRange.setFontSize(16);
   
   // Set column widths
   const widths = [150, 120, 150, 120, 200, 120, 200, 300]; // Added width for Notes
@@ -266,6 +267,10 @@ function setupPeopleSheet(ss, addSampleData = true) {
   
   // Freeze header row
   sheet.setFrozenRows(1);
+  // Default font size for all cells
+  sheet.getRange(1, 1, 900, headers.length).setFontSize(12);
+  // Wrap long text in Assigned Tasks and Notes columns
+  sheet.getRange(2, 7, 899, 2).setWrap(true);
   
   // Apply sample data if requested
   if (addSampleData) {

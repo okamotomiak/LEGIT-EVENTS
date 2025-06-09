@@ -19,7 +19,10 @@ function setupConfigSheet(ss) {
   // Set up headers
   const headers = ["Key / Template Name", "Value / Subject", "Body / Notes"];
   configSheet.getRange(1, 1, 1, headers.length).setValues([headers])
-    .setBackground('#434343').setFontColor('#ffffff').setFontWeight('bold');
+    .setBackground('#434343')
+    .setFontColor('#ffffff')
+    .setFontWeight('bold')
+    .setFontSize(16);
   
   // Set column widths
   configSheet.setColumnWidth(1, 220); // Key / Template Name
@@ -57,7 +60,10 @@ function setupConfigSheet(ss) {
   ];
   
   // Insert the configuration data
-  configSheet.getRange(2, 1, configData.length, configData[0].length).setValues(configData);
+  const dataRange = configSheet
+    .getRange(2, 1, configData.length, configData[0].length)
+    .setValues(configData);
+  dataRange.setFontSize(12);
   
   // --- Formatting ---
   // Highlight section headers
@@ -70,6 +76,8 @@ function setupConfigSheet(ss) {
   // Format the body column for text wrapping
   const bodyColumn = configSheet.getRange(2, 3, configData.length, 1);
   bodyColumn.setWrap(true).setVerticalAlignment('top');
+  // Wrap long text in the Value/Subject column as well
+  configSheet.getRange(2, 2, configData.length, 1).setWrap(true);
   
   // Freeze the header row
   configSheet.setFrozenRows(1);
