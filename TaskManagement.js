@@ -435,7 +435,7 @@ function testApiKey() {
     // Make a simple API call
     const url = 'https://api.openai.com/v1/chat/completions';
     const payload = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-4.1-mini",
       messages: [{ role: "user", content: "Hello" }],
       max_tokens: 10
     };
@@ -525,7 +525,7 @@ IMPORTANT: Include a diverse range of tasks covering all necessary aspects of ev
     // Call OpenAI API
     const url = 'https://api.openai.com/v1/chat/completions';
     const payload = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-4.1-mini",
       messages: [
         {
           role: "system",

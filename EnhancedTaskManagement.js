@@ -325,7 +325,7 @@ Focus on creating actionable, specific tasks rather than generic ones. Each sess
     // Call OpenAI API with enhanced prompt
     const url = 'https://api.openai.com/v1/chat/completions';
     const payload = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-4.1-mini",
       messages: [
         {
           role: "system",

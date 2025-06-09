@@ -144,7 +144,7 @@ function generateEmailWithAI(prompt) {
 
     const url = 'https://api.openai.com/v1/chat/completions';
     const payload = {
-      model: 'gpt-4o',
+      model: 'gpt-4.1-mini',
       messages: [{ role: 'user', content: fullPrompt }],
       response_format: { type: 'json_object' }
     };
