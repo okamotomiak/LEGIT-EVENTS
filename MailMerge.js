@@ -46,12 +46,12 @@ function getEmailUIData() {
  * MODIFIED: Now correctly replaces the {{name}} placeholder in the subject line.
  * @param {Object} filters An object containing the selected template, role, and status.
  */
-function sendEmails(filters) {
+function sendEmails(filters, subject, body) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const peopleSheet = ss.getSheetByName('People');
     const configSheet = ss.getSheetByName('Config');
-    
+
     // Get all people data
     const peopleData = peopleSheet.getDataRange().getValues();
     const peopleHeaders = peopleData.shift(); // Get headers and remove from data
@@ -59,15 +59,20 @@ function sendEmails(filters) {
     const emailIndex = peopleHeaders.indexOf('Email');
     const roleIndex = peopleHeaders.indexOf('Category');
     const statusIndex = peopleHeaders.indexOf('Status');
-    
-    // Get the email template
-    const configData = configSheet.getDataRange().getValues();
-    const templateRow = configData.find(row => row[0] === filters.template);
-    if (!templateRow) {
-      throw new Error(`Template "${filters.template}" not found in Config sheet.`);
+
+    const usingCustom = subject && body;
+    let subjectTemplate = subject;
+    let bodyTemplate = body;
+
+    if (!subjectTemplate || !bodyTemplate) {
+      const configData = configSheet.getDataRange().getValues();
+      const templateRow = configData.find(row => row[0] === filters.template);
+      if (!templateRow) {
+        throw new Error(`Template "${filters.template}" not found in Config sheet.`);
+      }
+      subjectTemplate = templateRow[1];
+      bodyTemplate = templateRow[2];
     }
-    let subjectTemplate = templateRow[1];
-    let bodyTemplate = templateRow[2];
     
     // Get event name to replace placeholder
     const eventName = getEventName(); // Assumes getEventName() exists
@@ -94,13 +99,16 @@ function sendEmails(filters) {
       
       // --- THIS IS THE FIX ---
       // Personalize BOTH the subject and the body
-      const personalizedSubject = subjectTemplate.replace(/{{name}}/g, personName);
-      const personalizedBody = bodyTemplate.replace(/{{name}}/g, personName);
+    const personalizedSubject = subjectTemplate.replace(/{{name}}/gi, personName);
+    const personalizedBody = bodyTemplate.replace(/{{name}}/gi, personName);
       
       GmailApp.sendEmail(personEmail, personalizedSubject, personalizedBody);
       count++;
     });
 
+    if (usingCustom) {
+      return `Successfully sent ${count} emails.`;
+    }
     return `Successfully sent ${count} emails using the "${filters.template}" template.`;
   } catch (e) {
     Logger.log(e);
