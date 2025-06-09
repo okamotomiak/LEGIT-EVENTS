@@ -116,6 +116,7 @@ function sendEmails(filters, subject, body) {
   }
 }
 
+
 /**
  * Generates an email subject and body using OpenAI based on event information.
  * The returned strings include a {{Name}} placeholder for personalization.
@@ -130,8 +131,9 @@ function generateEmailWithAI(prompt) {
     const eventInfo = getEventInformation();
     if (!eventInfo) throw new Error('Event information not available.');
 
-    const start = eventInfo.startDate ? Utilities.formatDate(new Date(eventInfo.startDate), Session.getScriptTimeZone(), 'yyyy-MM-dd') : '';
-    const end = eventInfo.endDate ? Utilities.formatDate(new Date(eventInfo.endDate), Session.getScriptTimeZone(), 'yyyy-MM-dd') : '';
+
+    const start = eventInfo.startDate ? Utilities.formatDate(new Date(eventInfo.startDate), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
+    const end = eventInfo.endDate ? Utilities.formatDate(new Date(eventInfo.endDate), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
     let context = `Event Name: ${eventInfo.eventName}\n` +
                   `Dates: ${start}${eventInfo.durationDays > 1 ? ' to ' + end : ''}\n` +
                   `Location: ${eventInfo.location || 'TBD'}`;
@@ -232,11 +234,13 @@ function sendEmailsAdvanced(data) {
     return 'Error: ' + e.message;
 
 /**
+
  * Saves or updates an email template in the Config sheet under "EMAIL TEMPLATES".
  * @param {string} name Template name/key.
  * @param {string} subject Subject line text.
  * @param {string} body Body text.
  * @return {string} Status message.
+
  */
 function saveEmailTemplate(name, subject, body) {
   try {
@@ -284,6 +288,9 @@ function saveEmailTemplate(name, subject, body) {
   } catch (e) {
     Logger.log('Error saving email template: ' + e.toString());
     return 'Error: ' + e.message;
+
+  } catch (e) {
+    Logger.log('Error saving email template: ' + e.toString());
   }
 }
 
