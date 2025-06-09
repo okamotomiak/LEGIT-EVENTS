@@ -4,9 +4,9 @@
  * Shows the custom HTML dialog for sending emails.
  */
 function showEmailDialog() {
-  const html = HtmlService.createHtmlOutputFromFile('EmailDialog')
-      .setWidth(450)
-      .setHeight(400);
+  const html = HtmlService.createHtmlOutputFromFile('EmailAIDialog')
+      .setWidth(550)
+      .setHeight(600);
   SpreadsheetApp.getUi().showModalDialog(html, 'Send Email to Event Attendees');
 }
 
@@ -131,6 +131,7 @@ function generateEmailWithAI(prompt) {
     const eventInfo = getEventInformation();
     if (!eventInfo) throw new Error('Event information not available.');
 
+
     const start = eventInfo.startDate ? Utilities.formatDate(new Date(eventInfo.startDate), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
     const end = eventInfo.endDate ? Utilities.formatDate(new Date(eventInfo.endDate), Session.getScriptTimeZone(), "yyyy-MM-dd") : "";
     let context = `Event Name: ${eventInfo.eventName}\n` +
@@ -171,10 +172,75 @@ function generateEmailWithAI(prompt) {
 }
 
 /**
+ * Sends emails using either a template name or provided subject/body content.
+ * @param {Object} data Options from the dialog.
+ * @param {string=} data.template Template name to use.
+ * @param {string=} data.subject Subject text if not using a template.
+ * @param {string=} data.body Body text if not using a template.
+ * @param {string} data.role Filter role.
+ * @param {string} data.status Filter status.
+ * @return {string} Status message.
+ */
+function sendEmailsAdvanced(data) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const peopleSheet = ss.getSheetByName('People');
+    const configSheet = ss.getSheetByName('Config');
+
+    const peopleData = peopleSheet.getDataRange().getValues();
+    const headers = peopleData.shift();
+    const nameIndex = headers.indexOf('Name');
+    const emailIndex = headers.indexOf('Email');
+    const roleIndex = headers.indexOf('Category');
+    const statusIndex = headers.indexOf('Status');
+
+    let subjectTemplate = data.subject;
+    let bodyTemplate = data.body;
+
+    if (!subjectTemplate || !bodyTemplate) {
+      const configData = configSheet.getDataRange().getValues();
+      const row = configData.find(r => r[0] === data.template);
+      if (!row) {
+        throw new Error('Template "' + data.template + '" not found in Config sheet.');
+      }
+      subjectTemplate = row[1];
+      bodyTemplate = row[2];
+    }
+
+    const eventName = getEventName();
+    subjectTemplate = subjectTemplate.replace(/\[EVENT NAME\]/g, eventName);
+    bodyTemplate = bodyTemplate.replace(/\[EVENT NAME\]/g, eventName);
+
+    const recipients = peopleData.filter(p => {
+      const hasEmail = p[emailIndex];
+      const roleMatch = data.role === 'All Roles' || p[roleIndex] === data.role;
+      const statusMatch = data.status === 'All Statuses' || p[statusIndex] === data.status;
+      return hasEmail && roleMatch && statusMatch;
+    });
+
+    if (recipients.length === 0) {
+      return 'No recipients found matching your criteria. No emails were sent.';
+    }
+
+    recipients.forEach(r => {
+      const subject = subjectTemplate.replace(/{{name}}/g, r[nameIndex]);
+      const body = bodyTemplate.replace(/{{name}}/g, r[nameIndex]);
+      GmailApp.sendEmail(r[emailIndex], subject, body);
+    });
+
+    return 'Successfully sent ' + recipients.length + ' emails.';
+  } catch (e) {
+    Logger.log(e.toString());
+    return 'Error: ' + e.message;
+
+/**
+
  * Saves or updates an email template in the Config sheet under "EMAIL TEMPLATES".
  * @param {string} name Template name/key.
  * @param {string} subject Subject line text.
  * @param {string} body Body text.
+ * @return {string} Status message.
+
  */
 function saveEmailTemplate(name, subject, body) {
   try {
@@ -218,6 +284,11 @@ function saveEmailTemplate(name, subject, body) {
       sheet.insertRows(nextSectionRow, 1);
       sheet.getRange(nextSectionRow, 1, 1, 3).setValues([[name, subject, body]]);
     }
+    return 'Template saved.';
+  } catch (e) {
+    Logger.log('Error saving email template: ' + e.toString());
+    return 'Error: ' + e.message;
+
   } catch (e) {
     Logger.log('Error saving email template: ' + e.toString());
   }
