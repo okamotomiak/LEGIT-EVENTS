@@ -7,6 +7,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 - Automated menu with one-click access to event planning tools.
 - AI-powered generation of preliminary schedules, tasks, logistics lists, and budgets.
 - Form and email generators to streamline communication. Generated forms are saved in a "[Event Name] Forms" folder next to the spreadsheet.
+- New email dialog with role and status filters, plus an **Generate with AI** option to craft messages automatically.
 - Tools for managing people, schedules, and cues.
 - Interactive configuration dialog for customizing dropdown lists and email templates.
 - Dedicated **AI & Automation Tools** sheet to explain advanced menu options.
@@ -59,6 +60,10 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 9. **Enable Automatic Dropdown Updates**
    In the Apps Script editor run `createDropdownUpdateTrigger()` once. This sets
    up a daily trigger that refreshes dropdown lists across all sheets.
+
+## Email Templates and AI Generation
+
+The **Send Emails** dialog now lets you filter recipients by role and status and includes a **Generate with AI** button. When used, OpenAI crafts a subject line and body using your event description. You can tweak the generated text and click **Save Template** to add it to the `Config` sheet for later use. This feature relies on the OpenAI API key saved in your script properties.
 
 ## Repository Structure
 
