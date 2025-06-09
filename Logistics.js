@@ -161,7 +161,7 @@ function generateAILogisticsList(selectedItems) {
 
     const url = 'https://api.openai.com/v1/chat/completions';
     const payload = {
-      model: "gpt-4o",
+      model: "gpt-4.1-mini",
       messages: [{ "role": "user", "content": prompt }],
       response_format: { "type": "json_object" }
     };
