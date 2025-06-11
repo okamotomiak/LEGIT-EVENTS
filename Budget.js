@@ -191,7 +191,12 @@ function setupBudgetSheet(ss) {
 /**
  * Generates an estimated budget using OpenAI based on event and logistics data.
  */
-function generateAIBudget() {
+/**
+ * Prompts the user to answer clarifying questions before the budget is
+ * generated. Questions are retrieved from OpenAI based on current event
+ * details and stored temporarily in the user cache.
+ */
+function showBudgetQuestionsDialog() {
   const ui = SpreadsheetApp.getUi();
 
   try {
@@ -242,6 +247,128 @@ function generateAIBudget() {
     // Prepare logistics text for the prompt
     const logisticsText = neededItems.map(it => `- ${it.item} (${it.quantity})`).join('\n');
 
+    // Prompt OpenAI for clarifying questions only
+    const prompt =
+      `You are preparing to create a detailed budget for the following event. ` +
+      `Before creating the budget, list any questions about missing costs or assumptions.\n\n` +
+      `Event Name: ${eventInfo.eventName}\n` +
+      `Tagline: ${eventInfo.eventTagline || 'N/A'}\n` +
+      `Dates: ${startDate}${eventInfo.endDate ? ' to ' + endDate : ''}\n` +
+      `Location: ${eventInfo.location || 'TBD'}\n` +
+      `Attendance Goal: ${eventInfo.attendanceGoal}\n\n` +
+      `Success Metrics: ${eventInfo.successMetrics || 'N/A'}\n\n` +
+      `Event Website: ${eventInfo.eventWebsite || 'N/A'}\n\n` +
+      `Needed Logistics Items:\n${logisticsText}\n\n` +
+      `Respond with a JSON object {"questions": [] }`;
+
+    const url = 'https://api.openai.com/v1/chat/completions';
+    const payload = {
+      model: 'gpt-4.1-mini',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' }
+    };
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { Authorization: 'Bearer ' + apiKey },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    };
+
+    const response = UrlFetchApp.fetch(url, options);
+    if (response.getResponseCode() !== 200) {
+      throw new Error(`OpenAI API Error (${response.getResponseCode()}): ${response.getContentText()}`);
+    }
+
+    const parsed = JSON.parse(response.getContentText());
+    const content = JSON.parse(parsed.choices[0].message.content);
+    const questions = Array.isArray(content.questions) ? content.questions : [];
+
+    const cache = CacheService.getUserCache();
+    cache.put('budgetQuestions', JSON.stringify(questions), 600);
+
+    const template = HtmlService.createTemplateFromFile('BudgetQuestionsDialog');
+    template.questions = questions;
+    const html = template.evaluate().setWidth(500).setHeight(400);
+    SpreadsheetApp.getUi().showModalDialog(html, 'Budget Details');
+
+  } catch (e) {
+    Logger.log(e.toString());
+    ui.alert('Error generating budget questions: ' + e.message, ui.ButtonSet.OK);
+  }
+}
+
+/**
+ * Generates an estimated budget using OpenAI based on event and logistics data.
+ * @param {Array<string>} [answers] User provided answers to clarifying questions
+ */
+function generateAIBudget(answers) {
+  const ui = SpreadsheetApp.getUi();
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // Retrieve event information from TaskManagement.js
+    const eventInfo = getEventInformation();
+    if (!eventInfo) {
+      ui.alert('Error', 'Could not retrieve event information.', ui.ButtonSet.OK);
+      return;
+    }
+
+    // Retrieve API key
+    const apiKey = getOpenAIApiKey();
+    if (!apiKey) {
+      ui.alert('Error', 'OpenAI API key not found. Use the "Save API Key" option to add it.', ui.ButtonSet.OK);
+      return;
+    }
+
+    // Build list of logistics items marked as "Needed"
+    const logisticsSheet = ss.getSheetByName('Logistics');
+    const neededItems = [];
+    if (logisticsSheet) {
+      const allData = logisticsSheet.getDataRange().getValues();
+      if (allData.length > 2) {
+        const headers = allData[1];
+        const itemCol = headers.indexOf('Item');
+        const qtyCol = headers.indexOf('Quantity Needed');
+        const statusCol = headers.indexOf('Status');
+
+        for (let i = 2; i < allData.length; i++) {
+          const row = allData[i];
+          const status = row[statusCol];
+          if (status && status.toString().toLowerCase() === 'needed') {
+            neededItems.push({
+              item: row[itemCol],
+              quantity: row[qtyCol]
+            });
+          }
+        }
+      }
+    }
+
+    // Format event dates
+    const startDate = formatDate(eventInfo.startDate);
+    const endDate = formatDate(eventInfo.endDate);
+
+    // Prepare logistics text for the prompt
+    const logisticsText = neededItems.map(it => `- ${it.item} (${it.quantity})`).join('\n');
+
+    const cache = CacheService.getUserCache();
+    const storedQuestions = cache.get('budgetQuestions');
+    let questionsForPrompt = [];
+    if (storedQuestions) {
+      try { questionsForPrompt = JSON.parse(storedQuestions); } catch (_) {}
+    }
+    cache.remove('budgetQuestions');
+
+    let additionalDetails = '';
+    if (Array.isArray(answers) && answers.length > 0) {
+      additionalDetails = answers.map((a, i) => {
+        const q = questionsForPrompt[i] || `Detail ${i + 1}`;
+        return `${q} ${a}`;
+      }).join('\n');
+    }
+
     // Construct OpenAI prompt with explicit income/expense guidance
     const prompt =
       `Create a detailed budget for the following event that includes both income and expense categories.\n\n` +
@@ -253,7 +380,8 @@ function generateAIBudget() {
       `Success Metrics: ${eventInfo.successMetrics || 'N/A'}\n\n` +
       `Event Website: ${eventInfo.eventWebsite || 'N/A'}\n\n` +
       `Needed Logistics Items:\n${logisticsText}\n\n` +
-      `List any questions about missing costs or assumptions, such as registration fees per person.\n` +
+      (additionalDetails ? `Additional Details:\n${additionalDetails}\n\n` : '') +
+      `List any remaining questions about missing costs or assumptions.\n` +
       `Respond with a JSON object {"budget": [ {"category":"Income or Expense","item":"","unitPrice":0,"quantity":0} ], "questions": [] }`;
 
     const url = 'https://api.openai.com/v1/chat/completions';
@@ -329,11 +457,10 @@ function generateAIBudget() {
       }
     });
 
-    if (questions.length > 0) {
-      ui.alert('AI-generated budget has been added to the Budget sheet.\n\nQuestions:\n' + questions.join('\n'));
-    } else {
-      ui.alert('AI-generated budget has been added to the Budget sheet.');
-    }
+    const msg = questions.length > 0 ?
+      'AI-generated budget has been added to the Budget sheet.\n\nRemaining Questions:\n' + questions.join('\n') :
+      'AI-generated budget has been added to the Budget sheet.';
+    ui.alert(msg);
 
   } catch (e) {
     Logger.log(e.toString());

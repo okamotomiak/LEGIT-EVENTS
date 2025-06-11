@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display:block; margin-bottom:4px; font-weight:500; }
+    input[type="text"] { width:100%; padding:6px; }
+    .footer { text-align:right; margin-top:20px; }
+    .btn { padding:8px 16px; border:none; border-radius:4px; cursor:pointer; }
+    .primary { background:#667eea; color:#fff; }
+    .secondary { background:#f1f1f1; }
+  </style>
+</head>
+<body>
+  <form id="qForm">
+    <? if (questions.length > 0) { ?>
+      <? questions.forEach(function(q, idx) { ?>
+        <div class="form-group">
+          <label><?= q ?></label>
+          <input type="text" name="q<?= idx ?>" required />
+        </div>
+      <? }); ?>
+    <? } else { ?>
+      <p>No additional information is required. Click Generate to continue.</p>
+    <? } ?>
+    <div class="footer">
+      <button type="button" class="btn secondary" onclick="google.script.host.close()">Cancel</button>
+      <button type="button" class="btn primary" onclick="submitForm()">Generate Budget</button>
+    </div>
+  </form>
+  <script>
+    function submitForm() {
+      var answers = [];
+      document.querySelectorAll('#qForm input').forEach(function(inp){
+        answers.push(inp.value);
+      });
+      google.script.run.withSuccessHandler(function(){ google.script.host.close(); })
+        .generateAIBudget(answers);
+    }
+  </script>
+</body>
+</html>
