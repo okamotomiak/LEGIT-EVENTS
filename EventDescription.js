@@ -40,12 +40,17 @@ function setupEventDescriptionSheet(ss) {
     'Special Notes',
     'Event Website'
   ];
-  sheet.getRange(1, 1, 1, 2).setValues([headers])
+  const headerRange = sheet.getRange(1, 1, 1, 2).setValues([headers])
     .setBackground('#674ea7')
     .setFontColor('#ffffff')
-    .setFontWeight('bold');
+    .setFontWeight('bold')
+    .setFontSize(16);
+
   const data = fields.map(f => [f, '']);
-  sheet.getRange(2, 1, data.length, 2).setValues(data);
+  const dataRange = sheet.getRange(2, 1, data.length, 2).setValues(data);
+  dataRange.setFontSize(12);
+  // Wrap the value column for longer text
+  sheet.getRange(2, 2, data.length, 1).setWrap(true);
   sheet.setColumnWidth(1, 220);
   sheet.setColumnWidth(2, 250);
   sheet.setFrozenRows(1);

@@ -42,7 +42,11 @@ function setupCueBuilderSheet(ss) {
   // Set header values and formatting
   const headerRange = sheet.getRange(1, 1, 1, headers.length);
   headerRange.setValues([headers]);
-  headerRange.setBackground('#434343').setFontColor('#ffffff').setFontWeight('bold');
+  headerRange
+    .setBackground('#434343')
+    .setFontColor('#ffffff')
+    .setFontWeight('bold')
+    .setFontSize(16);
   
   // Set column widths
   const widths = [180, 200, 150, 100, 400, 200, 200, 200];
@@ -52,7 +56,7 @@ function setupCueBuilderSheet(ss) {
   
   // Freeze header row and apply text wrapping
   sheet.setFrozenRows(1);
-  sheet.getRange('A2:H').setWrap(true).setVerticalAlignment('top');
+  sheet.getRange('A2:H').setWrap(true).setVerticalAlignment('top').setFontSize(12);
   
   // Apply alternating row colors
   sheet.getRange('A2:H').applyRowBanding(SpreadsheetApp.BandingTheme.LIGHT_GREY);

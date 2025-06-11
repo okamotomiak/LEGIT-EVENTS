@@ -198,7 +198,8 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
   ];
   
   // Set header values
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  const headerRange = sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  headerRange.setFontSize(16);
   
   // Set column widths
   const widths = [120, 200, 300, 120, 150, 100, 100, 100, 150, 120];
@@ -208,6 +209,11 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
   
   // Freeze header row
   sheet.setFrozenRows(1);
+
+  // Default font size across the sheet
+  sheet.getRange(1, 1, 900, headers.length).setFontSize(12);
+  // Wrap descriptions for readability
+  sheet.getRange(2, 3, 899, 1).setWrap(true);
   
   // Format headers with blue background and white text
   sheet.getRange(1, 1, 1, headers.length)

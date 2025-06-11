@@ -19,18 +19,25 @@ function setupLogisticsSheet(ss) {
   }
   
   sheet.getRange('A1:F1').merge().setValue('Generated quantities will be based on the attendance goal from the "Event Description" sheet.')
-    .setHorizontalAlignment('center').setFontStyle('italic').setFontColor('#666666');
+    .setHorizontalAlignment('center')
+    .setFontStyle('italic')
+    .setFontColor('#666666')
+    .setFontSize(12);
 
   const headers = ['Item', 'Quantity Needed', 'Related Schedule Item', 'Status', 'Assigned To', 'Notes'];
-  sheet.getRange(2, 1, 1, headers.length).setValues([headers])
-    .setBackground('#674ea7').setFontColor('#ffffff').setFontWeight('bold');
+  const headerRange = sheet.getRange(2, 1, 1, headers.length).setValues([headers])
+    .setBackground('#674ea7')
+    .setFontColor('#ffffff')
+    .setFontWeight('bold')
+    .setFontSize(16);
 
   const widths = [250, 100, 180, 120, 150, 300];
   widths.forEach((width, i) => {
     sheet.setColumnWidth(i + 1, width);
   });
 
-  sheet.getRange('A3:F').setVerticalAlignment('top').setWrap(true);
+  const dataRange = sheet.getRange('A3:F');
+  dataRange.setVerticalAlignment('top').setWrap(true).setFontSize(12);
   
   const statusOptions = ['Needed', 'Sourced', 'On-site', 'Returned', 'Cancelled'];
   const statusRule = SpreadsheetApp.newDataValidation().requireValueInList(statusOptions, true).build();

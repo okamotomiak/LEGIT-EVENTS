@@ -33,7 +33,8 @@ function setupScheduleSheet(ss, addSampleData = true) {
   const headers = ['Date', 'Start Time', 'End Time', 'Duration', 'Session Title', 'Lead', 'Location', 'Status', 'Notes'];
   
   // Set header values
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  const headerRange = sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  headerRange.setFontSize(16);
   
   // Set column widths
   const widths = [100, 100, 100, 100, 200, 150, 150, 120, 300];
@@ -45,6 +46,10 @@ function setupScheduleSheet(ss, addSampleData = true) {
   
   // Freeze header row
   sheet.setFrozenRows(1);
+  sheet.getRange(1, 1, 900, headers.length).setFontSize(12);
+  // Wrap session titles and notes for readability
+  sheet.getRange(2, 5, 899, 1).setWrap(true);
+  sheet.getRange(2, 9, 899, 1).setWrap(true);
   
   // Add sample data if requested
   if (addSampleData) {

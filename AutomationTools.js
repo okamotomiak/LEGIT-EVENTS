@@ -21,10 +21,11 @@ function setupAutomationToolsSheet(ss) {
   }
 
   const headers = ['Tool or Sheet', 'Purpose'];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers])
+  const headerRange = sheet.getRange(1, 1, 1, headers.length).setValues([headers])
     .setBackground('#674ea7')
     .setFontColor('#ffffff')
-    .setFontWeight('bold');
+    .setFontWeight('bold')
+    .setFontSize(16);
 
   const info = [
     ['AI Generators menu',
@@ -37,7 +38,9 @@ function setupAutomationToolsSheet(ss) {
      'Duplicate this planner with all scripts and base sheets attached.']
   ];
 
-  sheet.getRange(2, 1, info.length, 2).setValues(info);
+  sheet.getRange(2, 1, info.length, 2).setValues(info)
+    .setFontSize(12)
+    .setWrap(true);
   sheet.setColumnWidth(1, 220);
   sheet.setColumnWidth(2, 500);
   sheet.setFrozenRows(1);
