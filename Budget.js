@@ -6,11 +6,15 @@
  */
 function setupBudgetSheet(ss) {
   if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
-  const budgetSheet = ss.getSheetByName('Budget');
-  
+  const ui = SpreadsheetApp.getUi();
+  let budgetSheet = ss.getSheetByName('Budget');
+
   if (!budgetSheet) {
-    SpreadsheetApp.getUi().alert('Budget sheet not found. Please create the template first.');
-    return;
+    budgetSheet = ss.insertSheet('Budget');
+    ui.alert('Sheet Created', 'The "Budget" sheet has been created.', ui.ButtonSet.OK);
+  } else {
+    const response = ui.alert('Reset Sheet?', 'This will clear all data. Continue?', ui.ButtonSet.YES_NO);
+    if (response !== ui.Button.YES) return;
   }
   
   // STEP 1: Aggressively remove all data validations first

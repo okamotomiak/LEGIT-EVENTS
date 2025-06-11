@@ -102,9 +102,13 @@ function getScheduleItemsForDialog() {
 function generateAILogisticsList(selectedItems) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const logisticsSheet = ss.getSheetByName('Logistics');
+    let logisticsSheet = ss.getSheetByName('Logistics');
     if (!logisticsSheet) {
-        throw new Error('The "Logistics" sheet has not been created yet.');
+        setupLogisticsSheet(ss);
+        logisticsSheet = ss.getSheetByName('Logistics');
+        if (!logisticsSheet) {
+            throw new Error('Unable to create the "Logistics" sheet.');
+        }
     }
 
     const eventInfo = getEventInformation();
