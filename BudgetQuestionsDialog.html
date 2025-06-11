@@ -3,42 +3,147 @@
 <head>
   <base target="_top">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .form-group { margin-bottom: 15px; }
-    label { display:block; margin-bottom:4px; font-weight:500; }
-    input[type="text"] { width:100%; padding:6px; }
-    .footer { text-align:right; margin-top:20px; }
-    .btn { padding:8px 16px; border:none; border-radius:4px; cursor:pointer; }
-    .primary { background:#667eea; color:#fff; }
-    .secondary { background:#f1f1f1; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f8f9fa;
+      font-size: 14px;
+    }
+    .dialog-container {
+      background: white;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 24px;
+      flex-shrink: 0;
+      text-align: center;
+    }
+    .dialog-header h1 { font-size: 26px; margin-bottom: 8px; }
+    .dialog-header p { opacity: 0.9; font-size: 15px; }
+    .dialog-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      color: #495057;
+      font-weight: 500;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .form-group input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102,126,234,0.1);
+    }
+    .dialog-footer {
+      background: white;
+      padding: 16px 24px;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .button-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .button-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+    }
+    .button-secondary {
+      background: white;
+      color: #495057;
+      border: 1px solid #ced4da;
+    }
+    .button-secondary:hover { background: #f8f9fa; }
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: #667eea;
+      font-size: 14px;
+    }
+    .loading.show { display: flex; }
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #667eea;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-  <form id="qForm">
-    <? if (questions.length > 0) { ?>
-      <? questions.forEach(function(q, idx) { ?>
-        <div class="form-group">
-          <label><?= q ?></label>
-          <input type="text" name="q<?= idx ?>" required />
-        </div>
-      <? }); ?>
-    <? } else { ?>
-      <p>No additional information is required. Click Generate to continue.</p>
-    <? } ?>
-    <div class="footer">
-      <button type="button" class="btn secondary" onclick="google.script.host.close()">Cancel</button>
-      <button type="button" class="btn primary" onclick="submitForm()">Generate Budget</button>
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <h1>Budget Details</h1>
+      <p>Please provide the information below</p>
     </div>
-  </form>
+    <div class="dialog-body">
+      <form id="qForm">
+        <? if (questions.length > 0) { ?>
+          <? questions.forEach(function(q, idx) { ?>
+            <div class="form-group">
+              <label><?= q ?></label>
+              <input type="text" name="q<?= idx ?>" required />
+            </div>
+          <? }); ?>
+        <? } else { ?>
+          <p>No additional information is required.</p>
+        <? } ?>
+      </form>
+    </div>
+    <div class="dialog-footer">
+      <button class="button button-secondary" onclick="closeDialog()">Cancel</button>
+      <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <span>Generating...</span>
+      </div>
+      <button class="button button-primary" id="generateBtn" onclick="submitForm()">Generate Budget</button>
+    </div>
+  </div>
   <script>
     function submitForm() {
-      var answers = [];
-      document.querySelectorAll('#qForm input').forEach(function(inp){
-        answers.push(inp.value);
-      });
-      google.script.run.withSuccessHandler(function(){ google.script.host.close(); })
-        .generateAIBudget(answers);
+      const answers = [];
+      document.querySelectorAll('#qForm input').forEach(inp => answers.push(inp.value));
+      document.getElementById('loadingIndicator').classList.add('show');
+      google.script.run.withSuccessHandler(closeDialog).generateAIBudget(answers);
     }
+    function closeDialog() { google.script.host.close(); }
   </script>
 </body>
 </html>

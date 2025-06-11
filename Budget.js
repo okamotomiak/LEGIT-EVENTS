@@ -287,6 +287,11 @@ function showBudgetQuestionsDialog() {
     const cache = CacheService.getUserCache();
     cache.put('budgetQuestions', JSON.stringify(questions), 600);
 
+    if (questions.length === 0) {
+      generateAIBudget([]);
+      return;
+    }
+
     const template = HtmlService.createTemplateFromFile('BudgetQuestionsDialog');
     template.questions = questions;
     const html = template.evaluate().setWidth(500).setHeight(400);
