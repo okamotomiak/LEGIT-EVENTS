@@ -574,7 +574,7 @@ function showProToolsMenu() {
       .addItem('🔑 Set Up API Key', 'saveApiKeyToScriptProperties')
       .addItem('📅 Generate Schedule', 'generatePreliminarySchedule')
       .addItem('✅ Generate Tasks', 'generateAITasksWithSchedule')
-      .addItem('💰 Generate Budget', 'generateAIBudget')
+      .addItem('💰 Generate Budget', 'showBudgetQuestionsDialog')
       .addItem('📦 Generate Logistics', 'showLogisticsDialog'))
     .addSubMenu(ui.createMenu('🎬 Production')
       .addItem('🎯 Cue Builder', 'setupCueBuilderSheet')
