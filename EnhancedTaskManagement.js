@@ -4,7 +4,7 @@
  * Enhanced version of generateAITasks that includes schedule analysis
  * This replaces the existing generateAITasks function
  */
-function generateAITasksWithSchedule() {
+function generateAITasksWithSchedule(category) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const ui = SpreadsheetApp.getUi();
   
@@ -33,9 +33,12 @@ function generateAITasksWithSchedule() {
     
     // Step 5: Show loading message
     ui.alert('Processing', 'Generating enhanced tasks using AI with schedule analysis. This may take a few moments...', ui.ButtonSet.OK);
-    
+
+    // Default to all categories if none provided
+    if (!category) category = 'All Categories';
+
     // Step 6: Generate tasks using enhanced prompt
-    const tasks = generateEnhancedTasksWithAI(eventInfo, scheduleInfo, peopleInfo, apiKey);
+    const tasks = generateEnhancedTasksWithAI(eventInfo, scheduleInfo, peopleInfo, apiKey, category);
     if (!tasks || tasks.length === 0) {
       ui.alert('Error', 'Failed to generate tasks. Please try again later.', ui.ButtonSet.OK);
       return;
@@ -48,7 +51,8 @@ function generateAITasksWithSchedule() {
     const taskCount = addTasksToSheet(tasks, eventInfo);
     
     // Step 9: Show success message
-    ui.alert('Success', `Generated and added ${taskCount} enhanced tasks to the Task Management sheet, including ${scheduleInfo.sessions.length} session-specific tasks.`, ui.ButtonSet.OK);
+    const catMsg = category === 'All Categories' ? '' : ` for the "${category}" category`;
+    ui.alert('Success', `Generated and added ${taskCount} enhanced tasks${catMsg} to the Task Management sheet, including ${scheduleInfo.sessions.length} session-specific tasks.`, ui.ButtonSet.OK);
   
   } catch (error) {
     Logger.log('Error: ' + error.toString());
@@ -225,7 +229,7 @@ function getPeopleInformation(ss) {
  * @param {string} apiKey OpenAI API key
  * @return {Array} Array of task objects
  */
-function generateEnhancedTasksWithAI(eventInfo, scheduleInfo, peopleInfo, apiKey) {
+function generateEnhancedTasksWithAI(eventInfo, scheduleInfo, peopleInfo, apiKey, category) {
   try {
     // Format dates for the prompt
     const startDate = formatDate(eventInfo.startDate);
@@ -271,7 +275,7 @@ Create coordination and communication tasks for team members.`;
     }
     
     // Create the enhanced prompt
-    const prompt = `Generate a comprehensive task list for planning and executing the following event:
+    let prompt = `Generate a comprehensive task list for planning and executing the following event:
 
 EVENT DETAILS:
 - Name: ${eventInfo.eventName}
@@ -321,6 +325,10 @@ Return response in this JSON format:
 }
 
 Focus on creating actionable, specific tasks rather than generic ones. Each session should have 2-4 related tasks.`;
+
+    if (category && category !== 'All Categories') {
+      prompt += `\nONLY provide tasks that fall under the "${category}" category.`;
+    }
 
     // Call OpenAI API with enhanced prompt
     const url = 'https://api.openai.com/v1/chat/completions';
@@ -379,5 +387,15 @@ Focus on creating actionable, specific tasks rather than generic ones. Each sess
  * Add this to your onOpen function
  */
 function addEnhancedTaskMenuItem(menu) {
-  return menu.addItem('Generate Enhanced AI Tasks (with Schedule)', 'generateAITasksWithSchedule');
+  return menu.addItem('Generate Enhanced AI Tasks (with Schedule)', 'showTaskCategoryDialog');
+}
+
+/**
+ * Opens a dialog to choose a task category before generating AI tasks.
+ */
+function showTaskCategoryDialog() {
+  const html = HtmlService.createHtmlOutputFromFile('TaskCategoryDialog')
+    .setWidth(400)
+    .setHeight(250);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Generate AI Tasks');
 }

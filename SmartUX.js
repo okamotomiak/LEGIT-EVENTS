@@ -573,7 +573,7 @@ function showProToolsMenu() {
     .addSubMenu(ui.createMenu('🤖 AI Tools')
       .addItem('🔑 Set Up API Key', 'saveApiKeyToScriptProperties')
       .addItem('📅 Generate Schedule', 'generatePreliminarySchedule')
-      .addItem('✅ Generate Tasks', 'generateAITasksWithSchedule')
+      .addItem('✅ Generate Tasks', 'showTaskCategoryDialog')
       .addItem('💰 Generate Budget', 'showBudgetQuestionsDialog')
       .addItem('📦 Generate Logistics', 'showLogisticsDialog'))
     .addSubMenu(ui.createMenu('🎬 Production')
