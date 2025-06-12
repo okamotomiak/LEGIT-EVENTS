@@ -11,6 +11,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 - Tools for managing people, schedules, and cues.
 - Interactive configuration dialog for customizing dropdown lists and email templates.
 - Dedicated **AI & Automation Tools** sheet to explain advanced menu options.
+- **Pro Tools → Blank Sheets** lets you quickly add a Budget, Logistics or other sheet when you need it.
 - Modular code organized by feature for easier maintenance.
 - Helpful onboarding with a **🚀 2-Minute Setup Wizard** and contextual help menu.
 - One-click access to a **📕 User Manual (Google Doc)** and an offline copy in `docs/USER_MANUAL.md`.
@@ -20,7 +21,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 1. After installing, open the Google Sheet and choose **🚀 2-Minute Setup Wizard** from the **Event Planner Pro** menu.
 2. Follow the on-screen prompts to generate your core sheets and sample data.
 3. Access **📖 Help & User Guide** at any time for context-sensitive tips.
-4. Explore **Show Me Around (Tutorial)** to add tutorial columns explaining each sheet. You can remove them later via **Remove Tutorial Overlays** in the same menu.
+4. Use **🗒️ Quick Event Setup** to capture details like your tagline, theme, key messages, and profit goal whenever you update your plan.
 
 ## Setup
 
