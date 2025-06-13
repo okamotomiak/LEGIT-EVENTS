@@ -4,9 +4,10 @@ This markdown file provides an offline reference for using the add‑on. The lat
 <https://docs.google.com/document/d/1w5KCO5O2MiuYDZMATFfLwGqHYrdsvhditDVzRJNmmP8/edit?usp=sharing>
 
 ## Getting Started
-1. From the **Event Planner Pro** menu choose **🚀 2-Minute Setup Wizard** to quickly create your starter sheets.
-2. Use **🗒️ Quick Event Setup** to capture your tagline, theme, key messages, and profit goal or to update details later.
-3. Explore the menu sections that appear as you progress. The system reveals advanced tools after you complete the basics.
+1. When you open a new planner the Quick Start Guide will appear automatically. You can launch it again from the **Event Planner Pro** menu.
+2. Use **📝 Create Event Description** to enter your event basics.
+3. Use **🗒️ Quick Event Setup** to capture your tagline, theme, key messages, and profit goal or to update details later.
+4. Explore the menu sections that appear as you progress. The system reveals advanced tools after you complete the basics.
 
 ## Help System
 - Select **📖 Help & User Guide** in the menu to see contextual help based on the active sheet.

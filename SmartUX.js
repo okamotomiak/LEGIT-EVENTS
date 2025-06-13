@@ -470,22 +470,7 @@ function checkAndGuideUser() {
 }
 
 function showWelcomeWizard() {
-  const ui = SpreadsheetApp.getUi();
-  const response = ui.alert(
-    'Welcome to Event Planner Pro! 🎉',
-    'Looks like you\'re just getting started. Would you like a quick 2-minute setup to get your first event planned?',
-    ui.ButtonSet.YES_NO
-  );
-  
-  if (response === ui.Button.YES) {
-    startSetupWizard();
-  } else {
-    ui.alert(
-      'No Problem!',
-      'You can start the setup wizard anytime from the "Event Planner Pro" menu. Just look for "Let\'s Get Started!"',
-      ui.ButtonSet.OK
-    );
-  }
+  showQuickStartGuide();
 }
 
 /**
@@ -696,4 +681,14 @@ function showUserManual() {
     `<p><a href="${USER_MANUAL_URL}" target="_blank">Open the User Manual</a></p>`
   ).setWidth(350).setHeight(80);
   SpreadsheetApp.getUi().showModalDialog(html, 'User Manual');
+}
+
+/**
+ * Display the one-page quick start guide
+ */
+function showQuickStartGuide() {
+  const html = HtmlService.createHtmlOutputFromFile('QuickStartGuide')
+    .setWidth(600)
+    .setHeight(600);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Quick Start Guide');
 }
