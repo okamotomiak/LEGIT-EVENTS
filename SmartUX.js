@@ -115,13 +115,8 @@ function checkForGeneratedContent() {
  * Menu for brand new users
  */
 function addNewUserMenu(menu, ui) {
+  // The onboarding submenu has been removed to streamline the interface
   return menu
-    .addSubMenu(ui.createMenu("🌟 Let's Get Started!")
-      .addItem('🚀 2-Minute Setup Wizard', 'startSetupWizard')
-      .addItem('📝 Create Event Description', 'setupEventDescriptionSheet')
-      .addItem('🗒️ Quick Event Setup', 'showEventSetupDialog')
-      .addSeparator()
-    )
     .addItem('⚙️ Pro Tools', 'showAdvancedOptionsDialog');
 }
 
