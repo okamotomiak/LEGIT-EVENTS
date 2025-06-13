@@ -3,6 +3,10 @@
   <head>
     <base target="_top">
     <style>
+      :root {
+        --primary-color: #667eea;
+        --border-color: #ced4da;
+      }
       * {
         margin: 0;
         padding: 0;
@@ -57,6 +61,9 @@
         padding: 12px;
         border-radius: 8px;
         background-color: white;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
       }
       .checkbox-item {
         display: block;
