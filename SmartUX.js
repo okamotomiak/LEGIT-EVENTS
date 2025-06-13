@@ -321,6 +321,99 @@ function getHelpContentForSheet(sheetName, userProgress) {
         <p>Check this regularly to stay motivated and catch any tasks that might be falling behind!</p>
         <p>You can customize status options and other settings in the <strong>Config</strong> sheet.</p>
       `
+    },
+
+    'Budget': {
+      title: 'Budget - Tracking Costs',
+      phase: 'Managing Finances',
+      content: `
+        <h3>💰 What This Sheet Does</h3>
+        <p>Estimate and track expenses for every part of your event.</p>
+
+        <h3>📂 Key Sections</h3>
+        <ul>
+          <li>Income & Sponsors</li>
+          <li>Major Expense Categories</li>
+          <li>Miscellaneous Costs</li>
+        </ul>
+
+        <h3>🚀 Getting Started</h3>
+        <p>Enter your expected amounts and update with actuals as you go.</p>
+
+        ${userProgress.hasAPIKey ? '<div class="ai-feature"><strong>🤖 AI Tip:</strong> Use <em>AI Generators → Generate Budget</em> for a quick starting point.</div>' : ''}
+      `
+    },
+
+    'Logistics': {
+      title: 'Logistics - Supplies & Equipment',
+      phase: 'Coordinating Details',
+      content: `
+        <h3>📦 What This Sheet Does</h3>
+        <p>Keep track of items, vendors, and assignments for your event logistics.</p>
+
+        <h3>📝 Typical Uses</h3>
+        <ul>
+          <li>Equipment to rent or bring</li>
+          <li>Venue or vendor contact info</li>
+          <li>Delivery dates and responsible people</li>
+        </ul>
+
+        ${userProgress.hasAPIKey ? '<div class="ai-feature"><strong>🤖 AI Tip:</strong> Try <em>AI Generators → Generate Logistics</em> to build an initial list.</div>' : ''}
+      `
+    },
+
+    'Cue Builder': {
+      title: 'Cue Builder - Program Flow',
+      phase: 'Running the Show',
+      content: `
+        <h3>🎯 What This Sheet Does</h3>
+        <p>Create the step-by-step cues for presenters and tech staff.</p>
+
+        <h3>✨ Features</h3>
+        <ul>
+          <li>Start times and durations</li>
+          <li>Roles and brief instructions</li>
+          <li>Convert to a professional cue sheet via the menu</li>
+        </ul>
+      `
+    },
+
+    'Form Templates': {
+      title: 'Form Templates - Collect Information',
+      phase: 'Engaging Attendees',
+      content: `
+        <h3>📝 What This Sheet Does</h3>
+        <p>Store question sets for quick creation of Google Forms.</p>
+
+        <h3>💡 How to Use</h3>
+        <p>Edit the template rows or add your own. Then run <strong>Generate Forms</strong> from the menu to create live forms.</p>
+      `
+    },
+
+    'AI & Automation Tools': {
+      title: 'AI & Automation Tools - Advanced Features',
+      phase: 'Working Smarter',
+      content: `
+        <h3>🤖 What This Sheet Explains</h3>
+        <p>Overview of optional tools that automate and enhance your planning.</p>
+        <ul>
+          <li>AI generators for schedules, tasks, logistics and budgets</li>
+          <li>Email and form automation</li>
+          <li>Links to relevant setup dialogs</li>
+        </ul>
+      `
+    },
+
+    'Config': {
+      title: 'Config - Customize Dropdowns',
+      phase: 'Fine-Tuning Settings',
+      content: `
+        <h3>⚙️ What This Sheet Does</h3>
+        <p>Defines categories and dropdown lists used across your planner.</p>
+
+        <h3>✏️ Editing Tips</h3>
+        <p>Change values carefully. Updates here alter dropdown menus in other sheets.</p>
+      `
     }
   };
   
