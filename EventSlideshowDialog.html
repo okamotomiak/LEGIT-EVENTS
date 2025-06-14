@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 800px;
+            height: 85%;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide h1 {
+            color: #674ea7;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .slide h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .slide h3 {
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .tagline {
+            font-size: 1.4em;
+            color: #888;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .content-section {
+            text-align: left;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #674ea7;
+        }
+
+        .content-section h4 {
+            color: #674ea7;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .content-section p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #93c47d;
+        }
+
+        .info-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .metrics-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .metric-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .metric-number {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #674ea7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #5a3d8a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .slide-counter {
+            background: rgba(103, 78, 167, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #674ea7;
+            font-weight: 500;
+        }
+
+        .location-info {
+            background: linear-gradient(135deg, #f1c232, #e69138);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .audience-box {
+            background: linear-gradient(135deg, #c27ba0, #a64d79);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .website-link {
+            display: inline-block;
+            background: #674ea7;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .website-link:hover {
+            background: #5a3d8a;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <!-- Slide 1: Event Overview -->
+        <div class="slide active">
+            <h1><?= eventData.eventName || 'Event Name' ?></h1>
+            <? if (eventData.tagline) { ?>
+                <div class="tagline"><?= eventData.tagline ?></div>
+            <? } ?>
+            
+            <? if (eventData.eventId) { ?>
+                <div class="content-section">
+                    <h4>Event ID</h4>
+                    <p><?= eventData.eventId ?></p>
+                </div>
+            <? } ?>
+            
+            <? if (eventData.description) { ?>
+                <div class="content-section">
+                    <h4>Event Description</h4>
+                    <p><?= eventData.description ?></p>
+                </div>
+            <? } ?>
+
+            <? if (eventData.eventType) { ?>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Event Type</strong>
+                        <?= eventData.eventType ?>
+                    </div>
+                </div>
+            <? } ?>
+        </div>
+
+        <!-- Slide 2: When & Where -->
+        <div class="slide">
+            <h2>📅 When & Where</h2>
+            
+            <? if (eventData.startDate) { ?>
+                <div class="content-section">
+                    <h4>Event Schedule</h4>
+                    <p><strong>Start:</strong> <?= eventData.startDate ?></p>
+                    <? if (eventData.endDate && eventData.endDate !== eventData.startDate) { ?>
+                        <p><strong>End:</strong> <?= eventData.endDate ?></p>
+                    <? } ?>
+                    <? if (eventData.duration) { ?>
+                        <p><strong>Duration:</strong> <?= eventData.duration ?></p>
+                    <? } ?>
+                    <? if (eventData.timezone) { ?>
+                        <p><strong>Timezone:</strong> <?= eventData.timezone ?></p>
+                    <? } ?>
+                </div>
+            <? } ?>
+
+            <? if (eventData.location || eventData.virtualLink) { ?>
+                <div class="location-info">
+                    <h4>📍 Location Details</h4>
+                    <? if (eventData.location) { ?>
+                        <p><strong>Venue:</strong> <?= eventData.location ?></p>
+                    <? } ?>
+                    <? if (eventData.venueAddress) { ?>
+                        <p><strong>Address:</strong> <?= eventData.venueAddress ?></p>
+                    <? } ?>
+                    <? if (eventData.virtualLink) { ?>
+                        <p><strong>Virtual Link:</strong> <?= eventData.virtualLink ?></p>
+                    <? } ?>
+                </div>
+            <? } ?>
+        </div>
+
+        <!-- Slide 3: Target Audience & Objectives -->
+        <div class="slide">
+            <h2>🎯 Who & Why</h2>
+            
+            <? if (eventData.targetAudience) { ?>
+                <div class="audience-box">
+                    <h4>👥 Target Audience</h4>
+                    <p><?= eventData.targetAudience ?></p>
+                </div>
+            <? } ?>
+
+            <? if (eventData.objectives) { ?>
+                <div class="content-section">
+                    <h4>🎯 Event Objectives</h4>
+                    <p><?= eventData.objectives ?></p>
+                </div>
+            <? } ?>
+        </div>
+
+        <!-- Slide 4: Success Metrics & Goals -->
+        <div class="slide">
+            <h2>📊 Success Metrics</h2>
+            
+            <? if (eventData.attendanceGoal || eventData.profitGoal) { ?>
+                <div class="metrics-container">
+                    <? if (eventData.attendanceGoal) { ?>
+                        <div class="metric-box">
+                            <div class="metric-number"><?= eventData.attendanceGoal ?></div>
+                            <div class="metric-label">Expected Attendees</div>
+                        </div>
+                    <? } ?>
+                    <? if (eventData.profitGoal) { ?>
+                        <div class="metric-box">
+                            <div class="metric-number"><?= eventData.profitGoal ?></div>
+                            <div class="metric-label">Profit Goal</div>
+                        </div>
+                    <? } ?>
+                </div>
+            <? } ?>
+
+            <? if (eventData.successMetrics) { ?>
+                <div class="content-section">
+                    <h4>📈 How We'll Measure Success</h4>
+                    <p><?= eventData.successMetrics ?></p>
+                </div>
+            <? } ?>
+        </div>
+
+        <!-- Slide 5: Additional Details -->
+        <? if (eventData.specialNotes || eventData.eventWebsite) { ?>
+            <div class="slide">
+                <h2>📝 Additional Information</h2>
+                
+                <? if (eventData.specialNotes) { ?>
+                    <div class="content-section">
+                        <h4>📌 Special Notes</h4>
+                        <p><?= eventData.specialNotes ?></p>
+                    </div>
+                <? } ?>
+
+                <? if (eventData.eventWebsite) { ?>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <h4>🌐 Learn More</h4>
+                        <a href="<?= eventData.eventWebsite ?>" target="_blank" class="website-link">
+                            Visit Event Website
+                        </a>
+                    </div>
+                <? } ?>
+            </div>
+        <? } ?>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides"></span>
+            </span>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Update total slides counter
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            
+            if (currentSlideIndex < 0) currentSlideIndex = 0;
+            if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+            
+            showSlide(currentSlideIndex);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') changeSlide(-1);
+            if (event.key === 'ArrowRight') changeSlide(1);
+            if (event.key === 'Escape') google.script.host.close();
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
