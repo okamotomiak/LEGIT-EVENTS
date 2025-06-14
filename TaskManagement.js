@@ -29,8 +29,6 @@ function getEventInformation() {
     theme: '',
     objectives: '',
     description: '',
-    detailedDescription: '',
-    keyMessages: '',
     successMetrics: '',
     eventWebsite: '',
     attendanceGoal: 0 // Default to 0
@@ -48,10 +46,8 @@ function getEventInformation() {
     'Location': 'location',
     'Theme': 'theme',
     'Theme or Focus': 'theme',
-    'Short Objectives': 'objectives',
+    'Short Objectives (How do you want the audience to feel, learn, and do)': 'objectives',
     'Description & Messaging': 'description',
-    'Detailed Description': 'detailedDescription',
-    'Key Messages': 'keyMessages',
     'Success Metrics': 'successMetrics',
     'Event Website': 'eventWebsite',
     'Attendance Goal (#)': 'attendanceGoal'
@@ -480,7 +476,7 @@ function generateTasksWithAI(eventInfo, apiKey) {
     const endDate = formatDate(eventInfo.endDate);
     
     // Create a detailed prompt with all available event information
-    const prompt = `
+  const prompt = `
 Generate a comprehensive list of tasks for planning and executing the following event:
 
 EVENT DETAILS:
@@ -492,8 +488,6 @@ EVENT DETAILS:
 - Theme: ${eventInfo.theme || 'N/A'}
 - Objectives: ${eventInfo.objectives || 'N/A'}
 - Description: ${eventInfo.description || 'N/A'}
-- Detailed Description: ${eventInfo.detailedDescription || 'N/A'}
-- Key Messages: ${eventInfo.keyMessages || 'N/A'}
 - Success Metrics: ${eventInfo.successMetrics || 'N/A'}
 - Event Website: ${eventInfo.eventWebsite || 'N/A'}
 

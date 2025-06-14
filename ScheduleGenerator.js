@@ -165,8 +165,6 @@ function getEventDetailsFromSheet(sheet) {
     targetAudience: null,
     objectives: null,
     description: null,
-    detailedDescription: null,
-    keyMessages: null,
     successMetrics: null,
     eventWebsite: null
   };
@@ -337,7 +335,8 @@ function getEventDetailsFromSheet(sheet) {
   }
   
   // Look for Objectives
-  const objectivesRow = _findRow(sheet, 'Objectives');
+  const objectivesRow = _findRow(sheet, 'Short Objectives (How do you want the audience to feel, learn, and do)') ||
+                        _findRow(sheet, 'Objectives');
   if (objectivesRow) {
     eventDetails.objectives = sheet.getRange(objectivesRow, 2).getValue();
   }
@@ -347,18 +346,6 @@ function getEventDetailsFromSheet(sheet) {
   if (descriptionRow) {
     eventDetails.description = sheet.getRange(descriptionRow, 2).getValue();
     Logger.log('Found Description & Messaging: ' + (eventDetails.description ? 'Yes' : 'No'));
-  }
-  
-  const detailedDescRow = _findRow(sheet, 'Detailed Description');
-  if (detailedDescRow) {
-    eventDetails.detailedDescription = sheet.getRange(detailedDescRow, 2).getValue();
-    Logger.log('Found Detailed Description: ' + (eventDetails.detailedDescription ? 'Yes' : 'No'));
-  }
-  
-  const keyMessagesRow = _findRow(sheet, 'Key Messages');
-  if (keyMessagesRow) {
-    eventDetails.keyMessages = sheet.getRange(keyMessagesRow, 2).getValue();
-    Logger.log('Found Key Messages: ' + (eventDetails.keyMessages ? 'Yes' : 'No'));
   }
   
   // Calculate event duration in days
@@ -400,8 +387,6 @@ function getEventDetailsFromSheet(sheet) {
   Logger.log(`- Target Audience: ${eventDetails.targetAudience}`);
   Logger.log(`- Objectives: ${eventDetails.objectives}`);
   Logger.log(`- Description: ${eventDetails.description ? 'Found' : 'Not found'}`);
-  Logger.log(`- Detailed Description: ${eventDetails.detailedDescription ? 'Found' : 'Not found'}`);
-  Logger.log(`- Key Messages: ${eventDetails.keyMessages ? 'Found' : 'Not found'}`);
   Logger.log(`- Success Metrics: ${eventDetails.successMetrics ? 'Found' : 'Not found'}`);
   Logger.log(`- Event Website: ${eventDetails.eventWebsite || 'N/A'}`);
   
@@ -528,15 +513,6 @@ For this ${eventTypeDesc} event, please include:
     descriptionAdded = true;
   }
   
-  if (eventDetails.detailedDescription) {
-    descriptionText += `- Detailed Description: ${eventDetails.detailedDescription}\n\n`;
-    descriptionAdded = true;
-  }
-  
-  if (eventDetails.keyMessages) {
-    descriptionText += `- Key Messages: ${eventDetails.keyMessages}\n\n`;
-    descriptionAdded = true;
-  }
 
   if (eventDetails.eventWebsite) {
     descriptionText += `- Event Website: ${eventDetails.eventWebsite}\n\n`;
