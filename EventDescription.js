@@ -222,3 +222,90 @@ function saveEventDetails(details) {
 
   return true;
 }
+
+/**
+ * Shows the event details in a slideshow presentation format
+ */
+function showEventSlideshow() {
+  const eventData = getEventSlideshowData();
+
+  if (!eventData.eventName) {
+    SpreadsheetApp.getUi().alert(
+      'No Event Data',
+      'Please set up your event details first before creating a slideshow.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+    return;
+  }
+
+  const html = HtmlService.createTemplateFromFile('EventSlideshowDialog');
+  html.eventData = eventData;
+
+  const htmlOutput = html.evaluate()
+    .setWidth(900)
+    .setHeight(700);
+
+  SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'Event Presentation Slideshow');
+}
+
+/**
+ * Retrieves and formats event data for the slideshow
+ * @return {Object} Formatted event data for presentation
+ */
+function getEventSlideshowData() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Event Description');
+
+  if (!sheet) {
+    return {};
+  }
+
+  const getVal = label => {
+    const row = _findRow(sheet, label);
+    const value = row ? sheet.getRange(row, 2).getValue() : '';
+    return value || '';
+  };
+
+  const formatDate = value => {
+    if (!value) return '';
+    if (value instanceof Date) {
+      return Utilities.formatDate(value, ss.getSpreadsheetTimeZone(), "EEEE, MMMM d, yyyy 'at' h:mm a");
+    }
+    return value.toString();
+  };
+
+  const formatCurrency = value => {
+    if (!value) return '';
+    const num = parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
+    return isNaN(num) ? value : '$' + num.toLocaleString();
+  };
+
+  const formatNumber = value => {
+    if (!value) return '';
+    const num = parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
+    return isNaN(num) ? value : num.toLocaleString();
+  };
+
+  return {
+    eventName: getVal('Event Name'),
+    tagline: getVal('Tagline'),
+    description: getVal('Description & Messaging'),
+    eventType: getVal('Event Type'),
+    theme: getVal('Theme or Focus'),
+    categories: getVal('Categories'),
+    startDate: formatDate(getVal('Start Date (And Time)')),
+    endDate: formatDate(getVal('End Date (And Time)')),
+    duration: getVal('Single- or Multi-Day?'),
+    timezone: getVal('Timezone'),
+    location: getVal('Location'),
+    venueAddress: getVal('Venue Address'),
+    virtualLink: getVal('Virtual Link'),
+    targetAudience: getVal('Target Audience'),
+    objectives: getVal('Short Objectives (How do you want the audience to feel, learn, and do)'),
+    successMetrics: getVal('Success Metrics'),
+    attendanceGoal: formatNumber(getVal('Attendance Goal (#)')),
+    profitGoal: formatCurrency(getVal('Profit Goal ($)')),
+    specialNotes: getVal('Special Notes'),
+    eventWebsite: getVal('Event Website')
+  };
+}
