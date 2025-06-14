@@ -14,46 +14,89 @@ function setupEventDescriptionSheet(ss) {
     sheet.clear();
   }
 
+  // Set up headers
   const headers = ['Field', 'Value'];
-  const fields = [
-    'Event ID',
-    'Event Name',
-    'Tagline',
-    'Start Date (And Time)',
-    'End Date (And Time)',
-    'Single- or Multi-Day?',
-    'Timezone',
-    'Event Type',
-    'Location',
-    'Venue Address',
-    'Virtual Link',
-    'Theme or Focus',
-    'Target Audience',
-    'Categories',
-    'Short Objectives',
-    'Success Metrics',
-    'Description & Messaging',
-    'Detailed Description',
-    'Key Messages',
-    'Attendance Goal (#)',
-    'Profit Goal ($)',
-    'Special Notes',
-    'Event Website'
-  ];
   const headerRange = sheet.getRange(1, 1, 1, 2).setValues([headers])
     .setBackground('#674ea7')
     .setFontColor('#ffffff')
     .setFontWeight('bold')
     .setFontSize(16);
 
-  const data = fields.map(f => [f, '']);
-  const dataRange = sheet.getRange(2, 1, data.length, 2).setValues(data);
-  dataRange.setFontSize(12);
-  // Wrap the value column for longer text
-  sheet.getRange(2, 2, data.length, 1).setWrap(true);
-  sheet.setColumnWidth(1, 220);
-  sheet.setColumnWidth(2, 250);
+  // Define field sections with their colors and fields
+  const fieldSections = [
+    {
+      color: '#674ea7', // Purple for basic event info
+      fields: ['Event ID', 'Event Name', 'Tagline']
+    },
+    {
+      color: '#93c47d', // Green for dates/timing
+      fields: ['Start Date (And Time)', 'End Date (And Time)', 'Single- or Multi-Day?', 'Timezone']
+    },
+    {
+      color: '#f1c232', // Orange/yellow for location
+      fields: ['Event Type', 'Location', 'Venue Address', 'Virtual Link']
+    },
+    {
+      color: '#6fa8dc', // Blue for theme/categories
+      fields: ['Theme or Focus', 'Categories']
+    },
+    {
+      color: '#c27ba0', // Pink/rose for audience/objectives
+      fields: ['Target Audience', 'Short Objectives (How do you want the audience to feel, learn, and do)']
+    },
+    {
+      color: '#6fa8dc', // Blue for success metrics
+      fields: ['Success Metrics', 'Attendance Goal (#)', 'Profit Goal ($)']
+    },
+    {
+      color: '#6fa8dc', // Blue for description
+      fields: ['Description & Messaging', 'Special Notes']
+    },
+    {
+      color: '#6fa8dc', // Blue for website
+      fields: ['Event Website']
+    }
+  ];
+
+  let currentRow = 2;
+
+  // Create each section
+  fieldSections.forEach(section => {
+    const sectionData = section.fields.map(field => [field, '']);
+    const sectionRange = sheet.getRange(currentRow, 1, section.fields.length, 2);
+
+    // Set the data
+    sectionRange.setValues(sectionData);
+
+    // Apply section styling
+    sectionRange.setFontSize(12);
+
+    // Style the field names (column A) with the section color
+    const fieldRange = sheet.getRange(currentRow, 1, section.fields.length, 1);
+    fieldRange.setBackground(section.color)
+             .setFontColor('#ffffff')
+             .setFontWeight('bold');
+
+    // Style the value column (column B) with light background
+    const valueRange = sheet.getRange(currentRow, 2, section.fields.length, 1);
+    const lightColor = section.color === '#674ea7' ? '#d9d2e9' : 
+                      section.color === '#93c47d' ? '#d9ead3' :
+                      section.color === '#f1c232' ? '#fff2cc' :
+                      section.color === '#c27ba0' ? '#ead1dc' : '#cfe2f3';
+
+    valueRange.setBackground(lightColor)
+             .setWrap(true);
+
+    currentRow += section.fields.length;
+  });
+
+  // Set column widths
+  sheet.setColumnWidth(1, 300); // Wider for field names
+  sheet.setColumnWidth(2, 400); // Wider for values
+  
+  // Freeze the header row
   sheet.setFrozenRows(1);
+  
   return sheet;
 }
 
@@ -105,7 +148,6 @@ function getEventDetails() {
     eventName: getVal('Event Name'),
     eventTagline: getVal('Tagline'),
     eventDescription: getVal('Description & Messaging'),
-    detailedDescription: getVal('Detailed Description'),
     theme: getVal('Theme or Focus'),
     eventDuration: getVal('Single- or Multi-Day?') || 'single',
     timezone: getVal('Timezone'),
@@ -119,9 +161,8 @@ function getEventDetails() {
     virtualLink: getVal('Virtual Link'),
     targetAudience: getVal('Target Audience'),
     categories: getVal('Categories'),
-    eventGoals: getVal('Short Objectives'),
+    eventGoals: getVal('Short Objectives (How do you want the audience to feel, learn, and do)'),
     successMetrics: getVal('Success Metrics'),
-    keyMessages: getVal('Key Messages'),
     expectedAttendees: getVal('Attendance Goal (#)'),
     profitGoal: getVal('Profit Goal ($)'),
     specialNotes: getVal('Special Notes'),
@@ -157,10 +198,8 @@ function saveEventDetails(details) {
   };
 
   setVal('Event Name', details.eventName);
-
   setVal('Tagline', details.eventTagline);
   setVal('Description & Messaging', details.eventDescription);
-  setVal('Detailed Description', details.detailedDescription);
   setVal('Theme or Focus', details.theme);
   setVal('Single- or Multi-Day?', details.eventDuration);
   setVal('Timezone', details.timezone);
@@ -174,9 +213,8 @@ function saveEventDetails(details) {
   setVal('Virtual Link', details.virtualLink);
   setVal('Target Audience', details.targetAudience);
   setVal('Categories', details.categories);
-  setVal('Short Objectives', details.eventGoals);
+  setVal('Short Objectives (How do you want the audience to feel, learn, and do)', details.eventGoals);
   setVal('Success Metrics', details.successMetrics);
-  setVal('Key Messages', details.keyMessages);
   setVal('Attendance Goal (#)', details.expectedAttendees);
   setVal('Profit Goal ($)', details.profitGoal);
   setVal('Special Notes', details.specialNotes);
@@ -184,4 +222,3 @@ function saveEventDetails(details) {
 
   return true;
 }
-

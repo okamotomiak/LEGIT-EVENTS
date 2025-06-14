@@ -364,21 +364,12 @@
                     <textarea id="eventDescription" placeholder="Describe your event's goals, target audience, key activities, and unique value proposition..."></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label>Give us the detailed description</label>
-                    <div class="helper-text">Share the full story — agenda highlights, speaker info, or anything else attendees should know <span class="optional-tag">(Optional)</span></div>
-                    <textarea id="detailedDescription" placeholder="Provide a thorough overview of the event, including schedule, speakers, and special elements..."></textarea>
-                </div>
 
                 <div class="form-group">
                     <label>Does your event have a theme or focus? <span class="optional-tag">(Optional)</span></label>
                     <input type="text" id="eventTheme" placeholder="e.g., Sustainability, Innovation, Community" />
                 </div>
 
-                <div class="form-group">
-                    <label>What are the key messages you want to communicate? <span class="optional-tag">(Optional)</span></label>
-                    <textarea id="keyMessages" placeholder="e.g., Empower local entrepreneurs; Foster collaboration among nonprofits..."></textarea>
-                </div>
             </div>
 
             <!-- Date & Time Section -->
@@ -538,9 +529,9 @@
                 </h2>
                 
                 <div class="form-group">
-                    <label>What are the main goals for this event?</label>
-                    <div class="helper-text">What do you hope to achieve? Be specific about your objectives</div>
-                    <textarea id="eventGoals" placeholder="e.g., 1. Connect 150+ professionals in the tech industry&#10;2. Showcase 10 innovative startups&#10;3. Raise $50K for our scholarship fund"></textarea>
+                    <label>What are the short objectives for this event? <span class="optional-tag">(How should the audience feel, learn, and do)</span></label>
+                    <div class="helper-text">Summarize the key outcomes you want participants to experience</div>
+                    <textarea id="eventGoals" placeholder="e.g., Inspire collaboration, teach new skills, motivate community action"></textarea>
                 </div>
                 
                 <div class="form-group">
@@ -660,9 +651,7 @@
                 document.getElementById('eventName').value = details.eventName || '';
                 document.getElementById('eventTagline').value = details.eventTagline || '';
                 document.getElementById('eventDescription').value = details.eventDescription || '';
-                document.getElementById('detailedDescription').value = details.detailedDescription || '';
                 document.getElementById('eventTheme').value = details.theme || '';
-                document.getElementById('keyMessages').value = details.keyMessages || '';
                 document.querySelector(`input[name="eventDuration"][value="${details.eventDuration || 'single'}"]`).checked = true;
                 document.getElementById('startDate').value = details.startDate || '';
                 document.getElementById('startTime').value = details.startTime || '';
@@ -715,7 +704,6 @@
                 eventName: eventName,
                 eventTagline: document.getElementById('eventTagline').value,
                 eventDescription: eventDescription,
-                detailedDescription: document.getElementById('detailedDescription').value,
                 eventDuration: document.querySelector('input[name="eventDuration"]:checked').value,
                 startDate: startDate,
                 startTime: startTime,
@@ -730,7 +718,6 @@
                 expectedAttendees: document.getElementById('expectedAttendees').value,
                 targetAudience: document.getElementById('targetAudience').value,
                 eventGoals: document.getElementById('eventGoals').value,
-                keyMessages: document.getElementById('keyMessages').value,
                 successMetrics: document.getElementById('successMetrics').value,
                 profitGoal: document.getElementById('profitGoal').value,
                 specialNotes: document.getElementById('specialNotes').value,
