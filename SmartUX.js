@@ -6,6 +6,37 @@
 // URL to the full user manual
 const USER_MANUAL_URL = 'https://docs.google.com/document/d/1w5KCO5O2MiuYDZMATFfLwGqHYrdsvhditDVzRJNmmP8/edit?usp=sharing';
 
+/**
+ * Determine if the spreadsheet is still a single blank sheet.
+ * @return {boolean} True if only one sheet exists with no data.
+ */
+function isBlankSpreadsheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheets = ss.getSheets();
+
+  if (sheets.length !== 1) return false;
+
+  const sheet = sheets[0];
+  const lastRow = sheet.getLastRow();
+  const lastCol = sheet.getLastColumn();
+
+  if (lastRow > 1 || lastCol > 1) return false;
+
+  const firstCell = sheet.getRange(1, 1).getValue();
+  return firstCell === '' || firstCell === null;
+}
+
+/**
+ * Show a simple welcome popup for brand new blank spreadsheets.
+ */
+function showBlankSheetWelcome() {
+  SpreadsheetApp.getUi().alert(
+    'Welcome to Event Planner Pro!',
+    'Explore the Event Planner Pro menu and start with "🗒️ Quick Event Setup" to begin planning your event.',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
+}
+
 function smartUXOnOpen() {
   const ui = SpreadsheetApp.getUi();
   const userProgress = assessUserProgress();
@@ -458,7 +489,12 @@ function createHelpHTML(helpContent) {
  */
 function checkAndGuideUser() {
   const userProgress = assessUserProgress();
-  
+
+  if (isBlankSpreadsheet()) {
+    showBlankSheetWelcome();
+    return;
+  }
+
   if (userProgress.isNewUser) {
     showWelcomeWizard();
   }
