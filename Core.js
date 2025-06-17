@@ -597,7 +597,7 @@ function createNewEventSpreadsheet() {
   setupDashboard(newSs);
 
   if (useTemplate) {
-    // Copy People data (reset status and assigned tasks)
+    // Copy People data (reset Status column)
     const srcPeople = current.getSheetByName('People');
     const destPeople = newSs.getSheetByName('People');
     if (srcPeople && destPeople) {
@@ -608,7 +608,6 @@ function createNewEventSpreadsheet() {
           .map(r => {
             const row = r.slice(0, destPeople.getLastColumn());
             row[3] = '';
-            if (row.length > 6) row[6] = '';
             return row;
           });
         if (data.length) {
@@ -638,10 +637,9 @@ function updateAllDropdowns() {
   const lists = _getConfigLists(ss);
 
   const peopleSheet = ss.getSheetByName('People');
-  const taskSheet = ss.getSheetByName('Task Management');
   if (peopleSheet) {
     const numRows = Math.max(peopleSheet.getMaxRows() - 1, 1);
-    setPeopleDropdowns(peopleSheet, numRows, lists, taskSheet);
+    setPeopleDropdowns(peopleSheet, numRows, lists);
   }
 
   setScheduleDropdowns(ss, null, null, lists);

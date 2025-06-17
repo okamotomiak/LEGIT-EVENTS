@@ -250,15 +250,15 @@ function setupPeopleSheet(ss, addSampleData = true) {
     sheet.insertRowsAfter(currentMaxRows, 900 - currentMaxRows);
   }
   
-  // Define headers with the new "Notes" column at the end
-  const headers = ['Name', 'Category', 'Role/Position', 'Status', 'Email', 'Phone', 'Assigned Tasks', 'Notes'];
+  // Define headers with the "Notes" column at the end
+  const headers = ['Name', 'Category', 'Role/Position', 'Status', 'Email', 'Phone', 'Notes'];
   
   // Set header values
   const headerRange = sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   headerRange.setFontSize(16);
   
   // Set column widths
-  const widths = [150, 120, 150, 120, 200, 120, 200, 300]; // Added width for Notes
+  const widths = [150, 120, 150, 120, 200, 120, 300]; // Adjusted widths after removing Assigned Tasks column
   for (let i = 0; i < headers.length; i++) {
     if (i < widths.length) {
       sheet.setColumnWidth(i + 1, widths[i]);
@@ -269,14 +269,14 @@ function setupPeopleSheet(ss, addSampleData = true) {
   sheet.setFrozenRows(1);
   // Default font size for all cells
   sheet.getRange(1, 1, 900, headers.length).setFontSize(12);
-  // Wrap long text in Assigned Tasks and Notes columns
-  sheet.getRange(2, 7, 899, 2).setWrap(true);
+  // Wrap long text in Notes column
+  sheet.getRange(2, 7, 899, 1).setWrap(true);
   
   // Apply sample data if requested
   if (addSampleData) {
     const sampleData = [
-      ['Jane Doe', 'Staff', 'Event Manager', 'Active', 'jane@example.com', '555-1234', '', 'Core team member.'],
-      ['John Smith', 'Volunteer', 'Setup Crew', 'Active', 'john@example.com', '555-5678', '', 'Available all day.']
+      ['Jane Doe', 'Staff', 'Event Manager', 'Active', 'jane@example.com', '555-1234', 'Core team member.'],
+      ['John Smith', 'Volunteer', 'Setup Crew', 'Active', 'john@example.com', '555-5678', 'Available all day.']
     ];
     sheet.getRange(2, 1, sampleData.length, headers.length).setValues(sampleData);
   }
@@ -320,15 +320,13 @@ function setupPeopleSheet(ss, addSampleData = true) {
 }
 
 /**
- * Sets dropdowns for Category, Status, and Assigned Tasks in People sheet.
- * Updated to pull task names from Task Management for Assigned Tasks dropdown.
+ * Sets dropdowns for Category and Status in the People sheet.
  * @param {GoogleAppsScript.Spreadsheet.Sheet} peopleSheet People sheet
  * @param {Number} numRows Number of rows to apply validation to
  * @param {Object} lists Configuration lists
- * @param {GoogleAppsScript.Spreadsheet.Sheet} taskMgmtSheet Task Management sheet for task names
  * @return {Array} List of updated dropdown fields
  */
-function setPeopleDropdowns(peopleSheet, numRows, lists, taskMgmtSheet) {
+function setPeopleDropdowns(peopleSheet, numRows, lists) {
   if (!peopleSheet) return [];
   
   // Always apply to data rows only (starting from row 2)
@@ -360,51 +358,7 @@ function setPeopleDropdowns(peopleSheet, numRows, lists, taskMgmtSheet) {
     updated.push("Status");
   }
   
-  // Add Assigned Tasks dropdown from Task Management sheet
-  if (taskMgmtSheet) {
-    try {
-      // Get task names from Task Management sheet
-      const taskLastRow = taskMgmtSheet.getLastRow();
-      
-      if (taskLastRow > 1) {
-        // Get headers to find Task Name column
-        const taskHeaders = taskMgmtSheet.getRange(1, 1, 1, taskMgmtSheet.getLastColumn()).getValues()[0];
-        const taskNameColIndex = taskHeaders.findIndex(header => 
-          header.toString().toLowerCase().trim() === 'task name');
-        
-        if (taskNameColIndex !== -1) {
-          // Get all task names, skipping header row
-          const taskNameRange = taskMgmtSheet.getRange(2, taskNameColIndex + 1, taskLastRow - 1, 1);
-          const taskNameValues = taskNameRange.getValues();
-          
-          // Filter non-empty task names
-          const allTaskNames = taskNameValues
-            .filter(row => row[0])
-            .map(row => row[0]);
-          
-          if (allTaskNames.length > 0) {
-            // Find Assigned Tasks column in People sheet
-            const peopleHeaders = peopleSheet.getRange(1, 1, 1, peopleSheet.getLastColumn()).getValues()[0];
-            const assignedTasksColIndex = peopleHeaders.findIndex(header => 
-              header.toString().toLowerCase().trim() === 'assigned tasks');
-            
-            if (assignedTasksColIndex !== -1) {
-              // Create validation rule with all task names
-              const taskRule = SpreadsheetApp.newDataValidation()
-                .requireValueInList(allTaskNames, true)
-                .build();
-              
-              // Apply to Assigned Tasks column - data rows only
-              peopleSheet.getRange(2, assignedTasksColIndex + 1, numRows).setDataValidation(taskRule);
-              updated.push("Assigned Tasks");
-            }
-          }
-        }
-      }
-    } catch (error) {
-      Logger.log('Error setting up Assigned Tasks dropdown: ' + error.toString());
-    }
-  }
+
   
   return updated;
 }
