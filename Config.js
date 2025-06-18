@@ -33,7 +33,7 @@ function setupConfigSheet(ss) {
   const configData = [
     // --- Section 1: Dropdown Lists ---
     ['--- DROPDOWN LISTS ---', 'Enter comma-separated values for dropdown menus across the planner.', ''],
-    ['People Categories', 'Staff,Volunteer,Speaker,Participant', 'Used in the "Category" dropdown in the People sheet.'],
+    ['People Categories', 'Staff,Volunteer,Organizer,Speaker', 'Used in the "Category" dropdown in the People sheet.'],
     ['People Statuses', 'Potential,Invited,Accepted,Registered,Unavailable', 'Used in the "Status" dropdown in the People sheet.'],
     ['Schedule Status Options', 'Tentative,Confirmed,Cancelled', 'Used in the "Status" dropdown in the Schedule sheet.'],
     ['Task Status Options', 'Not Started,In Progress,Blocked,Done,Cancelled', 'Used in the "Status" dropdown in the Task Management sheet.'],

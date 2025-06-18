@@ -29,11 +29,6 @@ function setupFormTemplatesSheet(ss) {
 
   // Define the default templates
   const templates = [
-    // Template 1: Participant Registration
-    ['Participant Registration', 'Registration form for our upcoming event. Please fill out all required fields.', 'Thank you for registering! We will be in touch with more details soon.', 'Full Name', 'Text', '', true, 'Name'],
-    ['Participant Registration', '', '', 'Email', 'Text', '', true, 'Email'],
-    ['Participant Registration', '', '', 'Phone Number', 'Text', '', false, 'Phone'],
-    ['Participant Registration', '', '', 'Dietary Restrictions or Preferences', 'Paragraph Text', '', false, 'Notes'],
 
     // Template 2: Volunteer Signup
     ['Volunteer Signup', 'Join our team to help make this event a success!', 'Thank you for volunteering! We will contact you soon with more details.', 'Full Name', 'Text', '', true, 'Name'],
@@ -54,11 +49,6 @@ function setupFormTemplatesSheet(ss) {
     ['Vendor Signup', '', '', 'Type of Goods/Services', 'Text', '', true, 'Role/Position'],
     ['Vendor Signup', '', '', 'Special Requests (e.g., electricity)', 'Paragraph Text', '', false, 'Notes'],
 
-    // Template 5: Participant Feedback
-    ['Participant Feedback', 'Thank you for attending! Please let us know what you thought.', 'Your feedback is valuable to us. Thank you!', 'Name (Optional)', 'Text', '', false, 'Name'],
-    ['Participant Feedback', '', '', 'Overall Rating', 'Multiple Choice', 'Excellent,Good,Average,Poor', true, 'Notes'],
-    ['Participant Feedback', '', '', 'What did you enjoy most?', 'Paragraph Text', '', false, 'Notes'],
-    ['Participant Feedback', '', '', 'How can we improve?', 'Paragraph Text', '', false, 'Notes'],
 
     // Template 6: Press/Media Pass Application
     ['Press/Media Pass Application', 'Application for a complimentary media pass for our event.', 'Thank you for your interest. We will review your application and be in touch.', 'Full Name', 'Text', '', true, 'Name'],
