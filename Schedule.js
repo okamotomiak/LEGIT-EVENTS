@@ -362,37 +362,19 @@ function setScheduleDropdowns(ss, sheets, rowCounts, lists) {
     updated.push("Status");
   }
   
-  // Update Lead dropdown using People sheet and Owners list from Config
+  // Update Lead dropdown using names from the People sheet only
   const peopleSheet = sheets.people;
-  let leadOptions = [];
 
-  // Include owners list from Config if available
-  if (lists && lists['Owners'] && lists['Owners'].length) {
-    leadOptions = leadOptions.concat(lists['Owners']);
-  }
-
-  // Add names from People sheet
   if (peopleSheet) {
-    const lastPeopleRow = peopleSheet.getLastRow();
-    if (lastPeopleRow > 1) {
-      const dataRowCount = lastPeopleRow - 1; // Exclude header row
-      const nameRange = peopleSheet.getRange(2, 1, dataRowCount, 1);
-      const nameValues = nameRange.getValues();
-      const allPeople = nameValues
-        .filter(row => row[0])
-        .map(row => row[0]);
-      leadOptions = leadOptions.concat(allPeople);
+    const maxRows = peopleSheet.getMaxRows();
+    if (maxRows > 1) {
+      const peopleRange = peopleSheet.getRange(2, 1, maxRows - 1, 1);
+      const leadRule = SpreadsheetApp.newDataValidation()
+        .requireValueInRange(peopleRange, true)
+        .build();
+      scheduleSheet.getRange(2, 6, numRows).setDataValidation(leadRule);
+      updated.push("Lead");
     }
-  }
-
-  leadOptions = Array.from(new Set(leadOptions)); // unique values
-
-  if (leadOptions.length > 0) {
-    const leadRule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(leadOptions, true)
-      .build();
-    scheduleSheet.getRange(2, 6, numRows).setDataValidation(leadRule);
-    updated.push("Lead");
   }
   
   return updated;
