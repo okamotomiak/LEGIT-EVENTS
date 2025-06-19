@@ -81,7 +81,8 @@ function setupScheduleSheet(ss, addSampleData = true) {
   sheet.getRange(2, 8, 899, 1).setDataValidation(statusRule); // Status (column H)
   
   // Set number formats in batch for all rows
-  sheet.getRange(2, 1, 899, 1).setNumberFormat('yyyy-mm-dd'); // Date (column A)
+  // Display dates like "Mon, 6/16" by default
+  sheet.getRange(2, 1, 899, 1).setNumberFormat('ddd, m/d'); // Date (column A)
   sheet.getRange(2, 2, 899, 2).setNumberFormat('hh:mm am/pm'); // Start/End Time (columns B-C)
   
   // Format headers with blue background and white text
