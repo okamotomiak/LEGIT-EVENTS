@@ -16,6 +16,10 @@ function generateProfessionalCueSheet() {
     }
 
     const eventInfo = getEventInformation(); // From TaskManagement.js
+    if (!eventInfo) {
+      ui.alert('Error', 'Could not retrieve event information. Please ensure the "Event Description" sheet is filled out correctly.', ui.ButtonSet.OK);
+      return;
+    }
     const sheetName = `${eventInfo.eventName || 'Event'} - Cue Sheet`;
 
     // Create or clear the cue sheet
