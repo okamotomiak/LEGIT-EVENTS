@@ -38,7 +38,6 @@ function setupConfigSheet(ss) {
     ['Schedule Status Options', 'Tentative,Confirmed,Cancelled', 'Used in the "Status" dropdown in the Schedule sheet.'],
     ['Task Status Options', 'Not Started,In Progress,Blocked,Done,Cancelled', 'Used in the "Status" dropdown in the Task Management sheet.'],
     ['Task Priority Options', 'High,Medium,Low,Critical', 'Used in the "Priority" dropdown in the Task Management sheet.'],
-    ['Location List', 'Main Hall,Room 101,Room 102,Outdoor Area', 'Used in the "Location" dropdown in the Schedule sheet.'],
     ['Owners', 'Jane Doe,John Smith,Alex Johnson', 'Used in the "Owner" dropdown in the Task Management sheet.'],
     
     // --- Section 2: System & AI Settings ---
@@ -121,7 +120,6 @@ function getConfiguration() {
     scheduleStatuses: find('Schedule Status Options', 1),
     taskStatuses: find('Task Status Options', 1),
     taskPriorities: find('Task Priority Options', 1),
-    locations: find('Location List', 1),
     owners: find('Owners', 1),
     lookAheadDays: find('Look-Ahead Days', 1),
     reminderLeadTime: find('Reminder Lead Time (days)', 1),
@@ -174,7 +172,6 @@ function saveConfiguration(config) {
   setVal('Schedule Status Options', config.scheduleStatuses);
   setVal('Task Status Options', config.taskStatuses);
   setVal('Task Priority Options', config.taskPriorities);
-  setVal('Location List', config.locations);
   setVal('Owners', config.owners);
   setVal('Look-Ahead Days', config.lookAheadDays);
   setVal('Reminder Lead Time (days)', config.reminderLeadTime);

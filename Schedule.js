@@ -68,16 +68,11 @@ function setupScheduleSheet(ss, addSampleData = true) {
   }
   
   // Apply data validations to data rows ONLY (rows 2-900, not header)
-  const locationRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Main Hall', 'Room 101', 'Room 102', 'Outdoor Area'], true)
-    .build();
-    
   const statusRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(['Tentative', 'Confirmed', 'Cancelled'], true)
     .build();
-  
+
   // Apply validation rules to all data rows (rows 2-900, not header)
-  sheet.getRange(2, 7, 899, 1).setDataValidation(locationRule); // Location (column G)
   sheet.getRange(2, 8, 899, 1).setDataValidation(statusRule); // Status (column H)
   
   // Set number formats in batch for all rows
@@ -317,7 +312,7 @@ function updateScheduleDurations() {
 }
 
 /**
- * Sets dropdowns for Lead, Location & Status in Schedule.
+ * Sets dropdowns for Lead and Status in Schedule.
  * Updated to get Lead dropdown from People sheet names.
  * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet
  * @param {Object} sheets Cached sheet references
@@ -342,16 +337,6 @@ function setScheduleDropdowns(ss, sheets, rowCounts, lists) {
     : Math.max(10, scheduleSheet.getLastRow() - 1);
     
   const updated = [];
-  
-  // Set Location dropdown
-  if (lists && lists['Location List'] && lists['Location List'].length) {
-    const locationRule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(lists['Location List'], true)
-      .build();
-    // Starting from row 2 (first data row)
-    scheduleSheet.getRange(2, 7, numRows).setDataValidation(locationRule);
-    updated.push("Location");
-  }
   
   // Set Status dropdown using values from Config sheet
   if (lists && lists['Schedule Status Options'] && lists['Schedule Status Options'].length) {
