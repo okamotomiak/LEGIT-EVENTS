@@ -83,8 +83,8 @@ function getApprovedLocationList(ss) {
   
   const configSheet = ss.getSheetByName('Config');
   if (!configSheet) {
-    Logger.log('Config sheet not found, using default locations');
-    return ['Main Hall']; // Default fallback
+    Logger.log('Config sheet not found, no location list available');
+    return [];
   }
   
   // Find the Location List row in the Config sheet
@@ -103,8 +103,8 @@ function getApprovedLocationList(ss) {
   }
   
   if (locationList.length === 0) {
-    Logger.log('No locations found in Config sheet, using default locations');
-    return ['Main Hall']; // Default fallback
+    Logger.log('No locations found in Config sheet');
+    return [];
   }
   
   Logger.log('Found approved locations: ' + locationList.join(', '));
@@ -118,8 +118,11 @@ function getApprovedLocationList(ss) {
  * @return {string} A valid location from the approved list
  */
 function validateLocation(location, approvedLocations) {
-  if (!location || !approvedLocations || approvedLocations.length === 0) {
-    return "Main Hall"; // Default fallback
+  if (!approvedLocations || approvedLocations.length === 0) {
+    return location || 'TBD';
+  }
+  if (!location) {
+    return approvedLocations[0];
   }
   
   // Check if the location exactly matches an approved location
@@ -139,8 +142,8 @@ function validateLocation(location, approvedLocations) {
     }
   }
   
-  // If no match found, return the first approved location as default
-  return approvedLocations[0];
+  // If no match found, return the provided location
+  return location;
 }
 
 /**
@@ -450,6 +453,12 @@ function generatePrompt(eventDetails, speakers, approvedLocations) {
   
   // Format approved locations for inclusion in prompt
   const locationsText = approvedLocations.join(', ');
+  const locationLines = approvedLocations.length > 0
+    ? `3. Location for each session MUST be one of these exact options: ${locationsText}\n4. IMPORTANT: Leave the Lead/Speaker field EMPTY for all sessions - this will be assigned later`
+    : `3. IMPORTANT: Leave the Lead/Speaker field EMPTY for all sessions - this will be assigned later`;
+  const guidelineLines = approvedLocations.length > 0
+    ? `8. CRITICALLY IMPORTANT: ALL locations MUST be chosen from this exact list: ${locationsText}\n9. CRITICALLY IMPORTANT: LEAVE THE SPEAKER/LEAD FIELD EMPTY FOR ALL SESSIONS`
+    : `8. CRITICALLY IMPORTANT: LEAVE THE SPEAKER/LEAD FIELD EMPTY FOR ALL SESSIONS`;
   
   // Base prompt with explicit event details including exact dates
   let prompt = `
@@ -484,8 +493,7 @@ IMPORTANT TIME CONSTRAINTS:
 For this ${eventTypeDesc} event, please include:
 1. Realistic timing for each session (start and end times) with appropriate breaks
 2. Appropriate session titles that reflect the event context
-3. Location for each session MUST be one of these exact options: ${locationsText}
-4. IMPORTANT: Leave the Lead/Speaker field EMPTY for all sessions - this will be assigned later`;
+${locationLines}`;
   
   // Add objectives if available
   if (eventDetails.objectives) {
@@ -541,7 +549,7 @@ Format your response as JSON with the following structure for each session:
       "endTime": "HH:MM AM/PM",
       "title": "Session Title",
       "speaker": "",  // LEAVE THIS EMPTY
-      "location": "Session Location (MUST be one of: ${locationsText})",
+      "location": "Session Location"${approvedLocations.length > 0 ? " (MUST be one of: ${locationsText})" : ""},
       "status": "Tentative"
     },
     ...more sessions...
@@ -556,8 +564,7 @@ IMPORTANT SCHEDULING GUIDELINES:
 5. Distribute session topics evenly throughout the day to maintain engagement
 6. CRITICALLY IMPORTANT: The dates must be EXACTLY between ${formattedStartDate} and ${formattedEndDate}, inclusive
 7. CRITICALLY IMPORTANT: Start each day no earlier than ${eventDetails.startTimeFormatted} and end no later than ${eventDetails.endTimeFormatted}
-8. CRITICALLY IMPORTANT: ALL locations MUST be chosen from this exact list: ${locationsText}
-9. CRITICALLY IMPORTANT: LEAVE THE SPEAKER/LEAD FIELD EMPTY FOR ALL SESSIONS
+${guidelineLines}
 `;
   
   Logger.log('Generated OpenAI Prompt:');
@@ -821,7 +828,7 @@ if (isFirstSessionOfDay) {
       let remainingText = line.substring(timeMatch[0].length).trim();
       
       // Look for location in brackets or parentheses
-      let location = approvedLocations[0]; // Default to first approved location
+      let location = approvedLocations.length > 0 ? approvedLocations[0] : '';
       const locationPattern = /[\(\[](.*?)[\)\]]/;
       const locationMatch = remainingText.match(locationPattern);
       
@@ -869,7 +876,7 @@ if (isFirstSessionOfDay) {
       endTime: formattedEndTime,
       title: "Opening Session",
       speaker: "", // Always empty for preliminary schedule
-      location: approvedLocations[0], // Use first approved location
+      location: approvedLocations.length > 0 ? approvedLocations[0] : '',
       status: "Tentative"
     });
   }

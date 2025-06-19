@@ -290,17 +290,6 @@
                 </div>
             </div>
 
-            <!-- Locations Section -->
-            <div class="section">
-                <h2>Event Locations</h2>
-                
-                <div class="form-group">
-                    <label>What locations or rooms will you be using?</label>
-                    <div class="helper-text">List all the venues, rooms, or areas where activities will take place</div>
-                    <div class="comma-note">Separate each location with a comma</div>
-                    <input type="text" id="locations" placeholder="Main Hall, Room 101, Room 102, Outdoor Area">
-                </div>
-            </div>
 
             <!-- System Settings Section -->
             <div class="section">
@@ -376,7 +365,6 @@
                 document.getElementById('scheduleStatuses').value = config.scheduleStatuses || '';
                 document.getElementById('taskStatuses').value = config.taskStatuses || '';
                 document.getElementById('taskPriorities').value = config.taskPriorities || '';
-                document.getElementById('locations').value = config.locations || '';
                 document.getElementById('owners').value = config.owners || '';
                 document.getElementById('lookAheadDays').value = config.lookAheadDays || '1';
                 document.getElementById('reminderLeadTime').value = config.reminderLeadTime || '2';
@@ -401,7 +389,6 @@
                 scheduleStatuses: document.getElementById('scheduleStatuses').value,
                 taskStatuses: document.getElementById('taskStatuses').value,
                 taskPriorities: document.getElementById('taskPriorities').value,
-                locations: document.getElementById('locations').value,
                 owners: document.getElementById('owners').value,
                 lookAheadDays: document.getElementById('lookAheadDays').value,
                 reminderLeadTime: document.getElementById('reminderLeadTime').value,
