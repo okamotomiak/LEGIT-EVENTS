@@ -283,7 +283,7 @@ function setupPeopleSheet(ss, addSampleData = true) {
   
   // Apply dropdown validations to ALL data rows ONLY (rows 2-900, not header)
   const categoryRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Staff', 'Volunteer', 'Speaker', 'Participant'], true)
+    .requireValueInList(['Staff', 'Volunteer', 'Organizer', 'Speaker'], true)
     .build();
   
   const statusRule = SpreadsheetApp.newDataValidation()

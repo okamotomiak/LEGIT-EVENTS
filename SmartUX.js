@@ -250,7 +250,7 @@ function getHelpContentForSheet(sheetName, userProgress) {
         <ol>
           <li>Click an empty row</li>
           <li>Enter their name</li>
-          <li>Choose category: Staff, Volunteer, Speaker, or Participant</li>
+          <li>Choose category: Staff, Volunteer, Organizer, or Speaker</li>
           <li>Set their status</li>
           <li>Add contact info if you have it</li>
         </ol>
