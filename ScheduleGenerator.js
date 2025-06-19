@@ -1075,7 +1075,8 @@ function populateScheduleSheet(scheduleData, eventDetails, sheet, approvedLocati
     sheet.getRange(2, 1, scheduleRows.length, scheduleRows[0].length).setValues(scheduleRows);
     
     // Format date and time columns
-    sheet.getRange(2, 1, scheduleRows.length, 1).setNumberFormat('yyyy-mm-dd');
+    // Display dates like "Mon, 6/16" for readability
+    sheet.getRange(2, 1, scheduleRows.length, 1).setNumberFormat('ddd, m/d');
     sheet.getRange(2, 2, scheduleRows.length, 2).setNumberFormat('hh:mm am/pm');
     
     // Re-apply the duration calculation
