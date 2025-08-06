@@ -1,104 +1,195 @@
 # LEGIT Event Planner Pro
 
+[![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-V8-blue.svg)](https://developers.google.com/apps-script)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CLASP](https://img.shields.io/badge/CLASP-Enabled-orange.svg)](https://github.com/google/clasp)
+
 LEGIT Event Planner Pro is a Google Apps Script project for managing events directly inside Google Sheets. It provides tools to generate schedules, task lists, logistics, and budgets with the help of AI services such as OpenAI. The script also includes utilities for sending emails, creating forms, and building professional cue sheets. A built-in help system guides you through these features and links to a full user manual.
 
-## Features
+## 🚀 Features
 
-- Automated menu with one-click access to event planning tools.
-- AI-powered generation of preliminary schedules, tasks, logistics lists, and budgets.
-- Form and email generators to streamline communication. Generated forms are saved in a "[Event Name] Forms" folder next to the spreadsheet.
-- New email dialog with role and status filters, plus an **Generate with AI** option to craft messages automatically.
-- Tools for managing people, schedules, and cues.
-- Interactive configuration dialog for customizing dropdown lists and email templates.
-- Dedicated **AI & Automation Tools** sheet to explain advanced menu options.
-- **Pro Tools → Blank Sheets** lets you quickly add a Budget, Logistics or other sheet when you need it.
-- Modular code organized by feature for easier maintenance.
-- Helpful onboarding with a quick start guide and contextual help menu.
-- One-click access to a **📕 User Manual (Google Doc)** and an offline copy in `docs/USER_MANUAL.md`.
+- **🤖 AI-Powered Planning** - Automated generation of preliminary schedules, tasks, logistics lists, and budgets using OpenAI
+- **📧 Smart Email System** - Role and status filters with AI message generation
+- **📋 Form Generation** - Create and manage forms automatically saved to Google Drive
+- **👥 People Management** - Comprehensive contact and role management
+- **📅 Schedule Management** - Interactive scheduling with AI assistance
+- **💰 Budget Tracking** - AI-powered budget generation with interactive questions
+- **📊 Dashboard & Analytics** - Centralized view of all event components
+- **⚙️ Configuration Management** - Customizable dropdowns and email templates
+- **🎯 Task Management** - Advanced task tracking with categories and assignments
+- **📖 Built-in Help System** - Contextual help and comprehensive user manual
+- **🔄 Automation Tools** - Pro tools for advanced users
 
-## Quick Start
+## 📋 Requirements
 
-1. When you first open the spreadsheet the Quick Start Guide appears. You can reopen it anytime from the **Event Planner Pro** menu.
-2. Use **📝 Create Event Description** to fill in your event basics.
-3. Access **📖 Help & User Guide** at any time for context-sensitive tips.
-4. Use **🗒️ Quick Event Setup** to capture details like your tagline, theme, key messages, and profit goal whenever you update your plan.
+- **Google Account** - Required for Google Sheets and Apps Script
+- **OpenAI API Key** - For AI-powered features (optional but recommended)
+- **CLASP** - For development and deployment
+- **Node.js** - For local development (optional)
 
-## Setup
+## 🛠️ Quick Start
 
-1. **Clone and install dependencies**
-   ```bash
-   git clone <repo-url>
-   cd LEGIT-EVENTS
-   npm install
-   ```
-   The project uses [CLASP](https://github.com/google/clasp) for deployment. Make sure it is installed globally:
-   ```bash
-   npm install -g @google/clasp
-   ```
+1. **Open the spreadsheet** - The Quick Start Guide appears automatically
+2. **Create Event Description** - Use **📝 Create Event Description** to fill in event basics
+3. **Access Help** - Use **📖 Help & User Guide** for context-sensitive tips
+4. **Quick Setup** - Use **🗒️ Quick Event Setup** to capture tagline, theme, and key messages
 
-2. **Authenticate with CLASP**
-   ```bash
-   clasp login
-   ```
+## ⚙️ Setup
 
-3. **Create a new Apps Script project**
-   ```bash
-   clasp create --title "LEGIT Event Planner Pro" --type sheets
-   ```
-   This will link the local files with your new script project.
+### 1. Clone and Install Dependencies
+```bash
+git clone <repo-url>
+cd LEGIT-EVENTS
+npm install
+```
 
-4. **Configure API Keys**
-   - Obtain an OpenAI API key and any other credentials required by your workflow.
-   - Store sensitive keys using the Apps Script Properties service rather than directly in the spreadsheet. In the Apps Script editor, go to `Project Settings` ➜ `Script Properties` or run **Event Planner Pro → Save API Key to Script Properties** from the sheet menu to add your keys.
+### 2. Install CLASP
+```bash
+npm install -g @google/clasp
+```
 
-5. **Deploy**
-  ```bash
-  clasp push
-  ```
-   After pushing, open the associated Google Sheet and refresh to load the custom menu. When first running the script you may be asked to authorize
-   Google Drive access so that new spreadsheets and generated forms can be created.
+### 3. Authenticate with CLASP
+```bash
+clasp login
+```
 
-6. **Initialize Sheets**
-   Run the setup functions from the "Event Planner Pro" menu to create the necessary sheets (Config, Schedule, Logistics, Budget, etc.). These provide templates for your event data and settings.
+### 4. Create Apps Script Project
+```bash
+clasp create --title "LEGIT Event Planner Pro" --type sheets
+```
 
-7. **Create a New Planner**
-   Use **Dashboard & Utilities → Create New Event Spreadsheet** to generate a fresh planner. The new file includes this script project and only the base sheets (Dashboard, Event Description, People, Schedule, Task Management, and Config).
+### 5. Configure API Keys
+- Obtain an OpenAI API key from [OpenAI Platform](https://platform.openai.com/)
+- Store keys using Apps Script Properties service
+- Run **Event Planner Pro → Save API Key to Script Properties** from the sheet menu
 
-8. **Learn Advanced Tools**
-   Run **Dashboard & Utilities → Create/Reset AI & Automation Tools Sheet** for a quick overview of optional automation features like cue sheets and form generators. The sheet explains what each advanced menu item does and provides links to setup dialogs.
+### 6. Deploy
+```bash
+clasp push
+```
 
-9. **Enable Automatic Dropdown Updates**
-   In the Apps Script editor run `createDropdownUpdateTrigger()` once. This sets
-   up a daily trigger that refreshes dropdown lists across all sheets.
+### 7. Initialize Sheets
+- Open the associated Google Sheet and refresh
+- Run setup functions from the "Event Planner Pro" menu
+- Authorize Google Drive access when prompted
 
-## Email Templates and AI Generation
+### 8. Create New Planner
+Use **Dashboard & Utilities → Create New Event Spreadsheet** to generate a fresh planner
 
-The **Send Emails** dialog now lets you filter recipients by role and status and includes a **Generate with AI** button. When used, OpenAI crafts a subject line and body using your event description. You can tweak the generated text and click **Save Template** to add it to the `Config` sheet for later use. This feature relies on the OpenAI API key saved in your script properties.
+### 9. Enable Automation
+Run `createDropdownUpdateTrigger()` in Apps Script editor to enable automatic dropdown updates
 
-## Documentation & Help
+## 🤖 AI Integration
 
-The **Event Planner Pro** menu provides built-in assistance:
+### OpenAI Features
+- **Schedule Generation** - AI creates preliminary schedules based on event description
+- **Task Generation** - Automated task list creation with categories
+- **Budget Estimation** - AI-powered budget generation with interactive questions
+- **Email Crafting** - Generate professional emails using AI
+- **Logistics Planning** - Automated logistics list generation
 
-1. **📖 Help & User Guide** – shows contextual help for the active sheet.
-2. **🗒️ Quick Event Setup** – opens a dialog for fast event configuration.
-3. **📕 User Manual (Google Doc)** – opens the full online manual.
+### API Configuration
+```javascript
+// Store API key securely
+PropertiesService.getScriptProperties().setProperty('OPENAI_API_KEY', 'your-key-here');
+```
 
-An abbreviated offline manual is available in [`docs/USER_MANUAL.md`](docs/USER_MANUAL.md).
+## 📧 Email Templates and AI Generation
 
-## Repository Structure
+The **Send Emails** dialog includes:
+- **Role and Status Filters** - Target specific groups
+- **AI Message Generation** - Craft emails using OpenAI
+- **Template Management** - Save and reuse email templates
+- **Custom Subjects** - Personalized subject lines
 
-- `Core.js` – Creates the custom menu and houses common utilities.
-- `Config.js` – Handles setup and management of configuration data.
-- `ScheduleGenerator.js` – Generates preliminary schedules using AI services.
-- `Logistics.js`, `Budget.js`, `TaskManagement.js` – Sheets and logic for logistics, budgeting, and tasks.
-- `AutomationTools.js` – Sets up the AI & Automation Tools overview sheet.
-- `MailMerge.js`, `FormGenerator.js` – Communication helpers for emailing and form creation.
-- `appsscript.json` – Google Apps Script project manifest.
+## 📚 Documentation & Help
 
-## Contributing
+### Built-in Assistance
+1. **📖 Help & User Guide** – Contextual help for active sheet
+2. **🗒️ Quick Event Setup** – Fast event configuration dialog
+3. **📕 User Manual (Google Doc)** – Complete online manual
 
-Contributions are welcome! Feel free to open issues or submit pull requests. Please keep functions modular and document any new code with JSDoc comments.
+### Offline Documentation
+- Abbreviated manual available in [`docs/USER_MANUAL.md`](docs/USER_MANUAL.md)
+- Full online manual: [Google Doc](https://docs.google.com/document/d/1w5KCO5O2MiuYDZMATFfLwGqHYrdsvhditDVzRJNmmP8/edit?usp=sharing)
 
-## License
+## 🏗️ Repository Structure
+
+```
+├── Core.js                    # Custom menu and common utilities
+├── Config.js                  # Configuration management
+├── ScheduleGenerator.js       # AI-powered schedule generation
+├── TaskManagement.js          # Advanced task tracking
+├── Budget.js                  # Budget management and AI generation
+├── Logistics.js               # Logistics planning
+├── People.js                  # Contact and role management
+├── Dashboard.js               # Central dashboard
+├── MailMerge.js              # Email functionality
+├── FormGenerator.js           # Form creation utilities
+├── AutomationTools.js         # AI & Automation Tools setup
+├── SmartUX.js                # User experience enhancements
+├── EnhancedTaskManagement.js  # Advanced task features
+├── SpeakerTaskCreator.js      # Speaker-specific task creation
+├── GenerateCueSheet.js       # Professional cue sheet generation
+├── EventDescription.js        # Event description management
+├── CueBuilder.js             # Cue building utilities
+├── appsscript.json           # Google Apps Script manifest
+└── docs/
+    └── USER_MANUAL.md        # Offline user manual
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**"Authorization Required"**
+- Ensure you've authorized Google Drive access
+- Check that the script has proper OAuth scopes
+
+**"API Key Not Found"**
+- Verify API key is stored in Script Properties
+- Use **Event Planner Pro → Save API Key to Script Properties**
+
+**"Menu Not Appearing"**
+- Refresh the Google Sheet after deployment
+- Check that `Core.js` is properly loaded
+
+**"AI Features Not Working"**
+- Verify OpenAI API key is valid and has credits
+- Check internet connection for API calls
+
+### Debug Mode
+Enable debug logging in Apps Script editor:
+```javascript
+console.log('Debug information');
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Make your changes** with proper JSDoc comments
+4. **Test thoroughly** in a development environment
+5. **Submit a pull request**
+
+### Development Guidelines
+- Keep functions modular and well-documented
+- Add JSDoc comments for all new functions
+- Test changes in a separate Apps Script project first
+- Follow existing code style and patterns
+
+## 📄 License
 
 This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Google Apps Script](https://developers.google.com/apps-script)
+- AI features powered by [OpenAI](https://openai.com/)
+- Deployed using [CLASP](https://github.com/google/clasp)
+
+---
+
+**Need Help?** Check the [User Manual](https://docs.google.com/document/d/1w5KCO5O2MiuYDZMATFfLwGqHYrdsvhditDVzRJNmmP8/edit?usp=sharing) or open an issue on GitHub.
