@@ -1,8 +1,8 @@
 //Schedule.gs
 
 /**
- * Sets up the Schedule sheet with headers, formatting, and sample data.
- * MODIFIED: Removed the obsolete "Add to Cue" column.
+ * Sets up the Schedule sheet with simplified headers, formatting, and sample data.
+ * Simplified structure: Time, Duration, Program, Lead/Presenter
  * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet object
  * @param {boolean} addSampleData Whether to add sample data to the sheet
  * @return {GoogleAppsScript.Spreadsheet.Sheet} The configured Schedule sheet
@@ -29,15 +29,15 @@ function setupScheduleSheet(ss, addSampleData = true) {
     sheet.insertRowsAfter(currentMaxRows, 900 - currentMaxRows);
   }
   
-  // Define headers (9 columns total)
-  const headers = ['Date', 'Start Time', 'End Time', 'Duration', 'Session Title', 'Lead', 'Location', 'Status', 'Notes'];
+  // Define simplified headers (4 columns total)
+  const headers = ['Time', 'Duration', 'Program', 'Lead/Presenter'];
   
   // Set header values
   const headerRange = sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   headerRange.setFontSize(16);
   
   // Set column widths
-  const widths = [100, 100, 100, 100, 200, 150, 150, 120, 300];
+  const widths = [100, 100, 300, 200];
   for (let i = 0; i < headers.length; i++) {
     if (i < widths.length) {
       sheet.setColumnWidth(i + 1, widths[i]);
@@ -47,38 +47,19 @@ function setupScheduleSheet(ss, addSampleData = true) {
   // Freeze header row
   sheet.setFrozenRows(1);
   sheet.getRange(1, 1, 900, headers.length).setFontSize(12);
-  // Wrap session titles and notes for readability
-  sheet.getRange(2, 5, 899, 1).setWrap(true);
-  sheet.getRange(2, 9, 899, 1).setWrap(true);
+  // Wrap program and lead/presenter for readability
+  sheet.getRange(2, 3, 899, 2).setWrap(true);
   
   // Add sample data if requested
   if (addSampleData) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const dayAfter = new Date();
-    dayAfter.setDate(dayAfter.getDate() + 2);
-    
     const sampleData = [
-      [tomorrow, '9:00 AM', '10:00 AM', '1 hour', 'Opening Session', 'Jane Doe', 'Main Hall', 'Confirmed', 'Welcome address and introduction'],
-      [dayAfter, '1:00 PM', '3:00 PM', '2 hours', 'Workshop', 'John Smith', 'Room 101', 'Tentative', 'Interactive workshop session']
+      ['9:00 AM', '1 hour', 'Opening Session', 'Jane Doe'],
+      ['10:30 AM', '1.5 hours', 'Workshop Session', 'John Smith'],
+      ['2:00 PM', '45 minutes', 'Panel Discussion', 'Sarah Johnson']
     ];
     
     sheet.getRange(2, 1, sampleData.length, headers.length).setValues(sampleData);
   }
-  
-  // Apply data validations to data rows ONLY (rows 2-900, not header)
-  const statusRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Tentative', 'Confirmed', 'Cancelled'], true)
-    .build();
-
-  // Apply validation rules to all data rows (rows 2-900, not header)
-  sheet.getRange(2, 8, 899, 1).setDataValidation(statusRule); // Status (column H)
-  
-  // Set number formats in batch for all rows
-  // Display dates like "Mon, 6/16" by default
-  sheet.getRange(2, 1, 899, 1).setNumberFormat('ddd, m/d'); // Date (column A)
-  sheet.getRange(2, 2, 899, 2).setNumberFormat('hh:mm am/pm'); // Start/End Time (columns B-C)
   
   // Format headers with blue background and white text
   sheet.getRange(1, 1, 1, headers.length)
@@ -100,17 +81,17 @@ function setupScheduleSheet(ss, addSampleData = true) {
   if (filter) filter.remove();
   sheet.getRange(1, 1, 900, headers.length).createFilter();
   
-  // Setup duration calculation
-  setupDurationCalculation(ss);
+  // Setup time calculation
+  setupTimeCalculation(ss);
   
   return sheet;
 }
 
 /**
- * Sets up duration calculation in the Schedule sheet
- * Fixed to properly display 60m as 1h with a tolerance range
+ * Sets up time calculation in the Schedule sheet
+ * Time column will be calculated based on Duration column
  */
-function setupDurationCalculation(ss) {
+function setupTimeCalculation(ss) {
   if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   
   const sheet = ss.getSheetByName('Schedule');
@@ -122,29 +103,25 @@ function setupDurationCalculation(ss) {
   // Skip if only header row exists
   if (lastRow <= 1) return;
   
-  // Format Start Time and End Time columns correctly first
-  // Use a simple time format that works reliably with calculations
-  sheet.getRange(2, 2, lastRow-1, 2).setNumberFormat('h:mm AM/PM');
-  
-  // Set formula for duration calculation in column 4 (Duration)
-  // Using a refined formula with tolerance range for 60 minutes
+  // Set formula for time calculation in column 1 (Time)
+  // This will calculate time based on duration entries
   for (let row = 2; row <= lastRow; row++) {
-    const formula = `=IF(AND(B${row}<>"",C${row}<>""),
-      IF(
-        AND(((C${row}-B${row})*24*60)>=59.98, ((C${row}-B${row})*24*60)<=60.02),
-        "1h",
-        IF(
-          MOD((C${row}-B${row})*24*60,60)=0,
-          TEXT(INT((C${row}-B${row})*24),"0") & "h",
-          IF(
-            INT((C${row}-B${row})*24)=0,
-            TEXT(MOD((C${row}-B${row})*24*60,60),"0") & "m",
-            TEXT(INT((C${row}-B${row})*24),"0") & "h " & TEXT(MOD((C${row}-B${row})*24*60,60),"0") & "m"
+    const formula = `=IF(B${row}<>"", 
+      IF(ROW()=2, 
+        "9:00 AM", 
+        IF(ISNUMBER(SEARCH("day",B${row-1})), 
+          "9:00 AM", 
+          IF(ISNUMBER(SEARCH("h",B${row-1})), 
+            TEXT(TIMEVALUE(A${row-1}) + TIMEVALUE(SUBSTITUTE(SUBSTITUTE(B${row-1},"h",""),"m","") & ":00"),"h:mm AM/PM"),
+            IF(ISNUMBER(SEARCH("m",B${row-1})), 
+              TEXT(TIMEVALUE(A${row-1}) + TIMEVALUE("0:" & SUBSTITUTE(B${row-1},"m","")), "h:mm AM/PM"),
+              A${row-1}
+            )
           )
         )
       ),
     "")`;
-    sheet.getRange(row, 4).setFormula(formula);
+    sheet.getRange(row, 1).setFormula(formula);
   }
 }
 
@@ -157,9 +134,9 @@ function handleScheduleEdit(e) {
   // Only proceed if edit is in Schedule sheet
   if (!e || !e.range || e.range.getSheet().getName() !== 'Schedule') return;
   
-  // Only proceed if edit is in column B (Start Time) or C (End Time)
+  // Only proceed if edit is in column B (Duration)
   const col = e.range.getColumn();
-  if (col !== 2 && col !== 3) return;
+  if (col !== 2) return;
   
   // Get the row being edited
   const row = e.range.getRow();
@@ -167,71 +144,27 @@ function handleScheduleEdit(e) {
   
   // Get the sheet and values
   const sheet = e.range.getSheet();
-  const startTimeCell = sheet.getRange(row, 2);
-  const endTimeCell = sheet.getRange(row, 3);
-  const durationCell = sheet.getRange(row, 4);
+  const durationCell = sheet.getRange(row, 2);
+  const durationValue = durationCell.getValue();
   
-  const startTimeValue = startTimeCell.getValue();
-  const endTimeValue = endTimeCell.getValue();
-  
-  // Skip if either time is missing
-  if (!startTimeValue || !endTimeValue) {
-    durationCell.setValue("");
+  // Skip if duration is missing
+  if (!durationValue) {
     return;
   }
   
-  // Parse the time strings into Date objects
-  try {
-    // Create Date objects for today with the specified times
-    const startTime = parseTimeString(startTimeValue);
-    const endTime = parseTimeString(endTimeValue);
-    
-    if (!startTime || !endTime) {
-      durationCell.setValue("Format Error");
-      return;
-    }
-    
-    // Calculate duration in milliseconds
-    let durationMs = endTime.getTime() - startTime.getTime();
-    
-    // Handle case where end time is on the next day
-    if (durationMs < 0) {
-      durationMs += 24 * 60 * 60 * 1000; // Add a day in milliseconds
-    }
-    
-    // Convert to total minutes first
-    const totalMinutes = Math.floor(durationMs / (60 * 1000));
-    
-    // Format the duration string in simplified format with 60m = 1h fix
-    let durationStr = "";
-    
-    // Add a small tolerance for 60 minutes to handle floating point issues
-    if (totalMinutes >= 59 && totalMinutes <= 61) {
-      // Approximately 60 minutes = 1 hour
-      durationStr = "1h";
-    } else if (totalMinutes > 60) {
-      // More than an hour
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      
-      if (minutes === 0) {
-        // Full hours, no minutes
-        durationStr = hours + "h";
-      } else {
-        // Hours and minutes
-        durationStr = hours + "h " + minutes + "m";
-      }
-    } else {
-      // Less than an hour, just minutes
-      durationStr = totalMinutes + "m";
-    }
-    
-    durationCell.setValue(durationStr);
-    
-  } catch (error) {
-    durationCell.setValue("Error");
-    Logger.log("Error calculating duration: " + error.toString());
+  // Check if this is a day separator (contains "day" or "Day")
+  if (typeof durationValue === 'string' && 
+      (durationValue.toLowerCase().includes('day') || 
+       durationValue.toLowerCase().includes('separator'))) {
+    // This is a day separator, format it appropriately
+    durationCell.setBackground('#e6f3ff');
+    durationCell.setFontWeight('bold');
+    sheet.getRange(row, 1, 1, 4).setBackground('#e6f3ff');
+    return;
   }
+  
+  // Normal duration entry - recalculate time
+  setupTimeCalculation(sheet.getParent());
 }
 
 /**
@@ -290,7 +223,7 @@ function parseTimeString(timeStr) {
       hours = 0;
     }
     
-    // Create a Date object for today with the parsed time
+    // Create a Date object for today with the specified time
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
     return date;
@@ -302,17 +235,17 @@ function parseTimeString(timeStr) {
 }
 
 /**
- * Standalone function to update duration calculation in Schedule sheet
- * This can be called from the menu to apply duration calculation to existing data
+ * Standalone function to update time calculation in Schedule sheet
+ * This can be called from the menu to apply time calculation to existing data
  */
-function updateScheduleDurations() {
+function updateScheduleTimes() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  setupDurationCalculation(ss);
-  SpreadsheetApp.getUi().alert('Duration calculation has been updated in the Schedule sheet.');
+  setupTimeCalculation(ss);
+  SpreadsheetApp.getUi().alert('Time calculation has been updated in the Schedule sheet.');
 }
 
 /**
- * Sets dropdowns for Lead and Status in Schedule.
+ * Sets dropdowns for Lead/Presenter in Schedule.
  * Updated to get Lead dropdown from People sheet names.
  * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet
  * @param {Object} sheets Cached sheet references
@@ -338,17 +271,7 @@ function setScheduleDropdowns(ss, sheets, rowCounts, lists) {
     
   const updated = [];
   
-  // Set Status dropdown using values from Config sheet
-  if (lists && lists['Schedule Status Options'] && lists['Schedule Status Options'].length) {
-    const statusRule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(lists['Schedule Status Options'], true)
-      .build();
-    // Starting from row 2 (first data row)
-    scheduleSheet.getRange(2, 8, numRows).setDataValidation(statusRule);
-    updated.push("Status");
-  }
-  
-  // Update Lead dropdown using names from the People sheet only
+  // Update Lead/Presenter dropdown using names from the People sheet only
   const peopleSheet = sheets.people;
 
   if (peopleSheet) {
@@ -358,10 +281,123 @@ function setScheduleDropdowns(ss, sheets, rowCounts, lists) {
       const leadRule = SpreadsheetApp.newDataValidation()
         .requireValueInRange(peopleRange, true)
         .build();
-      scheduleSheet.getRange(2, 6, numRows).setDataValidation(leadRule);
-      updated.push("Lead");
+      scheduleSheet.getRange(2, 4, numRows).setDataValidation(leadRule);
+      updated.push("Lead/Presenter");
     }
   }
   
   return updated;
+}
+
+/**
+ * Adds a day separator to the schedule
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet
+ * @param {string} dayLabel The label for the day (e.g., "Day 2", "Tuesday")
+ * @param {number} row The row to insert the separator at
+ */
+function addDaySeparator(ss, dayLabel, row) {
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  const sheet = ss.getSheetByName('Schedule');
+  if (!sheet) return;
+  
+  // Insert a new row
+  sheet.insertRowBefore(row);
+  
+  // Set the separator data
+  sheet.getRange(row, 1).setValue(''); // Time (will be calculated)
+  sheet.getRange(row, 2).setValue(dayLabel); // Duration column used for day label
+  sheet.getRange(row, 3).setValue(''); // Program
+  sheet.getRange(row, 4).setValue(''); // Lead/Presenter
+  
+  // Format the separator row
+  sheet.getRange(row, 1, 1, 4).setBackground('#e6f3ff');
+  sheet.getRange(row, 2).setFontWeight('bold');
+  
+  // Recalculate times
+  setupTimeCalculation(ss);
+}
+
+/**
+ * Adds menu items for schedule management
+ * @param {GoogleAppsScript.UI.Menu} menu The menu to add items to
+ */
+function addScheduleMenuItems(menu) {
+  menu.addSeparator();
+  menu.addItem('🕐 Update Time Calculations', 'updateScheduleTimes');
+  menu.addItem('📅 Add Day Separator', 'showDaySeparatorDialog');
+}
+
+/**
+ * Shows a dialog to add a day separator
+ */
+function showDaySeparatorDialog() {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt(
+    'Add Day Separator',
+    'Enter the day label (e.g., "Day 2", "Tuesday", "Wednesday"):',
+    ui.ButtonSet.OK_CANCEL
+  );
+  
+  if (response.getSelectedButton() === ui.Button.OK) {
+    const dayLabel = response.getResponseText().trim();
+    if (dayLabel) {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      const sheet = ss.getSheetByName('Schedule');
+      if (sheet) {
+        const lastRow = sheet.getLastRow();
+        addDaySeparator(ss, dayLabel, lastRow + 1);
+        ui.alert('Success', `Day separator "${dayLabel}" has been added to the schedule.`, ui.ButtonSet.OK);
+      }
+    } else {
+      ui.alert('Error', 'Please enter a valid day label.', ui.ButtonSet.OK);
+    }
+  }
+}
+
+/**
+ * Test function to verify the simplified schedule structure
+ * This function can be run to test the new schedule format
+ */
+function testSimplifiedSchedule() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ui = SpreadsheetApp.getUi();
+  
+  try {
+    // Test 1: Setup the simplified schedule
+    const sheet = setupScheduleSheet(ss, false);
+    ui.alert('Test 1 Complete', 'Simplified schedule structure created successfully.', ui.ButtonSet.OK);
+    
+    // Test 2: Add sample data
+    const sampleData = [
+      ['', '1 hour', 'Opening Session', 'Jane Doe'],
+      ['', '45 minutes', 'Workshop Session', 'John Smith'],
+      ['', '1.5 hours', 'Panel Discussion', 'Sarah Johnson']
+    ];
+    
+    sheet.getRange(2, 1, sampleData.length, sampleData[0].length).setValues(sampleData);
+    ui.alert('Test 2 Complete', 'Sample data added successfully.', ui.ButtonSet.OK);
+    
+    // Test 3: Add day separator
+    addDaySeparator(ss, 'Day 2', 6);
+    ui.alert('Test 3 Complete', 'Day separator added successfully.', ui.ButtonSet.OK);
+    
+    // Test 4: Add more data after separator
+    const moreData = [
+      ['', '30 minutes', 'Break', ''],
+      ['', '1 hour', 'Closing Session', 'Mike Wilson']
+    ];
+    
+    sheet.getRange(7, 1, moreData.length, moreData[0].length).setValues(moreData);
+    ui.alert('Test 4 Complete', 'Additional data added after separator.', ui.ButtonSet.OK);
+    
+    // Test 5: Update time calculations
+    setupTimeCalculation(ss);
+    ui.alert('Test 5 Complete', 'Time calculations updated successfully.', ui.ButtonSet.OK);
+    
+    ui.alert('All Tests Complete', 'The simplified schedule structure is working correctly!', ui.ButtonSet.OK);
+    
+  } catch (error) {
+    ui.alert('Test Failed', 'Error: ' + error.toString(), ui.ButtonSet.OK);
+  }
 }

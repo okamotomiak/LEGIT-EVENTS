@@ -950,6 +950,7 @@ function populateScheduleSheet(scheduleData, eventDetails, sheet, approvedLocati
   
   // Prepare the data for batch insertion
   const scheduleRows = [];
+  let currentDate = null;
   
   // Get event constraints for validation
   const eventStartTime = parseTimeString(eventDetails.startTimeFormatted);
@@ -989,7 +990,17 @@ function populateScheduleSheet(scheduleData, eventDetails, sheet, approvedLocati
       itemDate = new Date(eventDetails.endDate);
     }
     
-    // Ensure start time is not earlier than event start time for first session of the day
+    // Add day separator if this is a new day
+    if (currentDate === null || !areSameDates(currentDate, itemDate)) {
+      if (currentDate !== null) {
+        // Add a separator row for the new day
+        const dayLabel = formatDate(itemDate);
+        scheduleRows.push(['', dayLabel, '', '']); // Time, Duration (day label), Program, Lead/Presenter
+      }
+      currentDate = itemDate;
+    }
+    
+    // Calculate duration from start and end times
     let startTime = item.startTime || eventDetails.startTimeFormatted || '9:00 AM';
     let endTime = item.endTime || '10:00 AM';
     
@@ -1044,50 +1055,68 @@ function populateScheduleSheet(scheduleData, eventDetails, sheet, approvedLocati
       }
     }
     
-    // Validate location against approved locations
-    const location = validateLocation(item.location, approvedLocations);
+    // Calculate duration string
+    let durationStr = '';
+    if (sessionStartTime && sessionEndTime) {
+      const durationMs = sessionEndTime.getTime() - sessionStartTime.getTime();
+      const totalMinutes = Math.floor(durationMs / (60 * 1000));
+      
+      if (totalMinutes >= 59 && totalMinutes <= 61) {
+        durationStr = "1h";
+      } else if (totalMinutes > 60) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        
+        if (minutes === 0) {
+          durationStr = hours + "h";
+        } else {
+          durationStr = hours + "h " + minutes + "m";
+        }
+      } else {
+        durationStr = totalMinutes + "m";
+      }
+    } else {
+      durationStr = "1h"; // Default duration
+    }
     
-    // Create a row for this schedule item
-    // NOTE: The key change - setting the Lead field (column 6) to empty string regardless of what's returned from OpenAI
+    // Create a row for this schedule item in simplified format
     scheduleRows.push([
-      itemDate,                    // Date
-      startTime,                   // Start Time
-      endTime,                     // End Time
-      '',                          // Duration (will be calculated)
-      item.title || 'Untitled Session', // Session Title
-      '',                          // Lead/Speaker - ALWAYS EMPTY for preliminary schedule
-      location,                    // Location - validated against approved list
-      item.status || 'Tentative',  // Status
-      ''                           // Notes
+      '',                          // Time (will be calculated)
+      durationStr,                 // Duration
+      item.title || 'Untitled Session', // Program
+      ''                           // Lead/Presenter
     ]);
   }
-  
-  // Sort rows by date and time
-  scheduleRows.sort((a, b) => {
-    // First sort by date
-    const dateCompare = a[0] - b[0];
-    if (dateCompare !== 0) return dateCompare;
-    
-    // Then by start time
-    const startTimeA = parseTimeString(a[1]);
-    const startTimeB = parseTimeString(b[1]);
-    if (startTimeA && startTimeB) {
-      return startTimeA.getTime() - startTimeB.getTime();
-    }
-    return 0;
-  });
   
   // Batch insert all schedule items
   if (scheduleRows.length > 0) {
     sheet.getRange(2, 1, scheduleRows.length, scheduleRows[0].length).setValues(scheduleRows);
     
-    // Format date and time columns
-    // Display dates like "Mon, 6/16" for readability
-    sheet.getRange(2, 1, scheduleRows.length, 1).setNumberFormat('ddd, m/d');
-    sheet.getRange(2, 2, scheduleRows.length, 2).setNumberFormat('hh:mm am/pm');
+    // Format day separators
+    for (let i = 0; i < scheduleRows.length; i++) {
+      const row = i + 2; // +2 because we start at row 2
+      const durationCell = sheet.getRange(row, 2);
+      const durationValue = durationCell.getValue();
+      
+      // Check if this is a day separator
+      if (typeof durationValue === 'string' && 
+          (durationValue.toLowerCase().includes('day') || 
+           durationValue.toLowerCase().includes('separator') ||
+           durationValue.toLowerCase().includes('mon') ||
+           durationValue.toLowerCase().includes('tue') ||
+           durationValue.toLowerCase().includes('wed') ||
+           durationValue.toLowerCase().includes('thu') ||
+           durationValue.toLowerCase().includes('fri') ||
+           durationValue.toLowerCase().includes('sat') ||
+           durationValue.toLowerCase().includes('sun'))) {
+        // Format the separator row
+        sheet.getRange(row, 1, 1, 4).setBackground('#e6f3ff');
+        durationCell.setFontWeight('bold');
+      }
+    }
     
-    // Re-apply the duration calculation
-    setupDurationCalculation(sheet.getParent());
+    // Re-apply the time calculation
+    setupTimeCalculation(sheet.getParent());
   }
   
   return scheduleRows.length;

@@ -86,7 +86,7 @@ function updateCueBuilderDropdowns() {
     return;
   }
   
-  const sessionTitlesRange = scheduleSheet.getRange(2, 5, lastRow - 1, 1);
+  const sessionTitlesRange = scheduleSheet.getRange(2, 3, lastRow - 1, 1);
   const sessionTitles = sessionTitlesRange.getValues()
     .flat()
     .filter(title => title.toString().trim() !== ''); // Filter out empty titles
