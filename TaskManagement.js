@@ -181,7 +181,6 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
   
   // Define headers
   const headers = [
-    'Task ID', 
     'Task Name', 
     'Description', 
     'Category', 
@@ -189,7 +188,6 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
     'Due Date', 
     'Status', 
     'Priority', 
-    'Related Session', 
     'Reminder Sent?'
   ];
   
@@ -198,7 +196,7 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
   headerRange.setFontSize(16);
   
   // Set column widths
-  const widths = [120, 200, 300, 120, 150, 100, 100, 100, 150, 120];
+  const widths = [200, 300, 120, 150, 100, 100, 100, 120];
   for (let i = 0; i < headers.length; i++) {
     sheet.setColumnWidth(i + 1, widths[i]);
   }
@@ -222,62 +220,60 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
   const configData = getConfigDropdownOptions(ss);
   
   // Create dropdown validations
-  // Category dropdown (Column 4)
+  // Category dropdown (Column 3)
   const categoryOptions = ['Venue', 'Marketing', 'Logistics', 'Program', 'Budget', 'Staffing', 'Technology', 'Communications', 'Other'];
   const categoryRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(categoryOptions, true)
     .build();
-  sheet.getRange(2, 4, 899, 1).setDataValidation(categoryRule);
+  sheet.getRange(2, 3, 899, 1).setDataValidation(categoryRule);
   
-  // Owner dropdown from Config sheet (Column 5)
+  // Owner dropdown from Config sheet (Column 4)
   if (configData.owners && configData.owners.length > 0) {
     const ownerRule = SpreadsheetApp.newDataValidation()
       .requireValueInList(configData.owners, true)
       .build();
-    sheet.getRange(2, 5, 899, 1).setDataValidation(ownerRule);
+    sheet.getRange(2, 4, 899, 1).setDataValidation(ownerRule);
   }
   
-  // Format Due Date column (Column 6)
-  sheet.getRange(2, 6, 899, 1).setNumberFormat('yyyy-mm-dd');
+  // Format Due Date column (Column 5)
+  sheet.getRange(2, 5, 899, 1).setNumberFormat('yyyy-mm-dd');
   
-  // Status dropdown from Config sheet (Column 7)
+  // Status dropdown from Config sheet (Column 6)
   if (configData.taskStatus && configData.taskStatus.length > 0) {
     const statusRule = SpreadsheetApp.newDataValidation()
       .requireValueInList(configData.taskStatus, true)
       .build();
-    sheet.getRange(2, 7, 899, 1).setDataValidation(statusRule);
+    sheet.getRange(2, 6, 899, 1).setDataValidation(statusRule);
   } else {
     // Default status options if not found in Config
     const defaultStatusOptions = ['Not Started', 'In Progress', 'Done', 'Blocked', 'Cancelled'];
     const statusRule = SpreadsheetApp.newDataValidation()
       .requireValueInList(defaultStatusOptions, true)
       .build();
-    sheet.getRange(2, 7, 899, 1).setDataValidation(statusRule);
+    sheet.getRange(2, 6, 899, 1).setDataValidation(statusRule);
   }
   
-  // Priority dropdown from Config sheet (Column 8)
+  // Priority dropdown from Config sheet (Column 7)
   if (configData.taskPriority && configData.taskPriority.length > 0) {
     const priorityRule = SpreadsheetApp.newDataValidation()
       .requireValueInList(configData.taskPriority, true)
       .build();
-    sheet.getRange(2, 8, 899, 1).setDataValidation(priorityRule);
+    sheet.getRange(2, 7, 899, 1).setDataValidation(priorityRule);
   } else {
     // Default priority options if not found in Config
     const defaultPriorityOptions = ['High', 'Medium', 'Low'];
     const priorityRule = SpreadsheetApp.newDataValidation()
       .requireValueInList(defaultPriorityOptions, true)
       .build();
-    sheet.getRange(2, 8, 899, 1).setDataValidation(priorityRule);
+    sheet.getRange(2, 7, 899, 1).setDataValidation(priorityRule);
   }
   
-  // Related Session dropdown - will be populated in updateAllDropdowns
-  
-  // Reminder Sent dropdown (Column 10)
+  // Reminder Sent dropdown (Column 8)
   const reminderOptions = ['Yes', 'No'];
   const reminderRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(reminderOptions, true)
     .build();
-  sheet.getRange(2, 10, 899, 1).setDataValidation(reminderRule);
+  sheet.getRange(2, 8, 899, 1).setDataValidation(reminderRule);
   
   // Apply alternating row colors to all data rows in bulk
   const altColors = [];
@@ -294,7 +290,6 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
     
     const sampleTasks = [
       [
-        'T-001',
         'Create Event Budget',
         'Prepare detailed budget including venue costs, catering, staff, and materials',
         'Budget',
@@ -302,11 +297,9 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
         tomorrow,
         'Not Started',
         'High',
-        '',
         'No'
       ],
       [
-        'T-002',
         'Book Venue',
         'Contact venue options, get quotes, and secure reservation',
         'Venue',
@@ -314,7 +307,6 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
         tomorrow,
         'In Progress',
         'High',
-        '',
         'No'
       ]
     ];
@@ -764,9 +756,9 @@ function addTasksToSheet(tasks, eventInfo) {
   // Create header row if needed
   if (startRow === 2) {
     const headers = [
-      'Task ID', 'Task Name', 'Description', 'Category', 
+      'Task Name', 'Description', 'Category', 
       'Owner', 'Due Date', 'Status', 'Priority',
-      'Related Session', 'Reminder Sent?'
+      'Reminder Sent?'
     ];
     
     taskSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
@@ -786,15 +778,11 @@ function addTasksToSheet(tasks, eventInfo) {
   const taskData = [];
   
   for (const task of sortedTasks) {
-    // Generate a unique task ID
-    const taskId = generateTaskId();
-    
     // Calculate due date based on timeline and event info
     const dueDate = calculateDueDate(task.timeline, eventInfo);
     
     // Create a row for this task
     taskData.push([
-      taskId,                // Task ID
       task.name,             // Task Name
       task.description,      // Description
       task.category,         // Category
@@ -802,7 +790,6 @@ function addTasksToSheet(tasks, eventInfo) {
       dueDate,               // Due Date
       task.status || 'Not Started', // Status
       task.priority,         // Priority
-      '',                    // Related Session (left blank)
       'No'                   // Reminder Sent?
     ]);
   }
@@ -812,7 +799,7 @@ function addTasksToSheet(tasks, eventInfo) {
     taskSheet.getRange(startRow, 1, taskData.length, taskData[0].length).setValues(taskData);
     
     // Format the date column
-    taskSheet.getRange(startRow, 6, taskData.length).setNumberFormat('yyyy-mm-dd');
+    taskSheet.getRange(startRow, 5, taskData.length).setNumberFormat('yyyy-mm-dd');
     
     // Apply alternating row colors for readability
     for (let i = 0; i < taskData.length; i++) {
@@ -873,11 +860,20 @@ function sortTasks(tasks) {
 /**
  * Generates a unique task ID
  * @return {string} A unique task ID
+ * 
+ * DEPRECATED: Task ID column has been removed from Task Management sheet
  */
 function generateTaskId() {
+  // Function deprecated - Task ID column removed
+  Logger.log('generateTaskId called but Task ID column has been removed');
+  return 'DEPRECATED';
+  
+  // Original implementation commented out:
+  /*
   const timestamp = new Date().getTime();
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
   return `T-${timestamp.toString().slice(-6)}-${random}`;
+  */
 }
 
 /**
@@ -984,8 +980,16 @@ function formatDate(date) {
  * Updates the "Related Session" dropdown in the Task Management sheet using
  * titles from the Schedule sheet.
  * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet.
+ * 
+ * DEPRECATED: Related Session column has been removed from Task Management sheet
  */
 function updateRelatedSessionDropdown(ss) {
+  // Function deprecated - Related Session column removed
+  Logger.log('updateRelatedSessionDropdown called but Related Session column has been removed');
+  return;
+  
+  // Original implementation commented out:
+  /*
   if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   const scheduleSheet = ss.getSheetByName('Schedule');
   const taskSheet = ss.getSheetByName(TASK_SHEET_NAME);
@@ -1007,6 +1011,7 @@ function updateRelatedSessionDropdown(ss) {
 
   taskSheet.getRange(2, 9, taskSheet.getMaxRows() - 1, 1)
     .setDataValidation(rule);
+  */
 }
 
 /**

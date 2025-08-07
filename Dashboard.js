@@ -162,7 +162,7 @@ function setupDashboard(ss) {
         for (let i = 1; i < taskData.length; i++) {
           const row = taskData[i];
           
-          // Skip empty rows (check if first cell/Task ID is empty)
+          // Skip empty rows (check if first cell/Task Name is empty)
           if (!row[0]) continue;
           
           totalTasks++;
