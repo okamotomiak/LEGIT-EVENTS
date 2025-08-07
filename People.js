@@ -156,12 +156,8 @@ function createSpeakerTask(spreadsheet, speakerName) {
     const lastRow = taskMgmtSheet.getLastRow();
     const newRow = lastRow + 1;
     
-    // Generate a unique task ID
-    const taskId = generateTaskId();
-    
     // Prepare the task data
     const taskData = [
-      taskId,                                                    // Task ID
       `Collect Bio & Headshot from ${speakerName}`,              // Task Name
       `Request and collect bio and headshot from ${speakerName} for event profile`, // Description
       'Staffing',                                                // Category
@@ -169,7 +165,6 @@ function createSpeakerTask(spreadsheet, speakerName) {
       dueDate,                                                   // Due Date
       'Not Started',                                             // Status
       'Medium',                                                  // Priority
-      '',                                                        // Related Session
       'No'                                                       // Reminder Sent?
     ];
     
@@ -177,7 +172,7 @@ function createSpeakerTask(spreadsheet, speakerName) {
     taskMgmtSheet.getRange(newRow, 1, 1, taskData.length).setValues([taskData]);
     
     // Format the due date
-    taskMgmtSheet.getRange(newRow, 6).setNumberFormat('yyyy-mm-dd');
+    taskMgmtSheet.getRange(newRow, 5).setNumberFormat('yyyy-mm-dd');
     
     // Apply alternating row colors
     if (newRow % 2 === 0) {
@@ -213,11 +208,20 @@ function findRowByLabel(sheet, label) {
 /**
  * Generates a unique task ID
  * @return {string} A unique task ID
+ * 
+ * DEPRECATED: Task ID column has been removed from Task Management sheet
  */
 function generateTaskId() {
+  // Function deprecated - Task ID column removed
+  Logger.log('generateTaskId called but Task ID column has been removed');
+  return 'DEPRECATED';
+  
+  // Original implementation commented out:
+  /*
   const timestamp = new Date().getTime();
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
   return `T-${timestamp.toString().slice(-6)}-${random}`;
+  */
 }
 
 /**

@@ -323,12 +323,8 @@ function createSpeakerTask(ss, speakerName) {
     const lastRow = taskMgmtSheet.getLastRow();
     const insertRow = lastRow + 1;
     
-    // Generate task ID
-    const taskId = generateUniqueTaskId();
-    
     // Set task values
     const taskData = [
-      taskId,  // Task ID
       `Collect Bio & Headshot from ${speakerName}`,  // Task Name
       `Request and collect bio and headshot from ${speakerName} for event profile`,  // Description
       'Staffing',  // Category
@@ -336,7 +332,6 @@ function createSpeakerTask(ss, speakerName) {
       dueDate,  // Due Date
       'Not Started',  // Status
       'Medium',  // Priority
-      '',  // Related Session
       'No'  // Reminder Sent
     ];
     
@@ -346,7 +341,7 @@ function createSpeakerTask(ss, speakerName) {
     taskMgmtSheet.getRange(insertRow, 1, 1, taskData.length).setValues([taskData]);
     
     // Format the date cell
-    taskMgmtSheet.getRange(insertRow, 6).setNumberFormat('yyyy-mm-dd');
+    taskMgmtSheet.getRange(insertRow, 5).setNumberFormat('yyyy-mm-dd');
     
     Logger.log(`Task created successfully for speaker: ${speakerName}`);
   } catch (error) {
@@ -391,13 +386,22 @@ function findRowByValue(sheet, value) {
  * Generates a unique task ID
  * 
  * @return {string} A unique task ID
+ * 
+ * DEPRECATED: Task ID column has been removed from Task Management sheet
  */
 function generateUniqueTaskId() {
+  // Function deprecated - Task ID column removed
+  Logger.log('generateUniqueTaskId called but Task ID column has been removed');
+  return 'DEPRECATED';
+  
+  // Original implementation commented out:
+  /*
   // Use timestamp plus random characters
   const timestamp = new Date().getTime();
   const random = Math.random().toString(36).substring(2, 6); // Get 4 random alphanumeric chars
   
   return 'T-' + timestamp.toString().slice(-6) + '-' + random.toUpperCase();
+  */
 }
 
 /**

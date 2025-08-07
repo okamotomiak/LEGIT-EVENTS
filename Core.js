@@ -38,11 +38,14 @@ function onEdit(e) {
     handleSessionStatusChange(e);
 
     // Update Related Session dropdown when schedule changes
+    // DEPRECATED: Related Session column has been removed from Task Management sheet
+    /*
     try {
       updateRelatedSessionDropdown(e.source);
     } catch (err) {
       Logger.log('Error updating Related Session dropdown: ' + err);
     }
+    */
   }
   
   // Handle People sheet edits for speaker task creation
@@ -645,7 +648,7 @@ function updateAllDropdowns() {
   setScheduleDropdowns(ss, null, null, lists);
   updateLogisticsDropdowns(ss);
   updateCueBuilderDropdowns();
-  updateRelatedSessionDropdown(ss);
+  // updateRelatedSessionDropdown(ss); // DEPRECATED: Related Session column removed
 }
 
 /**
