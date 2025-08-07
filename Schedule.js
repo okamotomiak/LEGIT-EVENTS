@@ -104,23 +104,23 @@ function setupTimeCalculation(ss) {
   if (lastRow <= 1) return;
   
   // Set formula for time calculation in column 1 (Time)
-  // This will calculate time based on duration entries
+  // Simple approach: first row starts at 9:00 AM, subsequent rows add duration
   for (let row = 2; row <= lastRow; row++) {
-    const formula = `=IF(B${row}<>"", 
-      IF(ROW()=2, 
-        "9:00 AM", 
+    let formula;
+    if (row === 2) {
+      // First data row starts at 9:00 AM
+      formula = '=IF(B2<>"", "9:00 AM", "")';
+    } else {
+      // Subsequent rows: if previous row was a day separator, start at 9:00 AM
+      // Otherwise, add the duration to the previous time
+      formula = `=IF(B${row}<>"", 
         IF(ISNUMBER(SEARCH("day",B${row-1})), 
           "9:00 AM", 
-          IF(ISNUMBER(SEARCH("h",B${row-1})), 
-            TEXT(TIMEVALUE(A${row-1}) + TIMEVALUE(SUBSTITUTE(SUBSTITUTE(B${row-1},"h",""),"m","") & ":00"),"h:mm AM/PM"),
-            IF(ISNUMBER(SEARCH("m",B${row-1})), 
-              TEXT(TIMEVALUE(A${row-1}) + TIMEVALUE("0:" & SUBSTITUTE(B${row-1},"m","")), "h:mm AM/PM"),
-              A${row-1}
-            )
-          )
-        )
-      ),
-    "")`;
+          A${row-1} + B${row-1}
+        ),
+        ""
+      )`;
+    }
     sheet.getRange(row, 1).setFormula(formula);
   }
 }
