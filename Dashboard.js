@@ -274,26 +274,37 @@ function setupDashboard(ss) {
     const lastRow = Math.max(2, scheduleSheet.getLastRow());
     
     if (lastRow > 1) {
-      // Get all schedule data at once
-      const scheduleRange = scheduleSheet.getRange(2, 1, lastRow-1, 9);
+      // Get all schedule data at once (4 columns in simplified structure)
+      const scheduleRange = scheduleSheet.getRange(2, 1, lastRow-1, 4);
       const scheduleData = scheduleRange.getValues();
       
-      // Filter for future sessions
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Set to midnight for date comparison
-      
-      const futureSessions = scheduleData.filter(row => {
-        // Check if date is valid and in the future
-        return row[0] instanceof Date && row[0] >= today;
+      // Filter for actual sessions (skip day separators and empty rows)
+      const validSessions = scheduleData.filter(row => {
+        // Skip rows that are day separators or have no program title
+        const duration = row[1]; // Duration column
+        const program = row[2]; // Program column
+        
+        // Skip if this is a day separator (contains "day" or day names)
+        if (typeof duration === 'string' && 
+            (duration.toLowerCase().includes('day') || 
+             duration.toLowerCase().includes('mon') ||
+             duration.toLowerCase().includes('tue') ||
+             duration.toLowerCase().includes('wed') ||
+             duration.toLowerCase().includes('thu') ||
+             duration.toLowerCase().includes('fri') ||
+             duration.toLowerCase().includes('sat') ||
+             duration.toLowerCase().includes('sun'))) {
+          return false;
+        }
+        
+        // Include only rows with actual program titles
+        return program && program.trim() !== '';
       });
       
-      // Sort by date (ascending)
-      futureSessions.sort((a, b) => a[0] - b[0]);
-      
       // Take only the first 10
-      upcomingSessions = futureSessions.slice(0, 10);
+      upcomingSessions = validSessions.slice(0, 10);
       
-      // If no future sessions were found
+      // If no valid sessions were found
       if (upcomingSessions.length === 0) {
         upcomingSessions = [['No upcoming sessions']];
       }
@@ -305,10 +316,9 @@ function setupDashboard(ss) {
     const sessionRange = sheet.getRange(7, 1, upcomingSessions.length, upcomingSessions[0].length);
     sessionRange.setValues(upcomingSessions);
     
-    // Format dates if we have actual session data (not the "No upcoming sessions" message)
+    // Format times if we have actual session data (not the "No upcoming sessions" message)
     if (upcomingSessions[0].length > 1) {
-      sheet.getRange(7, 1, upcomingSessions.length, 1).setNumberFormat('yyyy-mm-dd');
-      sheet.getRange(7, 2, upcomingSessions.length, 2).setNumberFormat('hh:mm am/pm');
+      sheet.getRange(7, 1, upcomingSessions.length, 1).setNumberFormat('h:mm AM/PM');
     }
   }
 

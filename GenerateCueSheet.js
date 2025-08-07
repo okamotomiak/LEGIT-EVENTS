@@ -166,8 +166,8 @@ function populateProfessionalCueSheet(cueSheet, cueData, ss) {
 
   const scheduleData = scheduleSheet.getDataRange().getValues();
   const scheduleHeaders = scheduleData[0].map(h => h.toString().toLowerCase());
-  const scheduleTitleIndex = scheduleHeaders.indexOf('session title');
-  const scheduleTimeIndex = scheduleHeaders.indexOf('start time');
+  const scheduleTitleIndex = scheduleHeaders.indexOf('program');
+  const scheduleTimeIndex = scheduleHeaders.indexOf('time');
 
   // Create a map for quick lookup of schedule item start times
   const scheduleTimeMap = new Map();

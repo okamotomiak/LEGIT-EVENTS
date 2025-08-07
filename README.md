@@ -12,7 +12,7 @@ LEGIT Event Planner Pro is a Google Apps Script project for managing events dire
 - **📧 Smart Email System** - Role and status filters with AI message generation
 - **📋 Form Generation** - Create and manage forms automatically saved to Google Drive
 - **👥 People Management** - Comprehensive contact and role management
-- **📅 Schedule Management** - Interactive scheduling with AI assistance
+- **📅 Schedule Management** - Simplified scheduling with Time, Duration, Program, and Lead/Presenter columns
 - **💰 Budget Tracking** - AI-powered budget generation with interactive questions
 - **📊 Dashboard & Analytics** - Centralized view of all event components
 - **⚙️ Configuration Management** - Customizable dropdowns and email templates
@@ -78,6 +78,25 @@ Use **Dashboard & Utilities → Create New Event Spreadsheet** to generate a fre
 
 ### 9. Enable Automation
 Run `createDropdownUpdateTrigger()` in Apps Script editor to enable automatic dropdown updates
+
+## 📅 Schedule Management
+
+### Simplified Schedule Structure
+The schedule has been simplified to 4 essential columns:
+- **Time** - Automatically calculated from duration entries
+- **Duration** - Enter durations like "1h", "45m", "1h 30m"
+- **Program** - Session titles and descriptions
+- **Lead/Presenter** - Dropdown populated from People sheet
+
+### Multi-Day Events
+- Day separators can be added using the **📅 Add Day Separator** menu item
+- Separators automatically reset time calculations for the new day
+- Format: Enter day labels like "Day 2", "Tuesday", "Wednesday" in the Duration column
+
+### Time Calculation
+- Time column automatically calculates based on duration entries
+- First session of each day starts at 9:00 AM by default
+- Subsequent times are calculated by adding the previous session's duration
 
 ## 🤖 AI Integration
 
