@@ -97,6 +97,16 @@ function handlePeopleSheetEdit(e) {
   } catch (error) {
     Logger.log('Error in handlePeopleSheetEdit: ' + error.toString());
   }
+  
+  // After any People edit (excluding header), refresh Owner dropdown in Task Management
+  try {
+    const sheet = e.range.getSheet();
+    if (sheet.getName() === 'People' && e.range.getRow() !== 1) {
+      updateOwnerDropdownFromPeople(sheet.getParent());
+    }
+  } catch (err) {
+    Logger.log('Error updating Owner dropdown after People edit: ' + err);
+  }
 }
 
 /**

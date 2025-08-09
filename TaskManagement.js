@@ -228,9 +228,12 @@ function setupTaskManagementSheet(ss, addSampleData = false) {
   sheet.getRange(2, 3, 899, 1).setDataValidation(categoryRule);
   
   // Owner dropdown from Config sheet (Column 4)
-  if (configData.owners && configData.owners.length > 0) {
+  const peopleNames = getPeopleNamesList(ss);
+  const ownerOptions = (peopleNames && peopleNames.length > 0) ? peopleNames
+                        : (configData.owners && configData.owners.length > 0 ? configData.owners : []);
+  if (ownerOptions.length > 0) {
     const ownerRule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(configData.owners, true)
+      .requireValueInList(ownerOptions, true)
       .build();
     sheet.getRange(2, 4, 899, 1).setDataValidation(ownerRule);
   }
@@ -364,8 +367,72 @@ function getConfigDropdownOptions(ss) {
   return result;
 }
 
+/**
+ * Returns a deduplicated, non-empty list of names from the People sheet
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet
+ * @return {string[]} List of names from People sheet (may be empty if not available)
+ */
+function getPeopleNamesList(ss) {
+  try {
+    if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+    const peopleSheet = ss.getSheetByName('People');
+    if (!peopleSheet) return [];
 
+    const data = peopleSheet.getDataRange().getValues();
+    if (!data || data.length <= 1) return [];
 
+    const headers = data[0].map(h => h && h.toString ? h.toString() : String(h));
+    let nameIndex = headers.findIndex(h => h.toLowerCase().trim() === 'name');
+    if (nameIndex === -1) nameIndex = 0; // Fallback to first column
+
+    const names = [];
+    for (let i = 1; i < data.length; i++) {
+      const value = data[i][nameIndex];
+      if (value && value.toString().trim() !== '') {
+        names.push(value.toString().trim());
+      }
+    }
+
+    // Deduplicate while preserving order
+    const seen = new Set();
+    const uniqueNames = [];
+    for (const n of names) {
+      if (!seen.has(n)) {
+        seen.add(n);
+        uniqueNames.push(n);
+      }
+    }
+    return uniqueNames;
+  } catch (err) {
+    Logger.log('Error reading People names: ' + err);
+    return [];
+  }
+}
+
+/**
+ * Updates the Owner dropdown in Task Management to reflect People sheet names.
+ * Can be called after People sheet changes.
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss The spreadsheet
+ */
+function updateOwnerDropdownFromPeople(ss) {
+  try {
+    if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+    const taskSheet = ss.getSheetByName(TASK_SHEET_NAME);
+    if (!taskSheet) return;
+
+    const peopleNames = getPeopleNamesList(ss);
+    if (peopleNames.length === 0) return;
+
+    const ownerRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(peopleNames, true)
+      .build();
+    // Column 4 is Owner; apply to data rows
+    const maxRows = Math.max(2, taskSheet.getMaxRows());
+    taskSheet.getRange(2, 4, maxRows - 1, 1).setDataValidation(ownerRule);
+  } catch (err) {
+    Logger.log('Error updating Owner dropdown from People: ' + err);
+  }
+}
 
 /**
  * Gets the OpenAI API key from script properties
