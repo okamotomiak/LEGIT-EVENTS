@@ -705,6 +705,7 @@ function showProToolsMenu() {
       .addItem('AI & Automation Tools', 'setupAutomationToolsSheet'))
     .addSubMenu(ui.createMenu('⚙️ Utilities')
       .addItem('🔧 Configuration', 'showConfigDialog')
+      .addItem('📇 Import Directory Contacts', 'importDirectoryContacts')
       .addItem('📋 New Event Planner', 'createNewEventSpreadsheet'))
     .addToUi();
 }
