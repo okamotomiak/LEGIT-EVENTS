@@ -1,4 +1,9 @@
-//People.gs 
+//People.gs
+
+// ID of the external directory spreadsheet used for contact lookup
+const DIRECTORY_SHEET_ID = '1KftUoOtsAOEWKl7gmil3ltUZRG1-snwYgc1cLGMEYUg';
+// Name of the sheet tab within the directory spreadsheet
+const DIRECTORY_SHEET_NAME = 'Directory';
 
 /**
  * Handles edits specifically for the People sheet
@@ -371,8 +376,79 @@ function setPeopleDropdowns(peopleSheet, numRows, lists) {
     peopleSheet.getRange(2, 4, numRows).setDataValidation(statusRule);
     updated.push("Status");
   }
-  
 
-  
+
+
   return updated;
+}
+
+/**
+ * Populates Email and Phone columns in the People sheet by looking up
+ * matching names in an external directory spreadsheet.
+ * Only updates rows that have a corresponding entry in the directory.
+ */
+function importDirectoryContacts() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const peopleSheet = ss.getSheetByName('People');
+  if (!peopleSheet) {
+    ss.toast('People sheet not found.');
+    return;
+  }
+
+  let directorySs;
+  try {
+    directorySs = SpreadsheetApp.openById(DIRECTORY_SHEET_ID);
+  } catch (err) {
+    ss.toast('Unable to open directory spreadsheet.');
+    return;
+  }
+
+  const directorySheet = directorySs.getSheetByName(DIRECTORY_SHEET_NAME) || directorySs.getSheets()[0];
+  if (!directorySheet) {
+    ss.toast('Directory sheet not found.');
+    return;
+  }
+
+  const directoryData = directorySheet.getDataRange().getValues();
+  if (directoryData.length < 2) {
+    ss.toast('Directory has no data.');
+    return;
+  }
+
+  const dirHeaders = directoryData[0];
+  const fullNameIdx = findColumnIndex(dirHeaders, 'full name');
+  const emailIdx = findColumnIndex(dirHeaders, 'email');
+  const phoneIdx = findColumnIndex(dirHeaders, 'phone');
+
+  const directoryMap = {};
+  for (let i = 1; i < directoryData.length; i++) {
+    const row = directoryData[i];
+    const name = row[fullNameIdx];
+    if (name) {
+      directoryMap[name.toString().toLowerCase().trim()] = {
+        email: emailIdx > -1 ? row[emailIdx] : '',
+        phone: phoneIdx > -1 ? row[phoneIdx] : ''
+      };
+    }
+  }
+
+  const lastRow = peopleSheet.getLastRow();
+  if (lastRow < 2) return;
+
+  const peopleData = peopleSheet.getRange(2, 1, lastRow - 1, peopleSheet.getLastColumn()).getValues();
+  let updated = 0;
+
+  for (let i = 0; i < peopleData.length; i++) {
+    const name = peopleData[i][0];
+    if (!name) continue;
+    const info = directoryMap[name.toString().toLowerCase().trim()];
+    if (info) {
+      peopleData[i][4] = info.email;
+      peopleData[i][5] = info.phone;
+      updated++;
+    }
+  }
+
+  peopleSheet.getRange(2, 1, peopleData.length, peopleData[0].length).setValues(peopleData);
+  ss.toast(`${updated} contact${updated === 1 ? '' : 's'} updated from directory.`, 'Directory Import', 5);
 }
