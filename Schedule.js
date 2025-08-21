@@ -53,11 +53,11 @@ function setupScheduleSheet(ss, addSampleData = true) {
   // Add sample data if requested
   if (addSampleData) {
     const sampleData = [
-      ['9:00 AM', '1 hour', 'Opening Session', 'Jane Doe'],
-      ['10:30 AM', '1.5 hours', 'Workshop Session', 'John Smith'],
-      ['2:00 PM', '45 minutes', 'Panel Discussion', 'Sarah Johnson']
+      ['9:00 AM', '1:00', 'Opening Session', 'Jane Doe'],
+      ['10:00 AM', '1:30', 'Workshop Session', 'John Smith'],
+      ['11:30 AM', '0:45', 'Panel Discussion', 'Sarah Johnson']
     ];
-    
+
     sheet.getRange(2, 1, sampleData.length, headers.length).setValues(sampleData);
   }
   
@@ -70,6 +70,8 @@ function setupScheduleSheet(ss, addSampleData = true) {
   
   // Set normal white background for the first data row and all other rows
   sheet.getRange(2, 1, 899, headers.length).setBackground(null);
+  sheet.getRange(2, 1, 899, 1).setNumberFormat('h:mm AM/PM');
+  sheet.getRange(2, 2, 899, 1).setNumberFormat('[h]:mm');
   
   // Apply custom alternating row colors
   for (let i = 2; i <= 900; i += 2) {
@@ -104,23 +106,8 @@ function setupTimeCalculation(ss) {
   if (lastRow <= 1) return;
   
   // Set formula for time calculation in column 1 (Time)
-  // This will calculate time based on duration entries
   for (let row = 2; row <= lastRow; row++) {
-    const formula = `=IF(B${row}<>"", 
-      IF(ROW()=2, 
-        "9:00 AM", 
-        IF(ISNUMBER(SEARCH("day",B${row-1})), 
-          "9:00 AM", 
-          IF(ISNUMBER(SEARCH("h",B${row-1})), 
-            TEXT(TIMEVALUE(A${row-1}) + TIMEVALUE(SUBSTITUTE(SUBSTITUTE(B${row-1},"h",""),"m","") & ":00"),"h:mm AM/PM"),
-            IF(ISNUMBER(SEARCH("m",B${row-1})), 
-              TEXT(TIMEVALUE(A${row-1}) + TIMEVALUE("0:" & SUBSTITUTE(B${row-1},"m","")), "h:mm AM/PM"),
-              A${row-1}
-            )
-          )
-        )
-      ),
-    "")`;
+    const formula = `=IF(B${row}="", "", IF(ROW()=2, TIME(9,0,0), IF(REGEXMATCH(LOWER(B${row-1}), "day"), TIME(9,0,0), A${row-1}+B${row-1})))`;
     sheet.getRange(row, 1).setFormula(formula);
   }
 }
