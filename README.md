@@ -84,7 +84,7 @@ Run `createDropdownUpdateTrigger()` in Apps Script editor to enable automatic dr
 ### Simplified Schedule Structure
 The schedule has been simplified to 4 essential columns:
 - **Time** - Automatically calculated from duration entries
-- **Duration** - Enter durations like "1h", "45m", "1h 30m"
+- **Duration** - Enter durations as time values (e.g., `1:00` for one hour or `0:45` for forty-five minutes)
 - **Program** - Session titles and descriptions
 - **Lead/Presenter** - Dropdown populated from People sheet
 
